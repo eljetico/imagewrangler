@@ -1,0 +1,39 @@
+# frozen_string_literal: true
+
+require_relative '../test_helper'
+
+# rubocop:disable Metrics/ClassLength
+class FormatFamiliesTest < Minitest::Test
+  # This still doesn't supress PDF warnings encountered here
+  MiniMagick.configure do |config|
+    config.quiet_warnings
+  end
+
+  def setup
+  end
+
+  def test_valid_raster
+    image = MiniMagick::Image.new(raster_path('valid_jpg.jpg'))
+    assert image.raster?
+    refute image.vector?
+  end
+
+  def test_not_a_raster
+    image = MiniMagick::Image.new(vector_path('valid.eps'))
+    assert image.vector?
+    refute image.raster?
+  end
+
+  def test_valid_pdf
+    image = MiniMagick::Image.new(vector_path('valid.pdf'))
+    assert image.vector?
+    assert image.postscript?
+    refute image.raster?
+  end
+
+  def test_valid_webp
+    image = MiniMagick::Image.new(raster_path('valid_pam_format.webp'))
+    refute image.vector?
+    assert image.raster?
+  end
+end

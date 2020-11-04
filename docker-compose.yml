@@ -1,0 +1,9 @@
+version: '2'
+services:
+  app:
+    build: .
+    volumes:
+      - .:/apps/imagewrangler
+    command: ["bundle", "exec", "guard"]
+    tty: true
+

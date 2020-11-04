@@ -1,0 +1,6 @@
+Dockerfile
+.ruby-version
+.dockerignore
+.gitignore
+docker-compose.yml
+
