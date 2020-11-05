@@ -14,7 +14,7 @@ class PeakSaturationTest < Minitest::Test
   end
 
   def test_value_from_color_image
-    image = MiniMagick::Image.new(raster_path('valid_lo_res.jpg'))
+    image = MiniMagick::Image.new(raster_path('valid_jpg.jpg'))
     assert_equal 0.984314, image.peak_saturation
   end
 end

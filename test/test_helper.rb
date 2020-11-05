@@ -3,7 +3,8 @@
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'minitest/autorun'
-require 'minitest/reporters' # requires the gem
+require 'minitest/reporters'
+require 'webmock/minitest'
 
 require 'image_wrangler'
 

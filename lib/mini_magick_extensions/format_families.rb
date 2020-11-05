@@ -37,6 +37,10 @@ module MiniMagick
       RASTER_FORMATS.include?(type.upcase)
     end
 
+    def pdf?
+      type.upcase.match(/PDF/)
+    end
+
     def postscript?
       POSTSCRIPT_FORMATS.include?(type.upcase)
     end
