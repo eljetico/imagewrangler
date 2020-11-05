@@ -59,6 +59,13 @@ module ImageWrangler
       map { |attribute, message| full_message(attribute, message) }
     end
 
+    def include?(attribute)
+      attribute = attribute.to_sym
+      errors.key?(attribute) && !errors[attribute].empty?
+    end
+    alias :has_key? :include?
+    alias :key? :include?
+
     def messages
       errors.inspect
     end

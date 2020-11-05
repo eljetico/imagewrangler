@@ -52,7 +52,7 @@ module ImageWrangler
       @colorspace ||= extract_color_space
     end
 
-          def create_date
+    def create_date
       extract_create_date
     end
     alias date_created create_date
@@ -95,6 +95,10 @@ module ImageWrangler
       @filepath
     end
 
+    def filesize
+      @filesize ||= stat.size
+    end
+
     def load_image(filepath)
       @loaded = false
       @filepath = filepath
@@ -108,6 +112,7 @@ module ImageWrangler
       # but this operation takes some time, calling 'identify -verbose'
       @magick.colorspace
       @loaded = @magick.valid?
+
       @loaded
     rescue Errno::ENOENT => error
       raise ImageWrangler::MissingImageError, error.message
@@ -128,6 +133,13 @@ module ImageWrangler
       return nil
     end
 
+    def size
+      @size ||= nil_or_integer(attribute('size'))
+    end
+
+    def stat
+      @stat ||= File.stat(@magick.path)
+    end
 
     def valid_extension?
       return false if extname.nil?

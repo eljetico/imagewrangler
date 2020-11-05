@@ -56,6 +56,7 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal 'abb4755aff726b0c4ac77c7be07b4776', @subject.checksum
     assert_equal 1000, @subject.height
     assert_equal 697, @subject.width
+    assert_equal 119333, @subject.filesize
     assert_equal 'JPEG', @subject.format
     refute @subject.visually_corrupt?
   end

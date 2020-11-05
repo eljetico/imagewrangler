@@ -7,21 +7,53 @@ module ImageWrangler
     def initialize(filepath, **options)
       @filepath = filepath
       @options = {
-        handler: ImageWrangler::Handlers::MiniMagickHandler.new
+        handler: ImageWrangler::Handlers::MiniMagickHandler.new,
+        errors: ImageWrangler::Errors.new
       }.merge(options)
 
       load_image
     end
 
-    def valid?
-      @handler.valid?
+    def method_missing(method, *args, &block)
+      if handler.respond_to?(method)
+        handler.send(method, *args, &block)
+      else
+        super
+      end
+    end
+
+    def respond_to_missing?(method, include_private = false)
+      handler.respond_to?(method) || super
+    end
+
+    def errors
+      @options[:errors]
+    end
+
+    def handler
+      @handler ||= @options[:handler]
+    end
+
+    def raster?
+      handler.raster?
+    end
+
+    def vector?
+      handler.vector?
+    end
+
+    def validate
+      errors.clear
+
+      yield self if block_given?
+
+      errors.empty?
     end
 
     private
 
     def load_image
-      @handler = @options[:handler]
-      @handler.load_image(@filepath)
+      handler.load_image(@filepath)
     end
   end
 end
