@@ -52,6 +52,7 @@ class MiniMagickHandlerTest < Minitest::Test
     @subject.load_image(raster_path('valid_jpg.jpg'))
 
     assert_equal 'image/jpeg', @subject.mime_type
+    assert_equal 'RGB', @subject.colorspace
     assert_equal 'abb4755aff726b0c4ac77c7be07b4776', @subject.checksum
     assert_equal 1000, @subject.height
     assert_equal 697, @subject.width
@@ -83,6 +84,10 @@ class MiniMagickHandlerTest < Minitest::Test
     @subject.load_image(raster_path('clipping_path.jpg'))
     assert_equal 'Canon', @subject.camera_make
     assert_equal 'Canon EOS 5D', @subject.camera_model
+
+    subject = @handler.new
+    subject.load_image(raster_path('valid_jpg.jpg'))
+    assert_nil subject.camera_make
   end
 
   def test_raster_detection
@@ -97,5 +102,14 @@ class MiniMagickHandlerTest < Minitest::Test
     assert @subject.postscript?
     refute @subject.raster?
     assert_equal 3.0, @subject.postscript_version
+  end
+
+  def test_layers_detection
+    @subject.load_image(raster_path('valid_jpg.jpg'))
+    assert_equal 1, @subject.layers.length
+
+    subject = @handler.new
+    subject.load_image(raster_path('layers.psd'))
+    assert_equal 2, subject.layers.length
   end
 end

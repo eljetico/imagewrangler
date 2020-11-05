@@ -34,14 +34,12 @@ module MiniMagick
       begin
         # need to get separator First
         lsep = "\n"
-        f = File.open(path, 'r:UTF-8')
+        f = StringIO.new to_blob
         line = f.gets.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
         lsep = line[/[\r\n]+/]
 
-        # f.close
         f.rewind
 
-        # now read line by line and check for regexes
         bounding_box_count = 0
         ps_version_found = false
 
