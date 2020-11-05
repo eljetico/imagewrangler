@@ -49,7 +49,7 @@ class MiniMagickHandlerTest < Minitest::Test
   end
 
   def test_attributes_retrieval_local_file
-    assert @subject.load_image(raster_path('valid_jpg.jpg'))
+    @subject.load_image(raster_path('valid_jpg.jpg'))
 
     assert_equal 'image/jpeg', @subject.mime_type
     assert_equal 'abb4755aff726b0c4ac77c7be07b4776', @subject.checksum
@@ -63,7 +63,7 @@ class MiniMagickHandlerTest < Minitest::Test
     stub_request(:get, "https://example.com/image.jpg")
       .to_return(body: File.read(raster_path('cmyk.jpg')))
 
-    assert @subject.load_image("https://example.com/image.jpg")
+    @subject.load_image("https://example.com/image.jpg")
 
     assert_equal 'image/jpeg', @subject.mime_type
     assert_equal 'CMYK', @subject.colorspace
@@ -74,13 +74,13 @@ class MiniMagickHandlerTest < Minitest::Test
   end
 
   def test_iptc_create_date
-    assert @subject.load_image(raster_path('grayscale.jpg'))
+    @subject.load_image(raster_path('grayscale.jpg'))
     refute @subject.iptc_date_created.nil?
     assert_equal 1970, @subject.iptc_date_created.year
   end
 
   def test_camera_make_and_model
-    assert @subject.load_image(raster_path('clipping_path.jpg'))
+    @subject.load_image(raster_path('clipping_path.jpg'))
     assert_equal 'Canon', @subject.camera_make
     assert_equal 'Canon EOS 5D', @subject.camera_model
   end
@@ -96,10 +96,6 @@ class MiniMagickHandlerTest < Minitest::Test
     assert @subject.vector?
     assert @subject.postscript?
     refute @subject.raster?
+    assert_equal 3.0, @subject.postscript_version
   end
-
-  # def test_vector_rescale_factor
-  #   @subject.load_image(vector_path('valid.eps'))
-  #   assert_equal 12.5, @subject.vector_rescale_factor
-  # end
 end
