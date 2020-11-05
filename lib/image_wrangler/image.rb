@@ -34,14 +34,6 @@ module ImageWrangler
       @handler ||= @options[:handler]
     end
 
-    def raster?
-      handler.raster?
-    end
-
-    def vector?
-      handler.vector?
-    end
-
     def validate
       errors.clear
 

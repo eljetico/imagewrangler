@@ -25,5 +25,5 @@ end
 
 require 'image_wrangler/errors'
 require 'image_wrangler/handler'
-require 'image_wrangler/image'
 require 'image_wrangler/handlers/mini_magick_handler'
+require 'image_wrangler/image'

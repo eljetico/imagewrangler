@@ -23,6 +23,10 @@ module ImageWrangler
       end
     end
 
+    def respond_to_missing?(method, include_private = false)
+      @magick.respond_to?(method) || super
+    end
+
     def black_and_white?
       return false if peak_saturation.nil?
       peak_saturation <= GRAYSCALE_PEAK_SATURATION_THRESHOLD
