@@ -9,7 +9,6 @@ module ImageWrangler
       opts = {
         magick_timeout: DEFAULT_TIMEOUT,
         quiet_warnings: DEFAULT_QUIET_WARNINGS #,
-        # errors: ImageWrangler::Errors.new
       }.merge(options)
 
       super(opts)
