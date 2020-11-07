@@ -16,6 +16,10 @@ module ImageWrangler
         ensure_compliance
       end
 
+      def menu
+        @menu
+      end
+
       def errors
         @errors ||= @options[:errors]
       end
@@ -30,8 +34,22 @@ module ImageWrangler
 
       def ensure_compliance
         unless menu.valid?
-          errors.add("Invalid config: #{menu.errors.full_messages}")
+          errors.add(:config, menu.errors.full_messages)
         end
+      end
+
+      def process
+        return false unless valid?
+
+        menu.recipes.each_with_index do |recipe, index|
+          process_recipe(recipe, index)
+        end
+
+        valid?
+      end
+
+      def valid?
+        errors.empty?
       end
     end
   end

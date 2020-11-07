@@ -126,13 +126,13 @@ module ImageWrangler
         private
 
         def generate_tmp_filepath
-          File.join('/', 'tmp', "pickle.#{random_token}")
+          File.join('/', 'tmp', "image_wrangler.#{random_token}")
         end
 
         def handle_unrecognized_options
           if @unrecognized_options.any?
             stringified = @unrecognized_options.map {|opt| "'#{opt}'" }.join('; ')
-            message = "unrecognized options #{stringified}"
+            message = "unrecognized #{stringified}"
             errors.add(:options, message)
           end
         end

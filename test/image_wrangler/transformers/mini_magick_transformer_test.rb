@@ -4,13 +4,32 @@ require_relative '../../test_helper'
 require 'image_wrangler'
 
 class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
+  OUTFILE_KEY = 'imagewrangler'
+
   def setup
+    @transformer = ImageWrangler::Transformers::MiniMagick::Transformer
+  end
+
+  def teardown
+    Dir.glob("/tmp/#{OUTFILE_KEY}.*").each do |file|
+      File.unlink(file)
+    end
   end
 
   def test_instantiates_with_menu
-    skip("Waiting for dependencies to be tested")
     image = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
     menu = menu_simple_resize
+
+    subject = @transformer.new(image, menu)
+
+    assert subject.valid?
+    assert subject.process
+
+    rendered = ImageWrangler::Image.new(menu[0][:filepath])
+    assert_equal 100, rendered.height
+
+    rendered = ImageWrangler::Image.new(menu[1][:filepath])
+    assert_equal 200, rendered.height
   end
 
   private
@@ -18,7 +37,7 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
   def menu_simple_resize
     [
       {
-        filepath: '/tmp/pickle.lo_res_100.jpg',
+        filepath: "/tmp/#{OUTFILE_KEY}.lo_res_100.jpg",
         options: {
           "geometry" => '100x100',
           "type" => 'TrueColor',
@@ -26,7 +45,7 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
         }
       },
       {
-        filepath: '/tmp/pickle.lo_res_200.jpg',
+        filepath: "/tmp/#{OUTFILE_KEY}.lo_res_200.jpg",
         options: {
           "geometry" => '200x200',
           "type" => 'TrueColor',
@@ -41,7 +60,7 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
 
     [
       {
-        filepath: '/tmp/pickle.grayscale_to_rgb_100.jpg',
+        filepath: "/tmp/#{OUTFILE_KEY}.grayscale_to_rgb_100.jpg",
         options: {
           "geometry" => '100x100',
           "type" => 'TrueColor',
@@ -58,7 +77,7 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
 
     [
       {
-        filepath: '/tmp/pickle.cmyk_to_rgb_100.jpg',
+        filepath: "/tmp/#{OUTFILE_KEY}.cmyk_to_rgb_100.jpg",
         options: {
           "geometry" => '100x100',
           "type" => 'TrueColor',
