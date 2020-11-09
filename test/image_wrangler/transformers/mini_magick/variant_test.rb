@@ -1,22 +1,22 @@
 # frozen_string_literal: true
 
 require_relative '../../../test_helper'
-require 'image_wrangler'
 
 # rubocop:disable Metrics/ClassLength
-class ImageWrangler::Transformers::MiniMagick::RecipeTest < Minitest::Test
+class ImageWrangler::Transformers::MiniMagick::VariantTest < Minitest::Test
   def setup
-
+    @variant = ImageWrangler::Transformers::MiniMagick::Variant
   end
 
   def test_recipe_fails_with_empty_options
-    subject = ImageWrangler::Transformers::MiniMagick::Recipe.new({})
+    subject = @variant.new({})
+    subject.validate!
     refute subject.valid?
     assert subject.errors.include?(:options)
   end
 
   def test_unrecognized_options_sets_error
-    subject = ImageWrangler::Transformers::MiniMagick::Recipe.new({
+    subject = @variant.new({
       options: {
         'qwerty' => '42',
         'dingbat' => '1970',
@@ -24,16 +24,19 @@ class ImageWrangler::Transformers::MiniMagick::RecipeTest < Minitest::Test
       }
     })
 
+    subject.validate!
     refute subject.valid?
     assert_equal(['qwerty', 'dingbat'], subject.unrecognized_options)
   end
 
   def test_array_value_options
-    subject = ImageWrangler::Transformers::MiniMagick::Recipe.new({
+    subject = @variant.new({
       options: {
         '+profile' => %w(8BIMTEXT IPTC IPTCTEXT XMP),
       }
     })
+
+    subject.validate!
 
     result = subject.grouped_options
 
@@ -43,25 +46,28 @@ class ImageWrangler::Transformers::MiniMagick::RecipeTest < Minitest::Test
   def test_filepath_supplied
     expected = '/path/to/file.jpg'
 
-    subject = ImageWrangler::Transformers::MiniMagick::Recipe.new({
+    subject = @variant.new({
       filepath: expected,
       options: { 'crop' => '90x200+0+150' }
     })
+
+    subject.validate!
 
     assert_equal expected, subject.filepath
   end
 
   def test_filepath_not_supplied
-    subject = ImageWrangler::Transformers::MiniMagick::Recipe.new({
+    subject = @variant.new({
       options: { 'crop' => '90x200+0+150' }
     })
 
-    # Just checking for minimum 8 chars
+    subject.validate!
+
     assert subject.filepath.match(/\A\/tmp\/\w{6,}/)
   end
 
   def test_grouped_options_error
-    subject = ImageWrangler::Transformers::MiniMagick::Recipe.new({
+    subject = @variant.new({
       options: {
         'crop' => '90x200+0+150',
         'colorspace' => 'RGB',
@@ -69,6 +75,8 @@ class ImageWrangler::Transformers::MiniMagick::RecipeTest < Minitest::Test
         'sharpen' => '1x0.5'
       }
     })
+
+    subject.validate!
 
     assert_equal(3, subject.grouped_options.keys.length)
     assert_equal(1, subject.grouped_options['image_settings'].length, "image_settings")
@@ -77,7 +85,7 @@ class ImageWrangler::Transformers::MiniMagick::RecipeTest < Minitest::Test
   end
 
   def test_ordered_grouped_options
-    subject = ImageWrangler::Transformers::MiniMagick::Recipe.new({
+    subject = @variant.new({
       options: {
         'crop' => '90x200+0+150',
         'colorspace' => 'RGB',
@@ -86,6 +94,7 @@ class ImageWrangler::Transformers::MiniMagick::RecipeTest < Minitest::Test
       }
     })
 
+    subject.validate!
     result = subject.ordered_options
 
     assert_equal 'colorspace', result[0].clean_option
@@ -94,13 +103,15 @@ class ImageWrangler::Transformers::MiniMagick::RecipeTest < Minitest::Test
 
   # Create an array of options and values for MiniMagick::Convert.merge!
   def test_merged_options
-    subject = ImageWrangler::Transformers::MiniMagick::Recipe.new({
+    subject = @variant.new({
       options: {
         'colorspace' => 'RGB',
         '+profile' => %w(8BIMTEXT IPTC),
         'append' => nil
       }
     })
+
+    subject.validate!
 
     expected = [
       '-colorspace',
@@ -117,5 +128,4 @@ class ImageWrangler::Transformers::MiniMagick::RecipeTest < Minitest::Test
 
     assert_equal expected, subject.merged_options
   end
-
 end

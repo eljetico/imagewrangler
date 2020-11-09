@@ -26,7 +26,7 @@ module ImageWrangler
       #
       require 'tempfile'
 
-      class Recipe
+      class Variant < ImageWrangler::Transformers::Variant
         # Order of operations is important for IM convert, so we handle the various
         # groups in the following sequence
         OPTION_GROUP_ORDER = [
@@ -35,28 +35,11 @@ module ImageWrangler
           'image_sequence_operators'
         ]
 
-        def initialize(recipe = {})
-          @config = {
-            filepath: nil,
-            options: {
-            }
-          }.merge(recipe)
+        def initialize(config = {}, options = {})
+          super(config, options)
 
+          @tool = ::MiniMagick::Tool::Convert
           @grouped_options = Hash.new {|hash, key| hash[key] = []}
-          @errors = ImageWrangler::Errors.new
-
-          validate_config
-        end
-
-        def errors
-          @errors
-        end
-
-        # Output filepath, as supplied, or a /tmp file
-        def filepath
-          @filepath ||= begin
-            @config[:filepath] || generate_tmp_filepath
-          end
         end
 
         def grouped_options
@@ -78,6 +61,29 @@ module ImageWrangler
           options.flatten
         end
 
+        def process(source_image)
+          tool = @tool.new
+          # Use the validated image filepath
+          tool << source_image.filepath
+
+          # There are a few ways to do this in MiniMagick, using merge! is
+          # the most flexible although requires some care when constructing
+          # the options/values
+          tool.merge! merged_options
+
+          # Finally, add the output filepath
+          tool << filepath
+
+          tool.call do |stdout, stderr, status|
+            unless status.zero?
+              raise StandardError, stderr
+            end
+
+            # Gather data about the resulting file
+            inspect_result
+          end
+        end
+
         def supplied_options
           @supplied_options ||= @config.fetch(:options, {})
         end
@@ -90,7 +96,7 @@ module ImageWrangler
           errors.empty?
         end
 
-        def validate_config
+        def validate!
           validate_empty_options
           validate_options
         end
@@ -125,24 +131,15 @@ module ImageWrangler
 
         private
 
-        def generate_tmp_filepath
-          File.join('/', 'tmp', "image_wrangler.#{random_token}")
-        end
-
         def handle_unrecognized_options
           if @unrecognized_options.any?
             stringified = @unrecognized_options.map {|opt| "'#{opt}'" }.join('; ')
-            message = "unrecognized #{stringified}"
-            errors.add(:options, message)
+            errors.add(:options, "unrecognized #{stringified}")
           end
         end
 
         def skip_option?(key)
           key.eql?('')
-        end
-
-        def random_token
-          rand(36**8).to_s(36)
         end
       end
     end

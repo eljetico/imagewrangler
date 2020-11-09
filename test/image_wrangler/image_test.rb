@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative '../test_helper'
-require 'image_wrangler'
 
 class ImageTest < Minitest::Test
   def setup

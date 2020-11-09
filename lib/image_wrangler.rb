@@ -26,11 +26,15 @@ module ImageWrangler
 
   module Handlers
   end
+
+  module Profiles
+  end
 end
 
 require 'image_wrangler/errors'
 require 'image_wrangler/handler'
 require 'image_wrangler/handlers/mini_magick_handler'
 require 'image_wrangler/image'
+require 'image_wrangler/profiles'
 require 'image_wrangler/transformers/transformer'
 require 'image_wrangler/transformers/mini_magick_transformer'

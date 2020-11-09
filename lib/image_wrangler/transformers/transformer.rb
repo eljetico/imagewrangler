@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 require 'fileutils'
 
+require_relative 'component_list'
+require_relative 'variant'
+
 module ImageWrangler
   module Transformers
     class Transformer
       attr_reader :image, :menu
 
-      def initialize(filepath, menu, options = {})
+      def initialize(filepath, list, options = {})
         @image = instantiate_source_image(filepath)
-        @menu = instantiate_menu(menu)
+        @component_list = instantiate_component_list(list)
 
         @options = {
           errors: ImageWrangler::Errors.new
@@ -17,8 +20,8 @@ module ImageWrangler
         ensure_compliance
       end
 
-      def menu
-        @menu
+      def component_list
+        @component_list
       end
 
       def errors
@@ -29,13 +32,13 @@ module ImageWrangler
         item.is_a?(ImageWrangler::Image) ? item : ImageWrangler::Image.new(item)
       end
 
-      def instantiate_menu(menu)
+      def instantiate_component_list(list)
         raise NotImplementedError
       end
 
       def ensure_compliance
-        unless menu.valid?
-          errors.add(:config, menu.errors.full_messages)
+        unless component_list.valid?
+          errors.add(:config, component_list.errors.full_messages)
         end
       end
 
@@ -46,11 +49,21 @@ module ImageWrangler
       def process
         return false unless valid?
 
-        menu.recipes.each_with_index do |recipe, index|
-          process_recipe(recipe, index)
+        component_list.variants.each_with_index do |variant, index|
+          begin
+            variant.process(source_image)
+          rescue StandardError => e
+            new_message = "failed at index #{index}: #{e.message}"
+            ensure_outfile_removed(variant.filepath)
+            errors.add(:variant, new_message)
+          end
         end
 
         valid?
+      end
+
+      def source_image
+        @image
       end
 
       def valid?

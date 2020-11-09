@@ -43,7 +43,7 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
     refute subject.process
     refute File.exist?(menu[0][:filepath])
 
-    assert_match(/recipe failed at index 0/i, subject.errors.full_messages[0])
+    assert_match(/variant failed at index 0/i, subject.errors.full_messages[0])
   end
 
   def test_conversion_with_rgb_profile
@@ -52,7 +52,7 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
     subject = @transformer.new(image, menu)
 
     assert subject.process
-
+    
     rendered = ImageWrangler::Image.new(menu[0][:filepath])
     assert_equal 100, rendered.width
     assert_equal 'RGB', rendered.colorspace
@@ -97,15 +97,13 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
   end
 
   def menu_grayscale_to_rgb
-    profile = profile_path('sRGB-IEC61966-2.1.icc')
-
     [
       {
         filepath: "/tmp/#{OUTFILE_KEY}.grayscale_to_rgb_100.jpg",
         options: {
           "geometry" => '100x100',
           "type" => 'TrueColor',
-          "profile" => "icc:#{profile}",
+          "profile" => "icc:#{ImageWrangler::Profiles.sRGB}",
           "quality" => 80
         }
       }
@@ -113,16 +111,13 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
   end
 
   def menu_cmyk_to_rgb
-    cmyk_profile = profile_path('USWebCoatedSWOP.icc')
-    rgb_profile = profile_path('sRGB-IEC61966-2.1.icc')
-
     [
       {
         filepath: "/tmp/#{OUTFILE_KEY}.cmyk_to_rgb_100.jpg",
         options: {
           "geometry" => '100x100',
           "type" => 'TrueColor',
-          "profile" => [rgb_profile],
+          "profile" => [ImageWrangler::Profiles.sRGB],
           "quality" => 80
         }
       }

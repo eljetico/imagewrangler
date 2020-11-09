@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-# frozen_string_literal: true
-
 require_relative '../../test_helper'
-require 'image_wrangler/handlers/mini_magick_handler'
 
 class MiniMagickHandlerTest < Minitest::Test
   def setup
