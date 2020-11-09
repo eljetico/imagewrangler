@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    imagewrangler (1.0.0)
+    imagewrangler (0.1.0.alpha)
       mini_magick
 
 GEM
