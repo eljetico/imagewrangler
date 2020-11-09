@@ -1,4 +1,4 @@
-FROM ruby:2.3-slim
+FROM ruby:2.5-slim
 
 # Create temp dir for installations
 WORKDIR /tmp/install

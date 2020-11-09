@@ -136,6 +136,10 @@ module ImageWrangler
       return nil
     end
 
+    def quality
+      @quality ||= nil_or_integer(raw_attribute('Q'))
+    end
+
     def size
       @size ||= nil_or_integer(attribute('size'))
     end

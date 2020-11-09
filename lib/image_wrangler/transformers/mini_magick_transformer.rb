@@ -37,6 +37,7 @@ module ImageWrangler
             end
           rescue StandardError => e
             new_message = "failed at index #{index}: #{e.message}"
+            ensure_outfile_removed(recipe.filepath)
             errors.add(:recipe, new_message)
           end
         end

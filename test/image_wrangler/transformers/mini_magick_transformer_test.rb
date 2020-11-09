@@ -7,6 +7,7 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
   OUTFILE_KEY = 'imagewrangler'
 
   def setup
+    # MiniMagick.logger.level = Logger::DEBUG
     @transformer = ImageWrangler::Transformers::MiniMagick::Transformer
   end
 
@@ -16,10 +17,9 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
     end
   end
 
-  def test_instantiates_with_menu
+  def test_simple_resize
     image = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
     menu = menu_simple_resize
-
     subject = @transformer.new(image, menu)
 
     assert subject.valid?
@@ -30,6 +30,47 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
 
     rendered = ImageWrangler::Image.new(menu[1][:filepath])
     assert_equal 200, rendered.height
+  end
+
+  def test_remove_outfile_on_profile_error
+    image = ImageWrangler::Image.new(raster_path('grayscale.jpg'))
+
+    menu = menu_grayscale_to_rgb
+    menu[0][:options]['profile'] = 'icc:/path/to/missing_profile.icc'
+
+    subject = @transformer.new(image, menu)
+
+    refute subject.process
+    refute File.exist?(menu[0][:filepath])
+
+    assert_match(/recipe failed at index 0/i, subject.errors.full_messages[0])
+  end
+
+  def test_conversion_with_rgb_profile
+    image = ImageWrangler::Image.new(raster_path('grayscale.jpg'))
+    menu = menu_grayscale_to_rgb
+    subject = @transformer.new(image, menu)
+
+    assert subject.process
+
+    rendered = ImageWrangler::Image.new(menu[0][:filepath])
+    assert_equal 100, rendered.width
+    assert_equal 'RGB', rendered.colorspace
+    assert_equal 80, rendered.quality
+  end
+
+  def test_conversion_cmyk_to_rgb
+    menu = menu_cmyk_to_rgb
+    image = ImageWrangler::Image.new(raster_path('cmyk_no_profile.jpg'))
+    subject = @transformer.new(image, menu)
+
+    assert subject.valid?
+    assert subject.process
+
+    rendered = ImageWrangler::Image.new(menu[0][:filepath])
+    assert_equal 100, rendered.width
+    assert_equal 'RGB', rendered.colorspace
+    assert_equal 80, rendered.quality
   end
 
   private
@@ -89,9 +130,6 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
   end
 
   def profile_path(icc_name)
-    File.expand_path(File.join(
-      File.dirname(__FILE__), '..', '..', 'resources', 'color_profiles',
-      icc_name
-    ))
+    File.join(ImageWrangler.root, 'resources', 'color_profiles', icc_name)
   end
 end

@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.requirements << 'You must have ImageMagick or GraphicsMagick installed'
   s.authors     = ['Tim Davies']
   s.email       = 'eljetico+imagewrangler@gmail.com'
-  s.files       = Dir['README.md', 'Rakefile', 'lib/**/*']
+  s.files       = Dir['README.md', 'Rakefile', 'lib/**/*', 'resources/**/*']
   s.required_ruby_version = '>= 2.3.0'
 
   s.add_dependency 'mini_magick'

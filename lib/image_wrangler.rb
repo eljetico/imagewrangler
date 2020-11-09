@@ -16,6 +16,11 @@ require 'mini_magick_extensions/postscript_detection'
 require 'mini_magick_extensions/visual_corruption'
 
 module ImageWrangler
+  # Use this when referring to resources, eg color profiles
+  def self.root
+    File.expand_path '..', File.dirname(__FILE__)
+  end
+
   module Transformers
   end
 

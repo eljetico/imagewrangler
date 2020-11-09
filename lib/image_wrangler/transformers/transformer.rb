@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'fileutils'
 
 module ImageWrangler
   module Transformers
@@ -6,7 +7,7 @@ module ImageWrangler
       attr_reader :image, :menu
 
       def initialize(filepath, menu, options = {})
-        @image = instantiate_image(filepath)
+        @image = instantiate_source_image(filepath)
         @menu = instantiate_menu(menu)
 
         @options = {
@@ -24,7 +25,7 @@ module ImageWrangler
         @errors ||= @options[:errors]
       end
 
-      def instantiate_image(item)
+      def instantiate_source_image(item)
         item.is_a?(ImageWrangler::Image) ? item : ImageWrangler::Image.new(item)
       end
 
@@ -36,6 +37,10 @@ module ImageWrangler
         unless menu.valid?
           errors.add(:config, menu.errors.full_messages)
         end
+      end
+
+      def ensure_outfile_removed(filepath)
+        FileUtils.rm_f(filepath) if File.exist?(filepath)
       end
 
       def process
