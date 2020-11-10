@@ -5,7 +5,8 @@ module MiniMagick
       eps_metadata.fetch(:postscript_version)
     end
 
-    def postscript_resize_density(target_pixels, density = 72) # EPS are 72 PPI
+    # Density required for 20mp by default
+    def postscript_resize_density(target_pixels = 20_000_000, density = 72) # EPS are 72 PPI
       return nil unless vector?
 
       height = eps_metadata.fetch(:actual_height, 0)
@@ -19,6 +20,8 @@ module MiniMagick
 
       (density * scaling_factor).ceil
     end
+    alias vector_resize_density postscript_resize_density
+    alias vector_rescale_density postscript_resize_density
 
     def eps_metadata
       @eps_metadata ||= extract_eps_metadata

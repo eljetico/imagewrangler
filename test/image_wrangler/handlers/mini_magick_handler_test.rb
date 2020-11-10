@@ -103,6 +103,12 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal 3.0, @subject.postscript_version
   end
 
+  def test_pages_detection
+    @subject.load_image(vector_path('multi_page_scanned.pdf'))
+    assert_equal 2, @subject.pages.length
+    assert_predicate @subject, :image_sequence?
+  end
+
   def test_layers_detection
     @subject.load_image(raster_path('valid_jpg.jpg'))
     assert_equal 1, @subject.layers.length

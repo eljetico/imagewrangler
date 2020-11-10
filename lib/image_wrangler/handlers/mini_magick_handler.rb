@@ -92,6 +92,10 @@ module ImageWrangler
       @height ||= (nil_or_integer(attribute('height')) || 0)
     end
 
+    def image_sequence?
+      pages.length > 1
+    end
+
     def width
       @width ||= (nil_or_integer(attribute('width')) || 0)
     end
@@ -103,6 +107,7 @@ module ImageWrangler
     def filepath
       @filepath
     end
+    alias file_path filepath
 
     def filesize
       @filesize ||= stat.size
