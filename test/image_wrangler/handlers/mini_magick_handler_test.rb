@@ -49,6 +49,7 @@ class MiniMagickHandlerTest < Minitest::Test
     @subject.load_image(raster_path('valid_jpg.jpg'))
 
     assert_equal 'image/jpeg', @subject.mime_type
+    assert_equal 8, @subject.bit_depth
     assert_equal 'RGB', @subject.colorspace
     assert_equal 'abb4755aff726b0c4ac77c7be07b4776', @subject.checksum
     assert_equal 1000, @subject.height

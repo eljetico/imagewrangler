@@ -26,6 +26,11 @@ module ImageWrangler
       @magick.respond_to?(method) || super
     end
 
+    def bit_depth
+      @bit_depth ||= nil_or_integer(raw_attribute('bit-depth'))
+    end
+    alias bitdepth bit_depth
+
     def black_and_white?
       return false if peak_saturation.nil?
       peak_saturation <= GRAYSCALE_PEAK_SATURATION_THRESHOLD
@@ -81,6 +86,7 @@ module ImageWrangler
     def format
       attribute('type') || 'UNKNOWN'
     end
+    alias file_format format
 
     def height
       @height ||= (nil_or_integer(attribute('height')) || 0)
@@ -167,8 +173,9 @@ module ImageWrangler
       normalized_color_space(color_mode)
     end
 
+    # Prefer IPTC as can be asserted by creator
     def extract_create_date
-      exif_date_time_original || exif_date_time_digitized || iptc_date_created
+      iptc_date_created || exif_date_time_original || exif_date_time_digitized
     end
 
     def extract_exif_date_time_original

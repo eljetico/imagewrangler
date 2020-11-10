@@ -12,6 +12,14 @@ class FormatFamiliesTest < Minitest::Test
   def setup
   end
 
+  def test_image_type
+    image = MiniMagick::Image.new(raster_path('valid_jpg.jpg'))
+    assert_equal 'raster', image.image_type
+
+    image = MiniMagick::Image.new(vector_path('valid.eps'))
+    assert_equal 'vector', image.image_type
+  end
+
   def test_valid_raster
     image = MiniMagick::Image.new(raster_path('valid_jpg.jpg'))
     assert image.raster?

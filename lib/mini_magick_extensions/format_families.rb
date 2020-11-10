@@ -33,6 +33,14 @@ module MiniMagick
 
   # Extends MiniMagick::Image class with custom functionality
   class Image
+    def image_type
+      return 'raster' if raster?
+
+      return 'vector' if vector?
+
+      'unknown'
+    end
+
     def raster?
       RASTER_FORMATS.include?(type.upcase)
     end
