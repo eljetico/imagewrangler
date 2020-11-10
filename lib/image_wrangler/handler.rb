@@ -12,8 +12,14 @@ module ImageWrangler
     end
 
     def megapixels
-      width * height
+      @megapixels ||= ((width * height).to_f / 1_000_000)
     end
+    alias mp megapixels
+
+    def megapixels_humanized
+      @megapixels_humanized ||= "#{megapixels.round(1)}mp"
+    end
+    alias mp_h megapixels_humanized
 
     private
 

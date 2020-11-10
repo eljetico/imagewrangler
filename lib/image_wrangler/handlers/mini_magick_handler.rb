@@ -44,6 +44,15 @@ module ImageWrangler
       @camera_model ||= nil_or_string(raw_attribute('EXIF:Model'))
     end
 
+    # Note `identify -format "%[channels]"` returns colorspace (lowercased)
+    # with current IM version so we use bruteforce method
+    def channel_count
+      @channel_count ||= begin
+        self.colorspace.eql?('Gray') ? 1 : self.colorspace.length
+      end
+    end
+    alias channels channel_count
+
     def checksum
       @checksum ||= begin
         md5 = Digest::MD5.file @magick.path
@@ -140,6 +149,14 @@ module ImageWrangler
       @iptc_date_created ||= extract_iptc_date_created
     end
 
+    def paths
+      @paths ||= extract_embedded_paths
+    end
+
+    def paths?
+      !paths.nil?
+    end
+
     def peak_saturation
       @peak_saturation ||= @analyzer.peak_saturation
     rescue StandardError => e
@@ -181,6 +198,10 @@ module ImageWrangler
     # Prefer IPTC as can be asserted by creator
     def extract_create_date
       iptc_date_created || exif_date_time_original || exif_date_time_digitized
+    end
+
+    def extract_embedded_paths
+      nil_or_string(raw_attribute('8BIM:2000,2999'))
     end
 
     def extract_exif_date_time_original

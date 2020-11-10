@@ -50,6 +50,7 @@ class MiniMagickHandlerTest < Minitest::Test
 
     assert_equal 'image/jpeg', @subject.mime_type
     assert_equal 8, @subject.bit_depth
+    assert_equal 3, @subject.channel_count
     assert_equal 'RGB', @subject.colorspace
     assert_equal 'abb4755aff726b0c4ac77c7be07b4776', @subject.checksum
     assert_equal 1000, @subject.height
@@ -67,10 +68,22 @@ class MiniMagickHandlerTest < Minitest::Test
 
     assert_equal 'image/jpeg', @subject.mime_type
     assert_equal 'CMYK', @subject.colorspace
+    assert_equal 4, @subject.channels
     assert_equal '.jpg', @subject.extension
     assert @subject.valid_extension?
     assert_equal '638595b250d6afdf8f62dcd299da1ad0', @subject.checksum
     refute @subject.visually_corrupt?
+  end
+
+  def test_clipping_paths
+    @subject.load_image(raster_path('clipping_path.jpg'))
+    assert_predicate @subject, :paths?
+
+    assert_equal 'Canon EOS 5D', @subject.camera_model
+
+    subject = @handler.new
+    subject.load_image(raster_path('valid_jpg.jpg'))
+    refute_predicate subject, :paths?
   end
 
   def test_iptc_create_date

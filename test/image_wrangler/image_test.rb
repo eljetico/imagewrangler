@@ -11,6 +11,8 @@ class ImageTest < Minitest::Test
 
     assert_equal 1000, image.height
     assert_equal 697, image.width
+    assert_equal 0.697, image.megapixels
+    assert_equal '0.7mp', image.megapixels_humanized
     assert_equal 'RGB', image.colorspace
     assert_equal 119333, image.filesize
     assert_equal 'abb4755aff726b0c4ac77c7be07b4776', image.checksum
