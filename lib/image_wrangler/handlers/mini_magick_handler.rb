@@ -48,7 +48,7 @@ module ImageWrangler
     # with current IM version so we use bruteforce method
     def channel_count
       @channel_count ||= begin
-        self.colorspace.eql?('Gray') ? 1 : self.colorspace.length
+        self.colorspace.match(/\Agray/i) ? 1 : self.colorspace.length
       end
     end
     alias channels channel_count
@@ -147,6 +147,10 @@ module ImageWrangler
 
     def iptc_date_created
       @iptc_date_created ||= extract_iptc_date_created
+    end
+
+    def orientation
+      @orientation ||= nil_or_string(raw_attribute('orientation'))
     end
 
     def paths

@@ -45,18 +45,30 @@ class MiniMagickHandlerTest < Minitest::Test
     end
   end
 
+  def test_channel_count
+    {
+      'valid_jpg.jpg' => 3,
+      'grayscale.jpg' => 1,
+      'cmyk.jpg' => 4
+    }.each_pair do |filename, cc|
+      subject = @handler.new
+      subject.load_image(raster_path(filename))
+      assert_equal cc, subject.channel_count, "#{filename} s/be #{cc} channels"
+    end
+  end
+
   def test_attributes_retrieval_local_file
     @subject.load_image(raster_path('valid_jpg.jpg'))
 
     assert_equal 'image/jpeg', @subject.mime_type
     assert_equal 8, @subject.bit_depth
-    assert_equal 3, @subject.channel_count
     assert_equal 'RGB', @subject.colorspace
     assert_equal 'abb4755aff726b0c4ac77c7be07b4776', @subject.checksum
     assert_equal 1000, @subject.height
     assert_equal 697, @subject.width
     assert_equal 119333, @subject.filesize
     assert_equal 'JPEG', @subject.format
+    assert_equal 'TopLeft', @subject.orientation
     refute @subject.visually_corrupt?
   end
 
@@ -68,7 +80,6 @@ class MiniMagickHandlerTest < Minitest::Test
 
     assert_equal 'image/jpeg', @subject.mime_type
     assert_equal 'CMYK', @subject.colorspace
-    assert_equal 4, @subject.channels
     assert_equal '.jpg', @subject.extension
     assert @subject.valid_extension?
     assert_equal '638595b250d6afdf8f62dcd299da1ad0', @subject.checksum
