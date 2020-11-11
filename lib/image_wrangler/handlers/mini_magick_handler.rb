@@ -138,7 +138,7 @@ module ImageWrangler
 
       @loaded
     rescue Errno::ENOENT => error
-      raise ImageWrangler::MissingImageError, error.message
+      raise ImageWrangler::MissingImageError, "not found at '#{filepath}'"
     rescue MiniMagick::Error => error
       handle_mini_magick_error(error)
     rescue OpenURI::HTTPError => error

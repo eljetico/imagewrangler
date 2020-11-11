@@ -16,9 +16,11 @@ class MiniMagickHandlerTest < Minitest::Test
   def test_initialization_with_missing_file
     filepath = raster_path('missing.jpg')
 
-    assert_raises ImageWrangler::MissingImageError do
+    err = assert_raises ImageWrangler::MissingImageError do
       @subject.load_image(filepath)
     end
+
+    assert_match /not found at '#{filepath}'/, err.message
   end
 
   def test_initialize_with_corrupt_local_file
