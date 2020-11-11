@@ -13,10 +13,20 @@ class MiniMagickHandlerTest < Minitest::Test
     assert @subject.load_image(filepath)
   end
 
+  def test_initialization_with_empty_file
+    filepath = raster_path('empty_file.jpeg')
+
+    err = assert_raises ImageWrangler::Error do
+      @subject.load_image(filepath)
+    end
+
+    assert_match /empty file/, err.message
+  end
+
   def test_initialization_with_missing_file
     filepath = raster_path('missing.jpg')
 
-    err = assert_raises ImageWrangler::MissingImageError do
+    err = assert_raises ImageWrangler::Error do
       @subject.load_image(filepath)
     end
 
@@ -24,27 +34,33 @@ class MiniMagickHandlerTest < Minitest::Test
   end
 
   def test_initialize_with_corrupt_local_file
-    assert_raises ImageWrangler::CorruptImageError do
+    err = assert_raises ImageWrangler::Error do
       @subject.load_image(raster_path('corrupt_premature_end.jpg'))
     end
+
+    assert_match /corrupted file/i, err.message
   end
 
   def test_initialize_with_corrupt_remote_file
     stub_request(:get, "https://example.com/corrupt.jpg")
       .to_return(body: File.read(raster_path('corrupt_premature_end.jpg')))
 
-    assert_raises ImageWrangler::CorruptImageError do
+    err = assert_raises ImageWrangler::Error do
       @subject.load_image("https://example.com/corrupt.jpg")
     end
+
+    assert_match /corrupted file/i, err.message
   end
 
   def test_basic_initialization_with_missing_url
     stub_request(:get, "https://example.com/image.jpg")
       .to_return(status: 404, body: "Not found")
 
-    assert_raises ImageWrangler::RemoteImageError do
+    err = assert_raises ImageWrangler::Error do
       @subject.load_image("https://example.com/image.jpg")
     end
+
+    assert_match /404/i, err.message
   end
 
   def test_channel_count

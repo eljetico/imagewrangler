@@ -3,12 +3,6 @@
 module ImageWrangler
   class Error < StandardError; end
 
-  class MissingImageError < Error; end
-
-  class CorruptImageError < Error; end
-
-  class RemoteImageError < Error; end
-
   # A simple modified hash-like object similar to ActiveModel::Errors
   class Errors
     include Enumerable

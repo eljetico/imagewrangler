@@ -138,11 +138,13 @@ module ImageWrangler
 
       @loaded
     rescue Errno::ENOENT => error
-      raise ImageWrangler::MissingImageError, "not found at '#{filepath}'"
+      raise ImageWrangler::Error, "not found at '#{filepath}'"
     rescue MiniMagick::Error => error
       handle_mini_magick_error(error)
+    rescue MiniMagick::Invalid => error
+      handle_mini_magick_invalid(error)
     rescue OpenURI::HTTPError => error
-      raise ImageWrangler::RemoteImageError, error.message
+      raise ImageWrangler::Error, error.message
     end
 
     def iptc_date_created
@@ -236,10 +238,16 @@ module ImageWrangler
       example = error.message.split("\n")[1]
 
       if example.match(/premature end/i)
-        raise ImageWrangler::CorruptImageError.new
-      else
-        raise
+        raise ImageWrangler::Error, 'corrupted file'
+      elsif example.match(/empty input file/i)
+        raise ImageWrangler::Error, 'empty file'
       end
+
+      raise
+    end
+
+    def handle_mini_magick_invalid(error)
+      handle_mini_magick_error(error)
     end
 
     def raw_attribute(attr_key)
