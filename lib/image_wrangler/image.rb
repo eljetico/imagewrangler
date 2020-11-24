@@ -4,6 +4,8 @@ module ImageWrangler
   class Image
     attr_reader :filepath
 
+    DEFAULT_TRANSFORMER = ImageWrangler::Transformers::MiniMagick::Transformer
+
     def initialize(filepath, **options)
       @filepath = filepath
       @options = {
@@ -32,6 +34,12 @@ module ImageWrangler
 
     def handler
       @handler ||= @options[:handler]
+    end
+
+    # See DEFAULT_TRANSFORMER for options
+    def transformer(component_list, klass = nil, options = {})
+      klass ||= DEFAULT_TRANSFORMER
+      klass.new(self, component_list, options)
     end
 
     def validate

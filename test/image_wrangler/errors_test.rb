@@ -55,4 +55,11 @@ class ErrorsTest < Minitest::Test
 
     assert object.errors.any?
   end
+
+  def test_to_s
+    object = Testable.new
+    object.errors.add(:topic, 'must be valid')
+    object.errors.add(:new_topic, 'is missing')
+    assert_equal 'new_topic is missing; topic must be valid', object.errors.to_s
+  end
 end

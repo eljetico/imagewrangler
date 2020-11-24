@@ -17,6 +17,14 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
     end
   end
 
+  def test_invalid_with_empty_component_list
+    image = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
+    subject = @transformer.new(image, [])
+
+    refute subject.valid?
+    assert_equal('component_list cannot be empty', subject.errors.full_messages[0])
+  end
+
   def test_simple_resize
     image = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
     menu = menu_simple_resize
@@ -52,7 +60,7 @@ class ImageWrangler::Transformers::MiniMagickTransformerTest < Minitest::Test
     subject = @transformer.new(image, menu)
 
     assert subject.process
-    
+
     rendered = ImageWrangler::Image.new(menu[0][:filepath])
     assert_equal 100, rendered.width
     assert_equal 'RGB', rendered.colorspace

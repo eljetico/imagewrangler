@@ -68,6 +68,10 @@ module ImageWrangler
       values.flatten.size
     end
 
+    def to_s
+      full_messages.sort.join('; ')
+    end
+
     def values
       errors.select do |key, value|
         !value.empty?

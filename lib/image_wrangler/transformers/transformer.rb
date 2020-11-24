@@ -11,12 +11,11 @@ module ImageWrangler
 
       def initialize(filepath, list, options = {})
         @image = instantiate_source_image(filepath)
-        @component_list = instantiate_component_list(list)
-
         @options = {
           errors: ImageWrangler::Errors.new
         }.merge(options)
 
+        @component_list = instantiate_component_list(list)
         ensure_compliance
       end
 
@@ -39,6 +38,10 @@ module ImageWrangler
       def ensure_compliance
         unless component_list.valid?
           errors.add(:config, component_list.errors.full_messages)
+        end
+
+        unless component_list.variants.any?
+          errors.add(:component_list, 'cannot be empty')
         end
       end
 

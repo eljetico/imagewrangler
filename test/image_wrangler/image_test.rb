@@ -53,4 +53,11 @@ class ImageTest < Minitest::Test
     assert_includes wrangler.errors, :postscript_version
     assert_equal ['postscript_version must be <= 3.0'], wrangler.errors.full_messages
   end
+
+  def test_transformer_defaults
+    wrangler = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
+    subject = wrangler.transformer([])
+    assert subject.is_a?(ImageWrangler::Transformers::MiniMagick::Transformer)
+    refute subject.valid? # component list cannot be empty
+  end
 end

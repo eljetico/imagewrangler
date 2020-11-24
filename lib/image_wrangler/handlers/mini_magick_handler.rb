@@ -83,14 +83,24 @@ module ImageWrangler
       @exif_date_time_digitized ||= extract_exif_date_time_digitized
     end
 
+    # TODO: persist ext from MiniMagick::Image.create
+    # Need to handle URLs/blobs too
     def extname
       @extname ||= begin
-        path = @magick.path || ""
+        path = @magick.path || ''
         nil_or_string(File.extname(path))
       end
     end
     alias_method :ext, :extname
     alias_method :extension, :extname
+
+    # TODO: need to handle URLs here too
+    # def filename
+    #   @filename ||= begin
+    #     path = @magick.path || ''
+    #     nil_or_string(File.basename(path))
+    #   end
+    # end
 
     def format
       attribute('type') || 'UNKNOWN'
