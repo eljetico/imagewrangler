@@ -16,8 +16,16 @@ class ImageTest < Minitest::Test
     assert_equal 'RGB', image.colorspace
     assert_equal 119333, image.filesize
     assert_equal 'abb4755aff726b0c4ac77c7be07b4776', image.checksum
+    assert_equal '.jpg', image.preferred_extension
     assert_predicate image, :raster?
     refute_predicate image, :vector?
+  end
+
+  def test_identifies_cloaked_file
+    image = ImageWrangler::Image.new(raster_path('png_as_jpg.jpg'))
+
+    assert_equal '.jpg', image.extname
+    assert_equal '.png', image.preferred_extension
   end
 
   def test_basic_attributes_vector

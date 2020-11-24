@@ -180,6 +180,13 @@ module ImageWrangler
       return nil
     end
 
+    # TODO: handle URLs!
+    def preferred_extension
+      @preferred_extension ||= begin
+        valid_extension? ? extname : @magick.valid_extensions[0]
+      end
+    end
+
     def quality
       @quality ||= nil_or_integer(raw_attribute('Q'))
     end
