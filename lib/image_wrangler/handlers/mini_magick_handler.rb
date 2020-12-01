@@ -2,7 +2,7 @@
 
 module ImageWrangler
   class Handlers::MiniMagickHandler < Handler
-    DEFAULT_TIMEOUT = 10
+    DEFAULT_TIMEOUT = 120
     DEFAULT_QUIET_WARNINGS = true
 
     def initialize(**options)
