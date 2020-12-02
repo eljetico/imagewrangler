@@ -2,13 +2,11 @@
 
 module ImageWrangler
   class Handlers::MiniMagickHandler < Handler
-    DEFAULT_TIMEOUT = 600
     DEFAULT_QUIET_WARNINGS = true
 
     def initialize(**options)
       opts = {
-        magick_timeout: DEFAULT_TIMEOUT,
-        quiet_warnings: DEFAULT_QUIET_WARNINGS #,
+        quiet_warnings: DEFAULT_QUIET_WARNINGS
       }.merge(options)
 
       super(opts)
@@ -276,7 +274,6 @@ module ImageWrangler
     def configure_handler(options)
       # MiniMagick.logger.level = Logger::DEBUG
       MiniMagick.configure do |config|
-        config.timeout = options.fetch(:magick_timeout)
         config.quiet_warnings = options.fetch(:quiet_warnings)
       end
 
