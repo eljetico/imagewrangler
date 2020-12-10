@@ -61,7 +61,7 @@ module ImageWrangler
           options.flatten
         end
 
-        def process(source_image)
+        def process
           tool = @tool.new
           # Use the validated image filepath
           tool << source_image.filepath

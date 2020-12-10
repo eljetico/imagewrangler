@@ -63,8 +63,16 @@ module ImageWrangler
       # Create/generate the variant.
       # Errors should be added to errors handler and return
       # by calling `valid?`
-      def process
+      def process # EG MiniMagickHandler
         raise NotImplementedError
+      end
+
+      def source_image=(source_image) # EG MiniMagickHandler
+        @source_image = source_image
+      end
+
+      def source_image
+        @source_image
       end
 
       def valid?
