@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'forwardable'
 
 module ImageWrangler
   module Transformers
@@ -6,12 +7,20 @@ module ImageWrangler
     # `config` is an array of variant configurations suitable for
     # ImageWrangler::Transformers::Variant-like instances
     class ComponentList
+      extend Forwardable
+      delegate [:each, :each_with_index, :to_a] => :@variants
+
       def initialize(list = [], options = {})
         @options = {
           error_handler: ImageWrangler::Errors.new
         }.merge(options)
 
+        @variants = []
         @list = list
+      end
+
+      def [](index)
+        @variants[index]
       end
 
       def errors
@@ -19,7 +28,7 @@ module ImageWrangler
       end
 
       def instantiate_variants
-        @variants = []
+        @variants.clear
 
         Array(list).compact.each_with_index do |config, index|
           variant = variant_handler.new(config)

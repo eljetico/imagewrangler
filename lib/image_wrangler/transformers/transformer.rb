@@ -31,8 +31,8 @@ module ImageWrangler
         return source_image if (variant_index == 0)
 
         if @options[:cascade]
-          variant = component_list.variants[variant_index - 1]
-          if File.exist?(variant.filepath)
+          variant = component_list[variant_index - 1]
+          if variant && File.exist?(variant.filepath)
             return instantiate_source_image(variant.filepath)
           end
         end
@@ -73,7 +73,7 @@ module ImageWrangler
       def process
         return false unless valid?
 
-        component_list.variants.each_with_index do |variant, index|
+        component_list.each_with_index do |variant, index|
           begin
             variant.source_image = assert_source_image(index)
             variant.process
