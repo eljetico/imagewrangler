@@ -7,7 +7,7 @@ require_relative 'variant'
 module ImageWrangler
   module Transformers
     class Transformer
-      attr_reader :image, :menu
+      attr_reader :image, :menu, :options
 
       def initialize(filepath, list, options = {})
         @image = instantiate_source_image(filepath)

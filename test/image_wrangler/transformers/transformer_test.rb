@@ -5,6 +5,7 @@ require 'image_wrangler'
 
 class ImageWrangler::Transformers::TransformerTest < Minitest::Test
   def setup
+    @default_transformer
   end
 
   def test_instantiate_menu_not_implemented
@@ -15,22 +16,30 @@ class ImageWrangler::Transformers::TransformerTest < Minitest::Test
     end
   end
 
+  def test_transformer_can_accept_options
+    image = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
+    component_list = simple_resize_components
+    transformer = image.transformer(component_list, {cascade: true})
+    assert transformer.is_a?(ImageWrangler::Image::DEFAULT_TRANSFORMER)
+    assert transformer.options[:cascade]
+  end
+
   private
 
-  def menu_simple_resize
+  def simple_resize_components
     [
       {
-        filepath: '/tmp/pickle.lo_res_100.jpg',
+        filepath: '/tmp/pickle.lo_res_200.jpg',
         options: {
-          "geometry" => '100x100',
+          "geometry" => '200x200',
           "type" => 'TrueColor',
           "auto-orient" => nil,
         }
       },
       {
-        filepath: '/tmp/pickle.lo_res_200.jpg',
+        filepath: '/tmp/pickle.lo_res_100.jpg',
         options: {
-          "geometry" => '200x200',
+          "geometry" => '100x100',
           "type" => 'TrueColor',
           "auto-orient" => nil
         }
