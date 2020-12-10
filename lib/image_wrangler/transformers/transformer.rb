@@ -7,16 +7,37 @@ require_relative 'variant'
 module ImageWrangler
   module Transformers
     class Transformer
-      attr_reader :image, :menu
+      attr_reader :image, :menu, :options
 
       def initialize(filepath, list, options = {})
         @image = instantiate_source_image(filepath)
         @options = {
+          cascade: false,
           errors: ImageWrangler::Errors.new
         }.merge(options)
 
         @component_list = instantiate_component_list(list)
         ensure_compliance
+      end
+
+      # Returns an ImageWrangler::Image instance
+      # If cascading is disabled, we use the source file
+      # for all components, otherwise, attempt to retrieve
+      # the previously rendered filepath.
+      # WARNING, there is no pixel dimension checking here
+      # so upscaling from a smaller file is possible if
+      # the component list is incorrectly ordered.
+      def assert_source_image(variant_index)
+        return source_image if (variant_index == 0)
+
+        if @options[:cascade]
+          variant = component_list.variants[variant_index - 1]
+          if File.exist?(variant.filepath)
+            return instantiate_source_image(variant.filepath)
+          end
+        end
+
+        source_image
       end
 
       def component_list
@@ -54,7 +75,8 @@ module ImageWrangler
 
         component_list.variants.each_with_index do |variant, index|
           begin
-            variant.process(source_image)
+            variant.source_image = assert_source_image(index)
+            variant.process
           rescue StandardError => e
             new_message = "failed at index #{index}: #{e.message}"
             ensure_outfile_removed(variant.filepath)

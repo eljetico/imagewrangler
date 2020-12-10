@@ -38,8 +38,15 @@ module ImageWrangler
 
     # See DEFAULT_TRANSFORMER for options
     def transformer(component_list, klass = nil, options = {})
-      klass ||= DEFAULT_TRANSFORMER
-      klass.new(self, component_list, options)
+      # Swap klass with options
+      if klass.is_a?(Hash)
+        options = klass
+        transformer_klass = DEFAULT_TRANSFORMER
+      else
+        transformer_klass = klass || DEFAULT_TRANSFORMER
+      end
+
+      transformer_klass.new(self, component_list, options)
     end
 
     def validate
