@@ -7,7 +7,7 @@ module MiniMagick
 
     def histogram_for_sample(options = {})
       opts = {
-        gravity: 'SouthWest',
+        gravity: 'SouthEast',
         crop: '20%x1%'
       }.merge(options)
 

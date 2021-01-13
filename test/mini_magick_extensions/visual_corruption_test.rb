@@ -23,4 +23,14 @@ class VisualCorruptionTest < Minitest::Test
     image = MiniMagick::Image.new(raster_path('grayscale.jpg'))
     refute image.visually_corrupt?
   end
+
+  def test_possibly_corruped_image
+    image = MiniMagick::Image.new(raster_path('possibly_visually_corrupt.jpg'))
+
+    # Default is SouthEast
+    refute image.visually_corrupt?
+
+    # Using SouthWest gravity
+    assert image.visually_corrupt?(gravity: 'SouthWest')
+  end
 end
