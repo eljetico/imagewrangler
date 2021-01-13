@@ -19,11 +19,11 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'mini_magick'
 
-  s.add_development_dependency 'webmock'
   s.add_development_dependency 'guard'
   s.add_development_dependency 'guard-minitest'
   s.add_development_dependency 'guard-rubocop'
   s.add_development_dependency 'minitest-reporters'
   s.add_development_dependency 'rb-readline'
   s.add_development_dependency 'rubocop'
+  s.add_development_dependency 'webmock'
 end

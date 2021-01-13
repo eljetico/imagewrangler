@@ -3,10 +3,8 @@
 require_relative '../test_helper'
 require 'image_wrangler'
 
-# rubocop:disable Metrics/ClassLength
 class PeakSaturationTest < Minitest::Test
-  def setup
-  end
+  def setup; end
 
   def test_value_from_grayscale_image
     image = MiniMagick::Image.new(raster_path('grayscale.jpg'))

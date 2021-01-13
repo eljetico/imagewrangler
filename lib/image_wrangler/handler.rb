@@ -4,6 +4,8 @@ module ImageWrangler
   class Handler
     GRAYSCALE_PEAK_SATURATION_THRESHOLD = 0.15 # ESP value
 
+    attr_accessor :filepath
+
     def initialize(**options)
       opts = {
       }.merge(options)
@@ -34,8 +36,8 @@ module ImageWrangler
     def normalized_color_space(color_mode = nil)
       return nil if color_mode.nil?
 
-      cleaned_color_space = color_mode.strip
-      color_space = cleaned_color_space.eql?('Gray') ? 'Grayscale' : cleaned_color_space
+      clean_space = color_mode.strip
+      color_space = clean_space.eql?('Gray') ? 'Grayscale' : clean_space
       ['srgb'].include?(color_space.downcase) ? 'RGB' : color_space
     end
 

@@ -3,10 +3,8 @@
 require_relative '../test_helper'
 require 'image_wrangler'
 
-# rubocop:disable Metrics/ClassLength
 class PostscriptDetectionTest < Minitest::Test
-  def setup
-  end
+  def setup; end
 
   def test_postscript_version
     image = MiniMagick::Image.new(vector_path('valid.eps'))

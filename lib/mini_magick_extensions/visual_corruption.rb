@@ -32,14 +32,11 @@ module MiniMagick
       }.merge(opts)
 
       hist = histogram_for_sample(test_opts) # gray values ignored in method
+      rgb = (hist[0].scan(RGB_VALUE_REGEX).flatten || []).uniq
 
-      return false if hist.length > 1 # More than a single color in this sample
+      return false if (hist.length > 1) || rgb.empty? || (rgb.length > 1)
 
-      rgb_values = (hist[0].scan(RGB_VALUE_REGEX).flatten || []).uniq
-
-      return false if rgb_values.empty? || (rgb_values.length > 1)
-
-      (test_opts[:min_gray]..test_opts[:max_gray]).include?(rgb_values[0].to_i)
+      (test_opts[:min_gray]..test_opts[:max_gray]).include?(rgb[0].to_i)
     end
   end
 end

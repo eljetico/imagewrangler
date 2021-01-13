@@ -3,10 +3,8 @@
 require_relative '../test_helper'
 require 'image_wrangler'
 
-# rubocop:disable Metrics/ClassLength
 class ConvertToolOptionsTest < Minitest::Test
-  def setup
-  end
+  def setup; end
 
   def test_image_settings_options
     all_options = MiniMagick::Tool::Convert.image_settings_options

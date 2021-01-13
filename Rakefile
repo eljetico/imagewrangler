@@ -8,4 +8,3 @@ end
 
 desc 'Run tests'
 task default: :tests
-

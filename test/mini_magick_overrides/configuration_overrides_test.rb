@@ -3,7 +3,6 @@
 require_relative '../test_helper'
 require 'image_wrangler'
 
-# rubocop:disable Metrics/ClassLength
 class ConfigurationOverridesTest < Minitest::Test
   def setup
   end
@@ -12,7 +11,7 @@ class ConfigurationOverridesTest < Minitest::Test
     MiniMagick.configure do |config|
       config.quiet_warnings = false
     end
-    
+
     refute MiniMagick.quiet_warnings
 
     MiniMagick.configure do |config|

@@ -88,6 +88,7 @@ module ImageWrangler
 
     def full_message(attribute, message)
       return message if attribute == :base
+
       "#{attribute} #{message}"
     end
   end

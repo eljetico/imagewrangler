@@ -3,6 +3,7 @@
 module ImageWrangler
   module Transformers
     module MiniMagick
+      # Process a supplied IM command line option
       class Option
         class << self
           def cleaned_option(option)
@@ -10,19 +11,23 @@ module ImageWrangler
           end
 
           def recognized?(key)
+            # rubocop:disable Layout/LineLength
             clean_key = ImageWrangler::Transformers::MiniMagick::Option.cleaned_option(key)
             ImageWrangler::Transformers::MiniMagick::Option.available_options.include?(clean_key)
+            # rubocop:enable Layout/LineLength
           end
 
           def available_options
+            # rubocop:disable Style/ClassVars
             @@available_options ||= ::MiniMagick::Tool::Convert.available_options
+            # rubocop:enable Style/ClassVars
           end
         end
 
         def initialize(key, value)
           @supplied_key = key
           @supplied_value = value
-          # validate_key
+          @my_option = ImageWrangler::Transformers::MiniMagick::Option
         end
 
         def errors
@@ -30,12 +35,15 @@ module ImageWrangler
         end
 
         def clean_option
-          @clean_option ||= ImageWrangler::Transformers::MiniMagick::Option.cleaned_option(@supplied_key)
+          @clean_option ||= @my_option.cleaned_option(@supplied_key)
         end
 
         def option_group
           @option_group ||= begin
+
+            # rubocop:disable Layout/LineLength
             !recognized? ? 'unknown' : ::MiniMagick::Tool::Convert.option_group(clean_option)
+            # rubocop:enable Layout/LineLength
           end
         end
 
@@ -44,7 +52,7 @@ module ImageWrangler
         end
 
         def recognized?
-          @recognized = ImageWrangler::Transformers::MiniMagick::Option.recognized?(clean_option)
+          @recognized = @my_option.recognized?(clean_option)
         end
 
         def to_s

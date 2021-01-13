@@ -2,6 +2,7 @@
 
 module ImageWrangler
   module Transformers
+    # Using MiniMagick tools for image processing
     module MiniMagick
       #
       # Recipe for rendered component, expected to be a hash eg:
@@ -26,35 +27,38 @@ module ImageWrangler
       #
       require 'tempfile'
 
+      # Individual component
       class Variant < ImageWrangler::Transformers::Variant
-        # Order of operations is important for IM convert, so we handle the various
-        # groups in the following sequence
-        OPTION_GROUP_ORDER = [
-          'image_settings',
-          'image_operators',
-          'image_sequence_operators'
-        ]
+        # Order of operations is important for IM convert so we
+        # handle the various groups in the following sequence
+        attr_reader :grouped_options, :unrecognized_options
+
+        OPTION_GROUP_ORDER = %w(
+          image_settings
+          image_operators
+          image_sequence_operators
+        ).freeze
 
         def initialize(config = {}, options = {})
           super(config, options)
 
           @tool = ::MiniMagick::Tool::Convert
-          @grouped_options = Hash.new {|hash, key| hash[key] = []}
+          @my_option = ImageWrangler::Transformers::MiniMagick::Option
+          @grouped_options = Hash.new { |hash, key| hash[key] = [] }
         end
 
-        def grouped_options
-          @grouped_options
-        end
-
+         # remove nil values for argument-less options
         def merged_options
-          ordered_options.map {|opt|
-            [ opt.to_s, opt.value ]
-          }.flatten.compact # remove nil values for argument-less options
+          ordered_options.map { |opt|
+            [opt.to_s, opt.value]
+          }.flatten.compact
         end
 
         def ordered_options
           return [] if @grouped_options.empty?
+
           options = []
+
           OPTION_GROUP_ORDER.each do |og|
             options << @grouped_options[og] unless @grouped_options[og].empty?
           end
@@ -74,10 +78,8 @@ module ImageWrangler
           # Finally, add the output filepath
           tool << filepath
 
-          tool.call do |stdout, stderr, status|
-            unless status.zero?
-              raise StandardError, stderr
-            end
+          tool.call do |_stdout, stderr, status|
+            raise StandardError, stderr unless status.zero?
 
             # Gather data about the resulting file
             inspect_result
@@ -86,10 +88,6 @@ module ImageWrangler
 
         def supplied_options
           @supplied_options ||= @config.fetch(:options, {})
-        end
-
-        def unrecognized_options
-          @unrecognized_options
         end
 
         def valid?
@@ -102,40 +100,40 @@ module ImageWrangler
         end
 
         def validate_empty_options
-          if supplied_options.empty?
-            errors.add(:options, 'cannot be empty')
-          end
+          errors.add(:options, 'cannot be empty') if supplied_options.empty?
         end
 
+        # rubocop:disable Metrics/MethodLength
         def validate_options
           @unrecognized_options = []
 
           supplied_options.each_pair do |key, value|
             next if skip_option?(key)
 
-            unless ImageWrangler::Transformers::MiniMagick::Option.recognized?(key.to_s)
-              @unrecognized_options.push(key)
-            else
+            if @my_option.recognized?(key.to_s)
               # Supplied values can be either String, Array or nil
               # Coercing nils to Array doesn't work, so send a special
               # string instead. See Option#value
               Array(value || '_x_').each do |val|
-                option = ImageWrangler::Transformers::MiniMagick::Option.new(key.to_s, val)
+                option = @my_option.new(key.to_s, val)
                 @grouped_options[option.option_group].push(option)
               end
+            else
+              @unrecognized_options.push(key)
             end
           end
 
           handle_unrecognized_options
         end
+        # rubocop:enable Metrics/MethodLength
 
         private
 
         def handle_unrecognized_options
-          if @unrecognized_options.any?
-            stringified = @unrecognized_options.map {|opt| "'#{opt}'" }.join('; ')
-            errors.add(:options, "unrecognized #{stringified}")
-          end
+          return unless @unrecognized_options.any?
+
+          opts = @unrecognized_options.map {|opt| "'#{opt}'" }.join('; ')
+          errors.add(:options, "unrecognized #{opts}")
         end
 
         def skip_option?(key)

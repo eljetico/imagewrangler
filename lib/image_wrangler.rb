@@ -21,12 +21,15 @@ module ImageWrangler
     File.expand_path '..', File.dirname(__FILE__)
   end
 
+  # Transformers to process images
   module Transformers
   end
 
+  # Assert specific image file handlers: default is MiniMagick
   module Handlers
   end
 
+  # Container for various ICC color profile handlers
   module Profiles
   end
 end

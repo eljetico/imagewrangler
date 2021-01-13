@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module ImageWrangler
+  # Transformers process images
   module Transformers
     #
     # Config for rendered component, expected to be a hash eg:
@@ -32,9 +33,13 @@ module ImageWrangler
     # `config` should contain requirements for generated file
     # `options` should override errors handler etc
     class Variant
+      attr_accessor :source_image
+
       def initialize(config = {}, options = {})
         @config = {
         }.merge(config)
+
+        @source_image = nil
 
         @options = {
           errors: ImageWrangler::Errors.new
@@ -57,22 +62,14 @@ module ImageWrangler
       end
 
       def inspect_result
-        #NOOP
+        # NOOP
       end
 
       # Create/generate the variant.
       # Errors should be added to errors handler and return
       # by calling `valid?`
-      def process # EG MiniMagickHandler
+      def process
         raise NotImplementedError
-      end
-
-      def source_image=(source_image) # EG MiniMagickHandler
-        @source_image = source_image
-      end
-
-      def source_image
-        @source_image
       end
 
       def valid?

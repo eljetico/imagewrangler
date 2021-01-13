@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require_relative '../test_helper'
 
 class VisualCorruptionTest < Minitest::Test
-  def setup
-  end
+  def setup; end
 
   def test_visually_corrupted_image
     image = MiniMagick::Image.new(raster_path('corrupt_pixels.jpg'))

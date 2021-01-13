@@ -9,9 +9,11 @@ module ImageWrangler
     module MiniMagick
       class Transformer < ImageWrangler::Transformers::Transformer
         def instantiate_component_list(list)
-          component_list = ImageWrangler::Transformers::MiniMagick::ComponentList.new(list)
-          component_list.instantiate_variants
-          component_list
+          # rubocop:disable Layout/LineLength
+          clist = ImageWrangler::Transformers::MiniMagick::ComponentList.new(list)
+          # rubocop:enable Layout/LineLength
+          clist.instantiate_variants
+          clist
         end
       end
     end

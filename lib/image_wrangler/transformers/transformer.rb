@@ -1,13 +1,16 @@
 # frozen_string_literal: true
+
 require 'fileutils'
 
 require_relative 'component_list'
 require_relative 'variant'
 
 module ImageWrangler
+  # Transformer process images
   module Transformers
+    # Abstract Transformer class
     class Transformer
-      attr_reader :image, :menu, :options
+      attr_reader :component_list, :image, :menu, :options
 
       def initialize(filepath, list, options = {})
         @image = instantiate_source_image(filepath)
@@ -28,7 +31,7 @@ module ImageWrangler
       # so upscaling from a smaller file is possible if
       # the component list is incorrectly ordered.
       def assert_source_image(variant_index)
-        return source_image if (variant_index == 0)
+        return source_image if variant_index.zero?
 
         if @options[:cascade]
           variant = component_list[variant_index - 1]
@@ -38,10 +41,6 @@ module ImageWrangler
         end
 
         source_image
-      end
-
-      def component_list
-        @component_list
       end
 
       def errors
@@ -70,6 +69,7 @@ module ImageWrangler
         FileUtils.rm_f(filepath) if File.exist?(filepath)
       end
 
+      # rubocop:disable Metrics/MethodLength
       def process
         return false unless valid?
 
@@ -86,6 +86,7 @@ module ImageWrangler
 
         valid?
       end
+      # rubocop:enable Metrics/MethodLength
 
       def source_image
         @image

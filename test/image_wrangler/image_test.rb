@@ -3,8 +3,7 @@
 require_relative '../test_helper'
 
 class ImageTest < Minitest::Test
-  def setup
-  end
+  def setup; end
 
   def test_basic_attributes_raster
     image = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
@@ -55,7 +54,8 @@ class ImageTest < Minitest::Test
     wrangler = ImageWrangler::Image.new(vector_path('not_valid_v3.1.eps'))
 
     wrangler.validate do |img|
-      img.errors.add(:postscript_version, 'must be <= 3.0') unless (img.postscript_version <= 3.0)
+      ver = img.postscript_version
+      img.errors.add(:postscript_version, 'must be <= 3.0') unless (ver <= 3.0)
     end
 
     assert_includes wrangler.errors, :postscript_version

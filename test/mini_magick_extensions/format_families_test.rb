@@ -2,15 +2,13 @@
 
 require_relative '../test_helper'
 
-# rubocop:disable Metrics/ClassLength
 class FormatFamiliesTest < Minitest::Test
   # This still doesn't supress PDF warnings encountered here
   MiniMagick.configure do |config|
     config.quiet_warnings
   end
 
-  def setup
-  end
+  def setup; end
 
   def test_image_type
     image = MiniMagick::Image.new(raster_path('valid_jpg.jpg'))

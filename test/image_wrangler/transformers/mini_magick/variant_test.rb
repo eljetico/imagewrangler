@@ -104,12 +104,12 @@ class ImageWrangler::Transformers::MiniMagick::VariantTest < Minitest::Test
   # Create an array of options and values for MiniMagick::Convert.merge!
   def test_merged_options
     subject = @variant.new({
-      options: {
-        'colorspace' => 'RGB',
-        '+profile' => %w(8BIMTEXT IPTC),
-        'append' => nil
-      }
-    })
+                              options: {
+                                          'colorspace' => 'RGB',
+                                          '+profile' => %w(8BIMTEXT IPTC),
+                                          'append' => nil
+                                        }
+                            })
 
     subject.validate!
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MiniMagick
   # Check for visual corruption of supplied image
   class Image
@@ -6,7 +8,8 @@ module MiniMagick
     end
 
     # Density required for 20mp by default
-    def postscript_resize_density(target_pixels = 20_000_000, density = 72) # EPS are 72 PPI
+    # EPS are 72 PPI
+    def postscript_resize_density(target_pixels = 20_000_000, density = 72)
       return nil unless vector?
 
       height = eps_metadata.fetch(:actual_height, 0)
@@ -27,6 +30,7 @@ module MiniMagick
       @eps_metadata ||= extract_eps_metadata
     end
 
+    # rubocop:disable Metrics/AbcSize
     def extract_eps_metadata
       return {} unless vector?
       return {} if pdf?
@@ -52,17 +56,22 @@ module MiniMagick
 
         # File.open(file_path, 'r:UTF-8').each(sep = lsep) do |l|
         f.each(sep = lsep) do |l|
-          line = l.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+          line = l.encode('UTF-8', 'binary', {
+            invalid: :replace,
+            undef: :replace,
+            replace: ''
+          })
+
           break if line.match(/\A\%\%EOF/)
 
-          if v_matches = line.match(version_regex)
-            if !ps_version_found
+          if (v_matches = line.match(version_regex))
+            unless ps_version_found
               ps_version = v_matches[1].to_f
               ps_version_found = true
             end
           end
 
-          if bb_matches = line.match(bounds_regex)
+          if (bb_matches = line.match(bounds_regex))
             bounding_box_count += 1
             @actual_width = bb_matches[3].to_i - bb_matches[1].to_i
             @actual_height = bb_matches[4].to_i - bb_matches[2].to_i
@@ -81,6 +90,7 @@ module MiniMagick
       ensure
         f.close
       end
+      # rubocop:enable Metrics/AbcSize
     end
   end
 end

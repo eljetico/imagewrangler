@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module ImageWrangler
+  # Default wrapper for image handling
   class Image
     attr_reader :filepath
 

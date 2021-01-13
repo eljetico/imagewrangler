@@ -42,22 +42,22 @@ class MiniMagickHandlerTest < Minitest::Test
   end
 
   def test_initialize_with_corrupt_remote_file
-    stub_request(:get, "https://example.com/corrupt.jpg")
+    stub_request(:get, 'https://example.com/corrupt.jpg')
       .to_return(body: File.read(raster_path('corrupt_premature_end.jpg')))
 
     err = assert_raises ImageWrangler::Error do
-      @subject.load_image("https://example.com/corrupt.jpg")
+      @subject.load_image('https://example.com/corrupt.jpg')
     end
 
     assert_match /corrupted file/i, err.message
   end
 
   def test_basic_initialization_with_missing_url
-    stub_request(:get, "https://example.com/image.jpg")
-      .to_return(status: 404, body: "Not found")
+    stub_request(:get, 'https://example.com/image.jpg')
+      .to_return(status: 404, body: 'Not found')
 
     err = assert_raises ImageWrangler::Error do
-      @subject.load_image("https://example.com/image.jpg")
+      @subject.load_image('https://example.com/image.jpg')
     end
 
     assert_match /404/i, err.message
@@ -90,11 +90,12 @@ class MiniMagickHandlerTest < Minitest::Test
     refute @subject.visually_corrupt?
   end
 
+  # rubocop:disable Metrics/AbcSize
   def test_attributes_retrieval_remote_file
-    stub_request(:get, "https://example.com/image.jpg")
+    stub_request(:get, 'https://example.com/image.jpg')
       .to_return(body: File.read(raster_path('cmyk.jpg')))
 
-    @subject.load_image("https://example.com/image.jpg")
+    @subject.load_image('https://example.com/image.jpg')
 
     assert_equal 'image/jpeg', @subject.mime_type
     assert_equal 'CMYK', @subject.colorspace
@@ -103,6 +104,7 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal '638595b250d6afdf8f62dcd299da1ad0', @subject.checksum
     refute @subject.visually_corrupt?
   end
+  # rubocop:enable Metrics/AbcSize
 
   def test_clipping_paths
     @subject.load_image(raster_path('clipping_path.jpg'))

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'forwardable'
 
 module ImageWrangler
@@ -8,7 +9,9 @@ module ImageWrangler
     # ImageWrangler::Transformers::Variant-like instances
     class ComponentList
       extend Forwardable
-      delegate [:each, :each_with_index, :to_a] => :@variants
+      delegate %i(each each_with_index to_a) => :@variants
+
+      attr_reader :variants, :list
 
       def initialize(list = [], options = {})
         @options = {
@@ -24,9 +27,10 @@ module ImageWrangler
       end
 
       def errors
-        @error_handler ||= @options[:error_handler]
+        @errors ||= @options[:error_handler]
       end
 
+      # rubocop:disable Metrics/AbcSize
       def instantiate_variants
         @variants.clear
 
@@ -42,14 +46,7 @@ module ImageWrangler
 
         @variants.any?
       end
-
-      def list
-        @list
-      end
-
-      def variants
-        @variants # may need to order by pixel dims if cascading?
-      end
+      # rubocop:enable Metrics/AbcSize
 
       def valid?
         errors.empty?

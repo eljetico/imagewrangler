@@ -3,8 +3,6 @@
 require_relative '../test_helper'
 require 'image_wrangler'
 
-# rubocop:disable Metrics/ClassLength
 class InfoOverridesTest < Minitest::Test
-  def setup
-  end
+  def setup; end
 end
