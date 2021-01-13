@@ -186,9 +186,7 @@ module ImageWrangler
 
       # TODO: handle URLs!
       def preferred_extension
-        @preferred_extension ||= begin
-          valid_extension? ? extname : @magick.valid_extensions[0]
-        end
+        @preferred_extension ||= @magick.valid_extensions[0]
       end
 
       def quality

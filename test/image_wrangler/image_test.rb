@@ -27,6 +27,11 @@ class ImageTest < Minitest::Test
     assert_equal '.png', image.preferred_extension
   end
 
+  def test_preferred_extension_for_jpeg_files
+    image = ImageWrangler::Image.new(raster_path('valid_jpg.jpeg'))
+    assert_equal '.jpg', image.preferred_extension
+  end
+
   def test_basic_attributes_vector
     image = ImageWrangler::Image.new(vector_path('valid.eps'))
 
