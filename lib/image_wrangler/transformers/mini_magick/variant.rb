@@ -33,11 +33,11 @@ module ImageWrangler
         # handle the various groups in the following sequence
         attr_reader :grouped_options, :unrecognized_options
 
-        OPTION_GROUP_ORDER = %w(
+        OPTION_GROUP_ORDER = %w[
           image_settings
           image_operators
           image_sequence_operators
-        ).freeze
+        ].freeze
 
         def initialize(config = {}, options = {})
           super(config, options)
@@ -47,11 +47,9 @@ module ImageWrangler
           @grouped_options = Hash.new { |hash, key| hash[key] = [] }
         end
 
-         # remove nil values for argument-less options
+        # remove nil values for argument-less options
         def merged_options
-          ordered_options.map { |opt|
-            [opt.to_s, opt.value]
-          }.flatten.compact
+          ordered_options.map { |opt| [opt.to_s, opt.value] }.flatten.compact
         end
 
         def ordered_options
@@ -132,7 +130,7 @@ module ImageWrangler
         def handle_unrecognized_options
           return unless @unrecognized_options.any?
 
-          opts = @unrecognized_options.map {|opt| "'#{opt}'" }.join('; ')
+          opts = @unrecognized_options.map { |opt| "'#{opt}'" }.join('; ')
           errors.add(:options, "unrecognized #{opts}")
         end
 

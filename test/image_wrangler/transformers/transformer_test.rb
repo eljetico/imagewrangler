@@ -9,10 +9,6 @@ module ImageWrangler
       OUTFILE_KEY = 'imagewrangler'
 
       def setup
-        @default_transformer
-      end
-
-      def setup
         # MiniMagick.logger.level = Logger::DEBUG
         @transformer = ImageWrangler::Transformers::MiniMagick::Transformer
       end
@@ -31,22 +27,24 @@ module ImageWrangler
         end
       end
 
+      # rubocop:disable Metrics/AbcSize
       def test_transformer_can_accept_optional_args
         image = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
         component_list = simple_resize_components
-        transformer = image.transformer(component_list, {cascade: true})
+        transformer = image.transformer(component_list, { cascade: true })
         assert transformer.is_a?(ImageWrangler::Image::DEFAULT_TRANSFORMER)
         assert transformer.options[:cascade]
 
         transformer = image.transformer(component_list)
         assert transformer.is_a?(ImageWrangler::Image::DEFAULT_TRANSFORMER)
-        assert transformer.options.has_key?(:errors)
+        assert transformer.options.key?(:errors)
       end
 
+      # rubocop:disable Metrics/MethodLength
       def test_transformer_can_cascade_components
         image = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
         component_list = simple_resize_components
-        transformer = image.transformer(component_list, {cascade: true})
+        transformer = image.transformer(component_list, { cascade: true })
         assert transformer.options[:cascade]
         assert transformer.valid?
         assert transformer.process
@@ -65,25 +63,28 @@ module ImageWrangler
         source_image = transformer.component_list.variants[1].source_image
         assert_equal render_one.filepath, source_image.filepath
       end
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/AbcSize
 
       private
 
+      # rubocop:disable Metrics/MethodLength
       def simple_resize_components
         [
           {
             filepath: "/tmp/#{OUTFILE_KEY}.lo_res_200.jpg",
             options: {
-              "geometry" => '200x200',
-              "type" => 'TrueColor',
-              "auto-orient" => nil,
+              'geometry' => '200x200',
+              'type' => 'TrueColor',
+              'auto-orient' => nil
             }
           },
           {
             filepath: "/tmp/#{OUTFILE_KEY}.lo_res_100.jpg",
             options: {
-              "geometry" => '100x100',
-              "type" => 'TrueColor',
-              "auto-orient" => nil
+              'geometry' => '100x100',
+              'type' => 'TrueColor',
+              'auto-orient' => nil
             }
           }
         ]
@@ -96,37 +97,40 @@ module ImageWrangler
           {
             filepath: "/tmp/#{OUTFILE_KEY}..grayscale_to_rgb_100.jpg",
             options: {
-              "geometry" => '100x100',
-              "type" => 'TrueColor',
-              "profile" => "icc:#{profile}",
-              "quality" => 80
+              'geometry' => '100x100',
+              'type' => 'TrueColor',
+              'profile' => "icc:#{profile}",
+              'quality' => 80
             }
           }
         ]
       end
+      # rubocop:enable Metrics/MethodLength
 
+      # rubocop:disable Metrics/MethodLength
       def menu_cmyk_to_rgb
-        cmyk_profile = profile_path('USWebCoatedSWOP.icc')
+        # cmyk_profile = profile_path('USWebCoatedSWOP.icc')
         rgb_profile = profile_path('sRGB-IEC61966-2.1.icc')
 
         [
           {
             filepath: "/tmp/#{OUTFILE_KEY}.cmyk_to_rgb_100.jpg",
             options: {
-              "geometry" => '100x100',
-              "type" => 'TrueColor',
-              "profile" => [rgb_profile],
-              "quality" => 80
+              'geometry' => '100x100',
+              'type' => 'TrueColor',
+              'profile' => [rgb_profile],
+              'quality' => 80
             }
           }
         ]
       end
+      # rubocop:enable Metrics/MethodLength
 
       def profile_path(icc_name)
         File.expand_path(
           File.join(
             File.dirname(__FILE__), '..', '..', 'resources', 'color_profiles',
-          icc_name
+            icc_name
           )
         )
       end

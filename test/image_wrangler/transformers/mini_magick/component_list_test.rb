@@ -26,7 +26,10 @@ module ImageWrangler
           subject.instantiate_variants
 
           refute subject.valid?
+
+          # rubocop:disable Layout/LineLength
           assert_equal(["variant 0: options unrecognized 'qwerty'"], subject.errors.full_messages)
+          # rubocop:enable Layout/LineLength
         end
 
         private

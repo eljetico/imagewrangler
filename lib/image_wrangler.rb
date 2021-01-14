@@ -15,6 +15,7 @@ require 'mini_magick_extensions/peak_saturation'
 require 'mini_magick_extensions/postscript_detection'
 require 'mini_magick_extensions/visual_corruption'
 
+# Top level module
 module ImageWrangler
   # Use this when referring to resources, eg color profiles
   def self.root

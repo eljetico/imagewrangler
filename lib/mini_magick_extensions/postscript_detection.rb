@@ -30,19 +30,32 @@ module MiniMagick
       @eps_metadata ||= extract_eps_metadata
     end
 
+    def version_regex
+      /\A.*?\%\!PS-Adobe-(\d\.\d)\s+?(?:EP[S|T]F*?-.*?)\W*?\z/x
+    end
+
+    def bounds_regex
+      /\%\%BoundingBox:\s(-?\d+)\s(-?\d+)\s(-?\d+)\s(-?\d+)/
+    end
+
+    # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def extract_eps_metadata
       return {} unless vector?
       return {} if pdf?
 
-      version_regex = /\A.*?\%\!PS-Adobe-(\d\.\d)\s+?(?:EP[S|T]F*?-.*?)\W*?\z/x
-      bounds_regex  = /\%\%BoundingBox:\s(-?\d+)\s(-?\d+)\s(-?\d+)\s(-?\d+)/
-
       begin
-        # need to get separator First
-        lsep = "\n"
         f = StringIO.new to_blob
-        line = f.gets.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+        # rubocop:disable Layout/FirstHashElementIndentation
+        line = f.gets.encode('UTF-8', 'binary', {
+          invalid: :replace,
+          undef: :replace,
+          replace: ''
+        })
+        # rubocop:enable Layout/FirstHashElementIndentation
+
         lsep = line[/[\r\n]+/]
 
         f.rewind
@@ -54,13 +67,15 @@ module MiniMagick
         actual_width = width
         actual_height = height
 
-        # File.open(file_path, 'r:UTF-8').each(sep = lsep) do |l|
+        # rubocop:disable Lint/UselessAssignment
         f.each(sep = lsep) do |l|
+          # rubocop:disable Layout/FirstHashElementIndentation
           line = l.encode('UTF-8', 'binary', {
             invalid: :replace,
             undef: :replace,
             replace: ''
           })
+          # rubocop:enable Layout/FirstHashElementIndentation
 
           break if line.match(/\A\%\%EOF/)
 
@@ -71,12 +86,15 @@ module MiniMagick
             end
           end
 
+          # rubocop:disable Style/Next
           if (bb_matches = line.match(bounds_regex))
             bounding_box_count += 1
             @actual_width = bb_matches[3].to_i - bb_matches[1].to_i
             @actual_height = bb_matches[4].to_i - bb_matches[2].to_i
           end
+          # rubocop:enable Style/Next
         end
+        # rubocop:enable Lint/UselessAssignment
 
         if bounding_box_count > 1
           raise MiniMagick::Error, 'More than one bounding box encountered'
@@ -90,7 +108,10 @@ module MiniMagick
       ensure
         f.close
       end
-      # rubocop:enable Metrics/AbcSize
     end
+    # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
   end
 end

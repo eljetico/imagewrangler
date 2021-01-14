@@ -16,6 +16,12 @@ module MiniMagick
       # rubocop:enable Layout/LineLength
     end
 
+    def rgb_values_from_histogram(hist)
+      return [] if hist.length > 1
+
+      (hist[0].scan(RGB_VALUE_REGEX).flatten || []).uniq
+    end
+
     # User can pass in full options such as
     # {
     #    max_gray: 180,
@@ -26,15 +32,11 @@ module MiniMagick
     def visually_corrupt?(opts = {})
       return false unless raster?
 
-      test_opts = {
-        max_gray: 180,
-        min_gray: 120
-      }.merge(opts)
+      test_opts = { max_gray: 180, min_gray: 120 }.merge(opts)
 
-      hist = histogram_for_sample(test_opts) # gray values ignored in method
-      rgb = (hist[0].scan(RGB_VALUE_REGEX).flatten || []).uniq
+      rgb = rgb_values_from_histogram(histogram_for_sample(test_opts))
 
-      return false if (hist.length > 1) || rgb.empty? || (rgb.length > 1)
+      return false if rgb.empty? || (rgb.length > 1)
 
       (test_opts[:min_gray]..test_opts[:max_gray]).include?(rgb[0].to_i)
     end

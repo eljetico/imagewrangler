@@ -96,8 +96,8 @@ module ImageWrangler
           nil_or_string(File.extname(path))
         end
       end
-      alias :ext :extname
-      alias :extension :extname
+      alias ext extname
+      alias extension extname
 
       # TODO: need to handle URLs here too
       # def filename
@@ -136,6 +136,7 @@ module ImageWrangler
         @filesize ||= stat.size
       end
 
+      # rubocop:disable Metrics/MethodLength
       def load_image(filepath)
         @loaded = false
         @filepath = filepath
@@ -151,15 +152,16 @@ module ImageWrangler
         @loaded = @magick.valid?
 
         @loaded
-      rescue Errno::ENOENT => error
+      rescue Errno::ENOENT
         raise ImageWrangler::Error, "not found at '#{filepath}'"
-      rescue MiniMagick::Error => error
-        handle_mini_magick_error(error)
-      rescue MiniMagick::Invalid => error
-        handle_mini_magick_invalid(error)
-      rescue OpenURI::HTTPError => error
-        raise ImageWrangler::Error, error.message
+      rescue MiniMagick::Error => e
+        handle_mini_magick_error(e)
+      rescue MiniMagick::Invalid => e
+        handle_mini_magick_invalid(e)
+      rescue OpenURI::HTTPError => e
+        raise ImageWrangler::Error, e.message
       end
+      # rubocop:enable Metrics/MethodLength
 
       def iptc_date_created
         @iptc_date_created ||= extract_iptc_date_created
@@ -179,16 +181,14 @@ module ImageWrangler
 
       def peak_saturation
         @peak_saturation ||= @analyzer.peak_saturation
-      rescue StandardError => e
-        # Should log this message somewhere
-        return nil
+      rescue StandardError
+        # Should log the error somewhere
+        nil
       end
 
       # TODO: handle URLs!
       def preferred_extension
-        @preferred_extension ||= begin
-          valid_extension? ? extname : @magick.valid_extensions[0]
-        end
+        @preferred_extension ||= @magick.valid_extensions[0]
       end
 
       def quality
@@ -205,6 +205,7 @@ module ImageWrangler
 
       def valid_extension?
         return false if extname.nil?
+
         @magick.valid_extensions.include?(extname.downcase)
       end
 
@@ -236,7 +237,7 @@ module ImageWrangler
         parse_date(value, '%Y:%m:%d %H:%M:%S')
       rescue StandardError => e
         @context.errors.add("Error parsing EXIF:DateTimeOriginal #{e.message}")
-        return nil
+        nil
       end
 
       def extract_exif_date_time_digitized
@@ -244,7 +245,7 @@ module ImageWrangler
         parse_date(value, '%Y:%m:%d %H:%M:%S')
       rescue StandardError => e
         @context.errors.add("Error parsing EXIF:DateTimeOriginal #{e.message}")
-        return nil
+        nil
       end
 
       def extract_iptc_date_created

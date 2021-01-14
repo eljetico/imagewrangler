@@ -19,7 +19,9 @@ module ImageWrangler
 
           def available_options
             # rubocop:disable Style/ClassVars
+            # rubocop:disable Layout/LineLength
             @@available_options ||= ::MiniMagick::Tool::Convert.available_options
+            # rubocop:enable Layout/LineLength
             # rubocop:enable Style/ClassVars
           end
         end
@@ -40,7 +42,6 @@ module ImageWrangler
 
         def option_group
           @option_group ||= begin
-
             # rubocop:disable Layout/LineLength
             !recognized? ? 'unknown' : ::MiniMagick::Tool::Convert.option_group(clean_option)
             # rubocop:enable Layout/LineLength

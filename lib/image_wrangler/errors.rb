@@ -7,8 +7,10 @@ module ImageWrangler
   class Errors
     include Enumerable
 
+    attr_reader :errors
+
     def initialize
-      @errors = Hash.new {|hash, key| hash[key] = []}
+      @errors = Hash.new { |hash, key| hash[key] = [] }
     end
 
     def [](attribute)
@@ -43,11 +45,7 @@ module ImageWrangler
     def empty?
       size.zero?
     end
-    alias :blank? :empty?
-
-    def errors
-      @errors
-    end
+    alias blank? empty?
 
     def full_messages
       map { |attribute, message| full_message(attribute, message) }
@@ -57,8 +55,8 @@ module ImageWrangler
       attribute = attribute.to_sym
       errors.key?(attribute) && !errors[attribute].empty?
     end
-    alias :has_key? :include?
-    alias :key? :include?
+    alias has_key? include?
+    alias key? include?
 
     def messages
       errors.inspect
@@ -73,17 +71,17 @@ module ImageWrangler
     end
 
     def values
-      errors.select do |key, value|
-        !value.empty?
+      errors.reject do |_key, value|
+        value.empty?
       end.values
     end
 
     private
 
     def add_error(attribute, message)
-      unless errors[attribute].include?(message)
-        errors[attribute].push(message)
-      end
+      return if errors[attribute].include?(message)
+
+      errors[attribute].push(message)
     end
 
     def full_message(attribute, message)

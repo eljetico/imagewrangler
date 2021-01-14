@@ -9,6 +9,7 @@ module ImageWrangler
     end
 
     # rubocop:disable Naming/MethodName
+    # rubocop:disable Naming/VariableName
     def self.sRGB
       @@sRGB ||= File.join(path, 'sRGB-IEC61966-2.1.icc')
     end
@@ -20,6 +21,7 @@ module ImageWrangler
     def self.CMYK
       @@CMYK ||= File.join(path, 'USWebCoatedSWOP.icc')
     end
+    # rubocop:enable Naming/VariableName
     # rubocop:enable Naming/MethodName
   end
   # rubocop:enable Style/ClassVars
