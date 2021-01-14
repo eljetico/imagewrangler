@@ -2,6 +2,7 @@
 
 require_relative '../../test_helper'
 
+# rubocop:disable Metrics/ClassLength
 class MiniMagickHandlerTest < Minitest::Test
   def setup
     @handler = ImageWrangler::Handlers::MiniMagickHandler
@@ -20,7 +21,7 @@ class MiniMagickHandlerTest < Minitest::Test
       @subject.load_image(filepath)
     end
 
-    assert_match /empty file/, err.message
+    assert_match(/empty file/, err.message)
   end
 
   def test_initialization_with_missing_file
@@ -30,7 +31,7 @@ class MiniMagickHandlerTest < Minitest::Test
       @subject.load_image(filepath)
     end
 
-    assert_match /not found at '#{filepath}'/, err.message
+    assert_match(/not found at '#{filepath}'/, err.message)
   end
 
   def test_initialize_with_corrupt_local_file
@@ -38,7 +39,7 @@ class MiniMagickHandlerTest < Minitest::Test
       @subject.load_image(raster_path('corrupt_premature_end.jpg'))
     end
 
-    assert_match /corrupted file/i, err.message
+    assert_match(/corrupted file/i, err.message)
   end
 
   def test_initialize_with_corrupt_remote_file
@@ -49,7 +50,7 @@ class MiniMagickHandlerTest < Minitest::Test
       @subject.load_image('https://example.com/corrupt.jpg')
     end
 
-    assert_match /corrupted file/i, err.message
+    assert_match(/corrupted file/i, err.message)
   end
 
   def test_basic_initialization_with_missing_url
@@ -60,7 +61,7 @@ class MiniMagickHandlerTest < Minitest::Test
       @subject.load_image('https://example.com/image.jpg')
     end
 
-    assert_match /404/i, err.message
+    assert_match(/404/i, err.message)
   end
 
   def test_channel_count
@@ -75,6 +76,8 @@ class MiniMagickHandlerTest < Minitest::Test
     end
   end
 
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def test_attributes_retrieval_local_file
     @subject.load_image(raster_path('valid_jpg.jpg'))
 
@@ -82,15 +85,15 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal 8, @subject.bit_depth
     assert_equal 'RGB', @subject.colorspace
     assert_equal 'abb4755aff726b0c4ac77c7be07b4776', @subject.checksum
-    assert_equal 1000, @subject.height
+    assert_equal 1_000, @subject.height
     assert_equal 697, @subject.width
-    assert_equal 119333, @subject.filesize
+    assert_equal 119_333, @subject.filesize
     assert_equal 'JPEG', @subject.format
     assert_equal 'TopLeft', @subject.orientation
     refute @subject.visually_corrupt?
   end
+  # rubocop:enable Metrics/MethodLength
 
-  # rubocop:disable Metrics/AbcSize
   def test_attributes_retrieval_remote_file
     stub_request(:get, 'https://example.com/image.jpg')
       .to_return(body: File.read(raster_path('cmyk.jpg')))
@@ -162,3 +165,4 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal 2, subject.layers.length
   end
 end
+# rubocop:enable Metrics/ClassLength

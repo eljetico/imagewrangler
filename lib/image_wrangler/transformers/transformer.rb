@@ -60,9 +60,11 @@ module ImageWrangler
           errors.add(:config, component_list.errors.full_messages)
         end
 
+        # rubocop:disable Style/GuardClause
         unless component_list.variants.any?
           errors.add(:component_list, 'cannot be empty')
         end
+        # rubocop:enable Style/GuardClause
       end
 
       def ensure_outfile_removed(filepath)

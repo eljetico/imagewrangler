@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+# Top level handler
 module ImageWrangler
+  # Abstract Handler class (eg MiniMagick)
   class Handler
     GRAYSCALE_PEAK_SATURATION_THRESHOLD = 0.15 # ESP value
 

@@ -5,6 +5,7 @@ require 'image_wrangler'
 
 module ImageWrangler
   module Transformers
+    # rubocop:disable Metrics/ClassLength
     class MiniMagickTransformerTest < Minitest::Test
       OUTFILE_KEY = 'imagewrangler'
 
@@ -24,9 +25,12 @@ module ImageWrangler
         subject = @transformer.new(image, [])
 
         refute subject.valid?
+        # rubocop:disable Layout/LineLength
         assert_equal('component_list cannot be empty', subject.errors.full_messages[0])
+        # rubocop:enable Layout/LineLength
       end
 
+      # rubocop:disable Metrics/AbcSize
       def test_simple_resize
         image = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
         menu = menu_simple_resize
@@ -53,7 +57,9 @@ module ImageWrangler
         refute subject.process
         refute File.exist?(menu[0][:filepath])
 
+        # rubocop:disable Layout/LineLength
         assert_match(/variant failed at index 0/i, subject.errors.full_messages[0])
+        # rubocop:enable Layout/LineLength
       end
 
       def test_conversion_with_rgb_profile
@@ -82,9 +88,11 @@ module ImageWrangler
         assert_equal 'RGB', rendered.colorspace
         assert_equal 80, rendered.quality
       end
+      # rubocop:enable Metrics/AbcSize
 
       private
 
+      # rubocop:disable Metrics/MethodLength
       def menu_simple_resize
         [
           {
@@ -92,7 +100,7 @@ module ImageWrangler
             options: {
               'geometry' => '100x100',
               'type' => 'TrueColor',
-              'auto-orient' => nil,
+              'auto-orient' => nil
             }
           },
           {
@@ -133,10 +141,12 @@ module ImageWrangler
           }
         ]
       end
+      # rubocop:enable Metrics/MethodLength
 
       def profile_path(icc_name)
         File.join(ImageWrangler.root, 'resources', 'color_profiles', icc_name)
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end

@@ -4,9 +4,7 @@ require_relative '../test_helper'
 
 class FormatFamiliesTest < Minitest::Test
   # This still doesn't supress PDF warnings encountered here
-  MiniMagick.configure do |config|
-    config.quiet_warnings
-  end
+  MiniMagick.configure(&:quiet_warnings)
 
   def setup; end
 

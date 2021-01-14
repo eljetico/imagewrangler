@@ -6,9 +6,9 @@ module MiniMagick
     class Convert
       class << self
         def option_group(option)
-          %w(
+          %w[
             image_settings image_operators image_sequence_operators
-          ).each do |grp|
+          ].each do |grp|
             # rubocop:disable Style/RedundantSelf
             options = self.send("#{grp}_options".to_sym)
             # rubocop:enable Style/RedundantSelf
@@ -18,6 +18,7 @@ module MiniMagick
           nil
         end
 
+        # rubocop:disable Style/ClassVars
         def available_options
           @@available_options ||= [
             # rubocop:disable Style/RedundantSelf
@@ -27,6 +28,7 @@ module MiniMagick
             # rubocop:enable Style/RedundantSelf
           ].flatten.uniq
         end
+        # rubocop:enable Style/ClassVars
 
         def image_settings_options
           # rubocop:disable Style/ClassVars
@@ -47,7 +49,9 @@ module MiniMagick
         def image_sequence_operators_options
           # rubocop:disable Style/ClassVars
           @@image_sequence_operators_options ||= begin
+            # rubocop:disable Layout/LineLength
             MiniMagick::Tool::Convert.extract_tool_options('Image Sequence Operators')
+            # rubocop:enable Layout/LineLength
           end
           # rubocop:enable Style/ClassVars
         end
@@ -55,9 +59,11 @@ module MiniMagick
         def tool_help
           # rubocop:disable Style/ClassVars
           @@tool_help ||= begin
+            # rubocop:disable Style/SymbolProc
             MiniMagick::Tool::Convert.new(whiny: false) do |b|
               b.help
             end
+            # rubocop:enable Style/SymbolProc
           end
           # rubocop:enable Style/ClassVars
         end
@@ -66,11 +72,14 @@ module MiniMagick
           tool_help = MiniMagick::Tool::Convert.tool_help
 
           # Take option group to first double newline
+          # rubocop:disable Layout/LineLength
           tool_help.match(/\n#{option_group}\:\n(.*?)(?:\n\n)/mi)[1].split("\n").map do |line|
             option = line.strip.split(/\s+/)[0]
-            option[0] = '' # remove hyphen (performant over `sub` etc)
+            # Remove hyphen in performant way (better than 'sub' apparently)
+            option[0] = ''
             option
           end
+          # rubocop:enable Layout/LineLength
         end
       end
     end

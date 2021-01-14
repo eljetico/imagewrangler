@@ -9,25 +9,25 @@ class ConvertToolOptionsTest < Minitest::Test
   def test_image_settings_options
     all_options = MiniMagick::Tool::Convert.image_settings_options
     assert(all_options.length > 10) # arbitrary test value
-    assert((['depth', 'colorspace', 'format'] - all_options).empty?)
+    assert((%w[depth colorspace format] - all_options).empty?)
   end
 
   def test_image_operator_options
     all_options = MiniMagick::Tool::Convert.image_operators_options
     assert(all_options.length > 10)
-    assert((['alpha', 'gamma', 'wave'] - all_options).empty?)
+    assert((%w[alpha gamma wave] - all_options).empty?)
   end
 
   def test_image_sequence_operator_options
     all_options = MiniMagick::Tool::Convert.image_sequence_operators_options
     assert(all_options.length > 10)
-    assert((['append', 'flatten', 'smush'] - all_options).empty?)
+    assert((%w[append flatten smush] - all_options).empty?)
   end
 
   def test_available_options
     all_options = MiniMagick::Tool::Convert.available_options
     assert(all_options.length > 10)
-    assert((['alpha', 'gamma', 'wave'] - all_options).empty?)
+    assert((%w[alpha gamma wave] - all_options).empty?)
   end
 
   def test_option_group
@@ -38,8 +38,10 @@ class ConvertToolOptionsTest < Minitest::Test
       'append' => 'image_sequence_operators',
       'smush' => 'image_sequence_operators',
       'gamma' => 'image_operators'
-    }.each_pair do |opt,group|
-      assert_equal(group, MiniMagick::Tool::Convert.option_group(opt), "#{opt}")
+    }.each_pair do |opt, group|
+      # rubocop:disable Layout/LineLength
+      assert_equal(group, MiniMagick::Tool::Convert.option_group(opt), "#{opt} grouped")
+      # rubocop:enable Layout/LineLength
     end
   end
 end

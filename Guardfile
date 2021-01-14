@@ -26,7 +26,7 @@ guard :minitest do
   watch(%r{^test/.+_test\.rb$})
 end
 
-# guard :rubocop, cli: ['--display-cop-names'] do
-#   watch(%r{.+\.rb$})
-#   watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
-# end
+guard :rubocop, cli: ['--display-cop-names'] do
+  watch(/.+\.rb$/)
+  watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
+end
