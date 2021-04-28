@@ -70,6 +70,10 @@ module ImageWrangler
         peak_saturation > GRAYSCALE_PEAK_SATURATION_THRESHOLD
       end
 
+      def color_managed?
+        !icc_name.nil?
+      end
+
       def colorspace
         @colorspace ||= extract_color_space
       end
@@ -99,14 +103,6 @@ module ImageWrangler
       alias ext extname
       alias extension extname
 
-      # TODO: need to handle URLs here too
-      # def filename
-      #   @filename ||= begin
-      #     path = @magick.path || ''
-      #     nil_or_string(File.basename(path))
-      #   end
-      # end
-
       def format
         attribute('type') || 'UNKNOWN'
       end
@@ -114,6 +110,10 @@ module ImageWrangler
 
       def height
         @height ||= (nil_or_integer(attribute('height')) || 0)
+      end
+
+      def icc_name
+        @icc_name ||= nil_or_string(raw_attribute('ICC:model'))
       end
 
       def image_sequence?
