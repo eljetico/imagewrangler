@@ -138,7 +138,7 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_nil subject.camera_make
   end
 
-  def test_color_managed_raster
+  def test_color_managed_raster_with_profile
     subject = @handler.new
     subject.load_image(raster_path('valid_jpg.jpg'))
     assert subject.color_managed?
@@ -148,6 +148,13 @@ class MiniMagickHandlerTest < Minitest::Test
     subject.load_image(raster_path('cmyk.jpg'))
     assert subject.color_managed?
     assert_equal 'U.S. Web Coated (SWOP) v2', subject.icc_name
+  end
+
+  def test_color_managed_raster_without_profile
+    subject = @handler.new
+    subject.load_image(raster_path('cmyk_no_profile.jpg'))
+    refute subject.color_managed?
+    assert_nil subject.icc_name
   end
 
   def test_color_managed_vector
