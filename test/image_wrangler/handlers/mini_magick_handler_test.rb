@@ -157,7 +157,8 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_nil subject.icc_name
   end
 
-  def test_color_managed_vector
+  # ICC profiles cannot be embedded in EPS files (postscript limitation)
+  def test_color_managed_vector_without_profile
     subject = @handler.new
     subject.load_image(vector_path('valid.eps'))
     refute subject.color_managed?
