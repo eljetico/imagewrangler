@@ -90,6 +90,7 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal 119_333, @subject.filesize
     assert_equal 'JPEG', @subject.format
     assert_equal 'TopLeft', @subject.orientation
+    assert_equal 'Adobe RGB (1998)', @subject.icc_name
     refute @subject.visually_corrupt?
   end
   # rubocop:enable Metrics/MethodLength
@@ -105,6 +106,7 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal '.jpg', @subject.extension
     assert @subject.valid_extension?
     assert_equal '638595b250d6afdf8f62dcd299da1ad0', @subject.checksum
+    assert_equal 'U.S. Web Coated (SWOP) v2', @subject.icc_name
     refute @subject.visually_corrupt?
   end
   # rubocop:enable Metrics/AbcSize
@@ -134,6 +136,33 @@ class MiniMagickHandlerTest < Minitest::Test
     subject = @handler.new
     subject.load_image(raster_path('valid_jpg.jpg'))
     assert_nil subject.camera_make
+  end
+
+  def test_color_managed_raster_with_profile
+    subject = @handler.new
+    subject.load_image(raster_path('valid_jpg.jpg'))
+    assert subject.color_managed?
+    assert_equal 'Adobe RGB (1998)', subject.icc_name
+
+    subject = @handler.new
+    subject.load_image(raster_path('cmyk.jpg'))
+    assert subject.color_managed?
+    assert_equal 'U.S. Web Coated (SWOP) v2', subject.icc_name
+  end
+
+  def test_color_managed_raster_without_profile
+    subject = @handler.new
+    subject.load_image(raster_path('cmyk_no_profile.jpg'))
+    refute subject.color_managed?
+    assert_nil subject.icc_name
+  end
+
+  # ICC profiles cannot be embedded in EPS files (postscript limitation)
+  def test_color_managed_vector_without_profile
+    subject = @handler.new
+    subject.load_image(vector_path('valid.eps'))
+    refute subject.color_managed?
+    assert_nil subject.icc_name
   end
 
   def test_raster_detection
