@@ -49,14 +49,14 @@ module ImageWrangler
         assert transformer.valid?
         assert transformer.process
 
-        render_one = ImageWrangler::Image.new(component_list[0][:filepath])
+        render_one = transformer.components[0]
         assert_equal 200, render_one.height
 
         # Source for first render is our main image ^
         source_image = transformer.components[0].source_image
         assert_equal image.filepath, source_image.filepath
 
-        render_two = ImageWrangler::Image.new(component_list[1][:filepath])
+        render_two = transformer.components[1]
         assert_equal 100, render_two.height
 
         # Source for second render is the previously rendered variant ^
