@@ -43,6 +43,10 @@ module ImageWrangler
         source_image
       end
 
+      def components
+        @component_list
+      end
+
       def errors
         @errors ||= @options[:errors]
       end

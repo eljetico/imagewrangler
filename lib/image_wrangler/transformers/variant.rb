@@ -33,17 +33,26 @@ module ImageWrangler
     # `config` should contain requirements for generated file
     # `options` should override errors handler etc
     class Variant
-      attr_accessor :source_image
+      attr_accessor :attributes,
+                    :height,
+                    :image_type,
+                    :mime_type,
+                    :size,
+                    :source_image,
+                    :width
 
       def initialize(config = {}, options = {})
-        @config = {
-        }.merge(config)
-
         @source_image = nil
+        @config = {}.merge(config)
+        @options = { errors: ImageWrangler::Errors.new }.merge(options)
 
-        @options = {
-          errors: ImageWrangler::Errors.new
-        }.merge(options)
+        # Simple data about our output file
+        @height = nil
+        @image_type = nil
+        @mime_type = nil
+        @mtime = nil
+        @size = nil
+        @width = nil
       end
 
       def errors
@@ -62,7 +71,14 @@ module ImageWrangler
       end
 
       def inspect_result
-        # NOOP
+        image = ImageWrangler::Image.new(filepath)
+        unless image.errors.empty?
+          errors.add(:result, image.errors.to_s)
+          return nil
+        end
+        assign_output_attributes(image)
+      rescue StandardError => e
+        errors.add(:result, e.full_message)
       end
 
       # Create/generate the variant.
@@ -81,6 +97,15 @@ module ImageWrangler
       end
 
       private
+
+      def assign_output_attributes(image)
+        @mtime = File.exist?(filepath) ? File.mtime(filepath) : nil
+        @height = image.height
+        @image_type = image.image_type
+        @mime_type = image.mime_type
+        @size = image.size
+        @width = image.width
+      end
 
       def generate_filename
         @config.fetch(:filename, "image_wrangler.#{random_token}")
