@@ -53,14 +53,14 @@ module ImageWrangler
         assert_equal 200, render_one.height
 
         # Source for first render is our main image ^
-        source_image = transformer.component_list.variants[0].source_image
+        source_image = transformer.components[0].source_image
         assert_equal image.filepath, source_image.filepath
 
         render_two = ImageWrangler::Image.new(component_list[1][:filepath])
         assert_equal 100, render_two.height
 
         # Source for second render is the previously rendered variant ^
-        source_image = transformer.component_list.variants[1].source_image
+        source_image = transformer.components[1].source_image
         assert_equal render_one.filepath, source_image.filepath
       end
       # rubocop:enable Metrics/MethodLength
