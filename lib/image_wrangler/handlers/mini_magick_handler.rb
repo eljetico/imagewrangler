@@ -267,7 +267,8 @@ module ImageWrangler
           raise ImageWrangler::Error, 'empty file'
         end
 
-        raise
+        # In calling code, use err.cause to access nested exception
+        raise ImageWrangler::Error, 'MiniMagick error'
       end
 
       def handle_mini_magick_invalid(error)
@@ -285,8 +286,6 @@ module ImageWrangler
         MiniMagick.configure do |config|
           config.quiet_warnings = options.fetch(:quiet_warnings)
         end
-
-        # @errors = options.fetch(:errors)
       end
     end
     # rubocop:enable Metrics/ClassLength
