@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module MiniMagick
-  RASTER_FORMATS = %w[BMP JPEG JPF PAM PNG WEBP GIF HEIF TIFF].freeze
+  RASTER_FORMATS = %w[BMP JPEG JPF JP2 PAM PNG WEBP GIF HEIF TIFF].freeze
   VECTOR_FORMATS = %w[PDF PS EPT EPS SVG].freeze
   POSTSCRIPT_FORMATS = %w[PDF EPT EPS PS].freeze
 

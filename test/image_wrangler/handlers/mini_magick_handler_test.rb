@@ -22,6 +22,7 @@ class MiniMagickHandlerTest < Minitest::Test
     end
 
     assert_match(/empty file/, err.message)
+    assert_match(/Empty input file/, err.cause.message) # nested error
   end
 
   def test_initialization_with_missing_file
@@ -32,6 +33,7 @@ class MiniMagickHandlerTest < Minitest::Test
     end
 
     assert_match(/not found at '#{filepath}'/, err.message)
+    assert_match(/No such file or directory/, err.cause.message) # nested error
   end
 
   def test_initialize_with_corrupt_local_file
@@ -40,6 +42,7 @@ class MiniMagickHandlerTest < Minitest::Test
     end
 
     assert_match(/corrupted file/i, err.message)
+    assert_match(/premature end of jpeg file/i, err.cause.message)
   end
 
   def test_initialize_with_corrupt_remote_file
@@ -192,6 +195,36 @@ class MiniMagickHandlerTest < Minitest::Test
     subject = @handler.new
     subject.load_image(raster_path('layers.psd'))
     assert_equal 2, subject.layers.length
+  end
+
+  def test_valid_jpeg_2000
+    @subject.load_image(raster_path('valid_jpeg_2000.jp2'))
+    assert_equal 'JP2', @subject.type
+    assert @subject.raster?
+  end
+
+  # JPEG2000 files without extensions cannot be identified by magic number with
+  # this version of IM, being an issue with IMs magic pattern config
+  # See https://github.com/ImageMagick/ImageMagick/issues/28
+  # and associated commit
+  def test_jpeg_2000_without_extension
+    err = assert_raises ImageWrangler::Error do
+      @subject.load_image(raster_path('valid_jpeg_2000'))
+    end
+
+    assert_equal 'MiniMagick error', err.message
+    assert_match(/no decode delegate/, err.cause.message)
+  end
+
+  # Similar to the above, masquerading JPEG2000s do not play nice
+  # IM uses the filename/ext 'hint' instead of magic number
+  def test_jpeg_2000_as_jpg
+    err = assert_raises ImageWrangler::Error do
+      @subject.load_image(raster_path('jpeg_2000_as_jpg.jpg'))
+    end
+
+    assert_equal 'MiniMagick error', err.message
+    assert_match(/Not a JPEG file/, err.cause.message)
   end
 end
 # rubocop:enable Metrics/ClassLength
