@@ -1,11 +1,29 @@
 # frozen_string_literal: true
 
+require 'down'
+require 'timeliness'
+
 module ImageWrangler
   # Default wrapper for image handling
   class Image
     attr_reader :filepath
 
     DEFAULT_TRANSFORMER = ImageWrangler::Transformers::MiniMagick::Transformer
+
+    class << self
+      def checksum(path, format: :md5)
+        {
+          sha1: Digest::SHA1.file(path).hexdigest,
+          sha256: Digest::SHA256.file(path).hexdigest,
+          sha512: Digest::SHA512.file(path).hexdigest,
+          md5: Digest::MD5.file(path).hexdigest
+        }.fetch(format) { Digest::MD5.file(path).base64digest }
+      end
+
+      def remote_location?(path)
+        path.to_s.match(/\Ahttps?:/i).to_a.any?
+      end
+    end
 
     def initialize(filepath, **options)
       @filepath = filepath
@@ -37,6 +55,19 @@ module ImageWrangler
       @handler ||= @options[:handler]
     end
 
+    def mtime
+      @mtime ||= begin
+        remote? ? remote_mtime : File.mtime(@filepath)
+      end
+    rescue StandardError => _e
+      nil
+    end
+
+    def remote?
+      @remote ||= ImageWrangler::Image.remote_location?(@filepath)
+    end
+    alias url? remote?
+
     # See DEFAULT_TRANSFORMER for options
     def transformer(component_list, klass = nil, options = {})
       # Swap klass with options
@@ -59,6 +90,34 @@ module ImageWrangler
     end
 
     private
+
+    def gather_remote_data
+      remote_file = Down.open(@filepath)
+      data = remote_file.data
+      remote_file.close
+      data
+    rescue Down::Error => _e
+      {}
+    end
+
+    def remote_data
+      @remote_data ||= gather_remote_data
+    end
+
+    def remote_headers
+      @remote_headers ||= remote_data.fetch(:headers, {})
+    end
+
+    def remote_mtime
+      date = remote_headers.fetch('Last-Modified', nil)
+      return nil if date.nil?
+
+      # This is a little constrictive
+      t_format = 'ddd, dd mmm yyyy hh:nn:ss GMT'
+      Timeliness.parse(date, format: t_format, zone: :utc)
+    rescue StandardError => _e
+      nil
+    end
 
     def load_image
       handler.load_image(@filepath)

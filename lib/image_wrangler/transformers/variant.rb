@@ -34,9 +34,11 @@ module ImageWrangler
     # `options` should override errors handler etc
     class Variant
       attr_accessor :attributes,
+                    :checksum,
                     :height,
                     :image_type,
                     :mime_type,
+                    :mtime,
                     :size,
                     :source_image,
                     :width
@@ -47,6 +49,7 @@ module ImageWrangler
         @options = { errors: ImageWrangler::Errors.new }.merge(options)
 
         # Simple data about our output file
+        @checksum = nil
         @height = nil
         @image_type = nil
         @mime_type = nil
@@ -68,6 +71,11 @@ module ImageWrangler
         @filepath ||= begin
           @config[:filepath] || generate_tmp_filepath
         end
+      end
+      alias file_path filepath
+
+      def filesize
+        @size
       end
 
       def inspect_result
@@ -99,7 +107,8 @@ module ImageWrangler
       private
 
       def assign_output_attributes(image)
-        @mtime = File.exist?(filepath) ? File.mtime(filepath) : nil
+        @checksum = image.checksum
+        @mtime = image.mtime
         @height = image.height
         @image_type = image.image_type
         @mime_type = image.mime_type

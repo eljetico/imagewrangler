@@ -2,7 +2,9 @@ PATH
   remote: .
   specs:
     imagewrangler (0.1.4)
+      down
       mini_magick
+      timeliness
 
 GEM
   remote: https://rubygems.org/
@@ -14,6 +16,8 @@ GEM
     builder (3.2.4)
     coderay (1.1.3)
     crack (0.4.4)
+    down (5.2.2)
+      addressable (~> 2.5)
     ffi (1.13.1)
     formatador (0.2.5)
     guard (2.16.2)
@@ -74,6 +78,7 @@ GEM
     ruby-progressbar (1.10.1)
     shellany (0.0.1)
     thor (1.0.1)
+    timeliness (0.4.4)
     unicode-display_width (1.7.0)
     webmock (3.9.3)
       addressable (>= 2.3.6)
@@ -94,4 +99,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   2.1.4
+   2.2.20
