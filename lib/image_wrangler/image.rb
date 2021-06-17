@@ -11,7 +11,7 @@ module ImageWrangler
     DEFAULT_TRANSFORMER = ImageWrangler::Transformers::MiniMagick::Transformer
 
     class << self
-      def checksum(path, format: :base64)
+      def checksum(path, format: :md5)
         {
           sha1: Digest::SHA1.file(path).hexdigest,
           sha256: Digest::SHA256.file(path).hexdigest,

@@ -5,11 +5,11 @@ require 'image_wrangler'
 
 module ImageWrangler
   module Transformers
+    # rubocop:disable Metrics/ClassLength
     class TransformerTest < Minitest::Test
       OUTFILE_KEY = 'imagewrangler'
 
       def setup
-        # MiniMagick.logger.level = Logger::DEBUG
         @transformer = ImageWrangler::Transformers::MiniMagick::Transformer
       end
 
@@ -51,6 +51,9 @@ module ImageWrangler
 
         render_one = transformer.components[0]
         assert_equal 200, render_one.height
+        assert_equal(render_one.checksum, 'b0630a34c11024dc352f9c5a9d4014c0')
+        assert_equal(render_one.filename, "#{OUTFILE_KEY}.lo_res_200.jpg")
+        assert(render_one.mtime.is_a?(Time))
 
         # Source for first render is our main image ^
         source_image = transformer.components[0].source_image
@@ -135,5 +138,6 @@ module ImageWrangler
         )
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end
