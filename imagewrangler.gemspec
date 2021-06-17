@@ -17,7 +17,9 @@ Gem::Specification.new do |s|
   s.files       = Dir['README.md', 'Rakefile', 'lib/**/*', 'resources/**/*']
   s.required_ruby_version = '>= 2.3.0'
 
+  s.add_dependency 'down'
   s.add_dependency 'mini_magick'
+  s.add_dependency 'timeliness'
 
   s.add_development_dependency 'guard'
   s.add_development_dependency 'guard-minitest'

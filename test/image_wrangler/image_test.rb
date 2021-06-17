@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'timeliness'
 require_relative '../test_helper'
 
 class ImageTest < Minitest::Test
@@ -81,5 +82,39 @@ class ImageTest < Minitest::Test
     assert subject.is_a?(ImageWrangler::Transformers::MiniMagick::Transformer)
     refute subject.valid? # component list cannot be empty
   end
+
+  def test_mtime_with_local_file
+    wrangler = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
+    subject = wrangler.mtime
+    assert(subject.is_a?(Time))
+    assert(subject < Time.now)
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def test_mtime_with_remote_file
+    filepath = raster_path('valid_jpg.jpg')
+
+    stub_request(:get, 'https://example.com/image.jpg')
+      .to_return(
+        {
+          body: File.read(filepath),
+          headers: {
+            'Date' => 'Thu, 01 Apr 2021 12:09:35 GMT',
+            'Last-Modified' => 'Thu, 18 Mar 2021 22:34:32 GMT',
+            'Etag' => '"a0a368ca9cffcac6bdc0bcf69138dd0c-201"',
+            'Accept-Ranges' => 'bytes',
+            'Content-Type' => 'image/jpeg',
+            'Content-Length' => File.size(filepath)
+          }
+        }
+      )
+
+    wrangler = ImageWrangler::Image.new('https://example.com/image.jpg')
+    subject = wrangler.mtime
+
+    assert(subject.is_a?(Time))
+    assert(subject < Time.now)
+  end
+  # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 end
