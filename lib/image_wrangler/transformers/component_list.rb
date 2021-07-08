@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'forwardable'
+require "forwardable"
 
 module ImageWrangler
   module Transformers
@@ -40,7 +40,7 @@ module ImageWrangler
           if variant.valid?
             @variants.push(variant)
           else
-            errors.add(:variant, "#{index}: #{variant.errors.full_messages.join('; ')}")
+            errors.add(:variant, "#{index}: #{variant.errors.full_messages.join("; ")}")
           end
         end
 

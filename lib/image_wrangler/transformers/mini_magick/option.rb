@@ -7,7 +7,7 @@ module ImageWrangler
       class Option
         class << self
           def cleaned_option(option)
-            option.sub(/\A[\-|+]+?/, '')
+            option.sub(/\A[\-|+]+?/, "")
           end
 
           def recognized?(key)
@@ -38,11 +38,11 @@ module ImageWrangler
 
         def option_group
           parent = ::MiniMagick::Tool::Convert
-          @option_group ||= !recognized? ? 'unknown' : parent.option_group(clean_option)
+          @option_group ||= !recognized? ? "unknown" : parent.option_group(clean_option)
         end
 
         def plus_option?
-          @plus_option ||= (@supplied_key.match(/\A\+/) ? true : false)
+          @plus_option ||= @supplied_key.start_with?("+")
         end
 
         def recognized?
@@ -50,12 +50,12 @@ module ImageWrangler
         end
 
         def to_s
-          prefix = plus_option? ? '+' : '-'
+          prefix = plus_option? ? "+" : "-"
           "#{prefix}#{clean_option}"
         end
 
         def value
-          @supplied_value == '_x_' ? nil : @supplied_value
+          @supplied_value == "_x_" ? nil : @supplied_value
         end
       end
     end

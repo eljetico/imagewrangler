@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'fileutils'
+require "fileutils"
 
-require_relative 'component_list'
-require_relative 'variant'
+require_relative "component_list"
+require_relative "variant"
 
 module ImageWrangler
   # Transformer process images
@@ -60,7 +60,7 @@ module ImageWrangler
       def ensure_compliance
         errors.add(:config, component_list.errors.full_messages) unless component_list.valid?
 
-        errors.add(:component_list, 'cannot be empty') unless component_list.variants.any?
+        errors.add(:component_list, "cannot be empty") unless component_list.variants.any?
       end
 
       def ensure_outfile_removed(filepath)
@@ -76,7 +76,7 @@ module ImageWrangler
           begin
             variant.source_image = assert_source_image(index)
             variant.process
-          rescue StandardError => e
+          rescue => e
             new_message = "failed at index #{index}: #{e.message}"
             ensure_outfile_removed(variant.filepath)
             errors.add(:variant, new_message)

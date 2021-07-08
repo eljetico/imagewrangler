@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-require_relative '../test_helper'
+require_relative "../test_helper"
 
 module ImageWrangler
   class ProfilesTest < Minitest::Test
-    def setup; end
+    def setup
+    end
 
     def test_srgb
       subject = ImageWrangler::Profiles.sRGB

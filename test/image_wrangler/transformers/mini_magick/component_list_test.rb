@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../test_helper'
+require_relative "../../../test_helper"
 
 module ImageWrangler
   module Transformers
@@ -36,17 +36,17 @@ module ImageWrangler
         def bad_list
           [
             {
-              filename: 'bad_recipe',
+              filename: "bad_recipe",
               options: {
                 qwerty: true
               }
             },
             {
-              filename: 'good_recipe',
+              filename: "good_recipe",
               options: {
                 gamma: 0.5,
-                sharpen: '1x0.5',
-                profile: 'icc:/path/to/profile.icc'
+                sharpen: "1x0.5",
+                profile: "icc:/path/to/profile.icc"
               }
             }
           ]

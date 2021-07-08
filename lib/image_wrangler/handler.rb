@@ -18,12 +18,12 @@ module ImageWrangler
     def megapixels
       @megapixels ||= ((width * height).to_f / 1_000_000)
     end
-    alias mp megapixels
+    alias_method :mp, :megapixels
 
     def megapixels_humanized
       @megapixels_humanized ||= "#{megapixels.round(1)}mp"
     end
-    alias mp_h megapixels_humanized
+    alias_method :mp_h, :megapixels_humanized
 
     private
 
@@ -39,16 +39,16 @@ module ImageWrangler
       return nil if color_mode.nil?
 
       clean_space = color_mode.strip
-      color_space = clean_space.eql?('Gray') ? 'Grayscale' : clean_space
-      ['srgb'].include?(color_space.downcase) ? 'RGB' : color_space
+      color_space = clean_space.eql?("Gray") ? "Grayscale" : clean_space
+      ["srgb"].include?(color_space.downcase) ? "RGB" : color_space
     end
 
-    def parse_date(dayte, date_format = '%Y:%m:%d %H:%M:%S')
+    def parse_date(dayte, date_format = "%Y:%m:%d %H:%M:%S")
       return nil if dayte.nil?
       return dayte if dayte.is_a? Time
 
       Date.strptime(dayte, date_format).to_time
-    rescue StandardError => _e
+    rescue => _e
       nil
     end
   end

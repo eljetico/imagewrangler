@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../test_helper'
+require_relative "../../../test_helper"
 
 module ImageWrangler
   module Transformers
@@ -21,9 +21,9 @@ module ImageWrangler
         def test_unrecognized_options_sets_error
           subject = @variant.new({
             options: {
-              'qwerty' => '42',
-              'dingbat' => '1970',
-              'gamma' => '0.5'
+              "qwerty" => "42",
+              "dingbat" => "1970",
+              "gamma" => "0.5"
             }
           })
 
@@ -35,7 +35,7 @@ module ImageWrangler
         def test_array_value_options
           subject = @variant.new({
             options: {
-                        '+profile' => %w[8BIMTEXT IPTC IPTCTEXT XMP]
+                        "+profile" => %w[8BIMTEXT IPTC IPTCTEXT XMP]
             }
           })
 
@@ -43,15 +43,15 @@ module ImageWrangler
 
           result = subject.grouped_options
 
-          assert_equal 4, result['image_operators'].length
+          assert_equal 4, result["image_operators"].length
         end
 
         def test_filepath_supplied
-          expected = '/path/to/file.jpg'
+          expected = "/path/to/file.jpg"
 
           subject = @variant.new({
                                    filepath: expected,
-                                   options: { 'crop' => '90x200+0+150' }
+                                   options: {"crop" => "90x200+0+150"}
                                   })
 
           subject.validate!
@@ -61,7 +61,7 @@ module ImageWrangler
 
         def test_filepath_not_supplied
           subject = @variant.new({
-            options: { 'crop' => '90x200+0+150' }
+            options: {"crop" => "90x200+0+150"}
           })
 
           subject.validate!
@@ -74,19 +74,19 @@ module ImageWrangler
         def test_grouped_options_error
           subject = @variant.new({
             options: {
-                        'crop' => '90x200+0+150',
-                        'colorspace' => 'RGB',
-                        'gamma' => '0.5',
-                        'sharpen' => '1x0.5'
+                        "crop" => "90x200+0+150",
+                        "colorspace" => "RGB",
+                        "gamma" => "0.5",
+                        "sharpen" => "1x0.5"
             }
           })
 
           subject.validate!
 
           assert_equal(3, subject.grouped_options.keys.length)
-          assert_equal(1, subject.grouped_options['image_settings'].length, 'image_settings')
-          assert_equal(2, subject.grouped_options['image_operators'].length, 'image_operators')
-          assert_equal(1, subject.grouped_options['image_sequence_operators'].length, 'image_sequence_operators')
+          assert_equal(1, subject.grouped_options["image_settings"].length, "image_settings")
+          assert_equal(2, subject.grouped_options["image_operators"].length, "image_operators")
+          assert_equal(1, subject.grouped_options["image_sequence_operators"].length, "image_sequence_operators")
         end
         # rubocop:enable Metrics/AbcSize
 
@@ -94,43 +94,43 @@ module ImageWrangler
         def test_ordered_grouped_options
           subject = @variant.new({
             options: {
-                        'crop' => '90x200+0+150',
-                        'colorspace' => 'RGB',
-                        'gamma' => '0.5',
-                        'sharpen' => '1x0.5'
+                        "crop" => "90x200+0+150",
+                        "colorspace" => "RGB",
+                        "gamma" => "0.5",
+                        "sharpen" => "1x0.5"
             }
           })
 
           subject.validate!
           result = subject.ordered_options
 
-          assert_equal 'colorspace', result[0].clean_option
-          assert_equal 'crop', result[-1].clean_option
+          assert_equal "colorspace", result[0].clean_option
+          assert_equal "crop", result[-1].clean_option
         end
 
         # Create an array of options and values for MiniMagick::Convert.merge!
         def test_merged_options
           subject = @variant.new({
                                     options: {
-                                                'colorspace' => 'RGB',
-                                                '+profile' => %w[8BIMTEXT IPTC],
-                                                'append' => nil
+                                                "colorspace" => "RGB",
+                                                "+profile" => %w[8BIMTEXT IPTC],
+                                                "append" => nil
                                               }
                                   })
 
           subject.validate!
 
           expected = [
-            '-colorspace',
-            'RGB',
+            "-colorspace",
+            "RGB",
 
-            '+profile',
-            '8BIMTEXT',
+            "+profile",
+            "8BIMTEXT",
 
-            '+profile',
-            'IPTC',
+            "+profile",
+            "IPTC",
 
-            '-append'
+            "-append"
           ]
 
           assert_equal expected, subject.merged_options

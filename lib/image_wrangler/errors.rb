@@ -22,7 +22,7 @@ module ImageWrangler
     #
     # If message is a proc, will be called and the result
     # added as a message string
-    def add(attribute, message = 'invalid')
+    def add(attribute, message = "invalid")
       message = message.call if message.respond_to?(:call)
 
       add_error(attribute.to_sym, message)
@@ -45,7 +45,7 @@ module ImageWrangler
     def empty?
       size.zero?
     end
-    alias blank? empty?
+    alias_method :blank?, :empty?
 
     def full_messages
       map { |attribute, message| full_message(attribute, message) }
@@ -55,8 +55,8 @@ module ImageWrangler
       attribute = attribute.to_sym
       errors.key?(attribute) && !errors[attribute].empty?
     end
-    alias has_key? include?
-    alias key? include?
+    alias_method :has_key?, :include?
+    alias_method :key?, :include?
 
     def messages
       errors.inspect
@@ -67,7 +67,7 @@ module ImageWrangler
     end
 
     def to_s
-      full_messages.sort.join('; ')
+      full_messages.sort.join("; ")
     end
 
     def values

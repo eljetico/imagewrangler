@@ -6,39 +6,39 @@ module MiniMagick
   POSTSCRIPT_FORMATS = %w[PDF EPT EPS PS].freeze
 
   PERMITTED_EXTENSIONS = {
-    'BMP' => ['.bmp'],
-    'EPT' => ['.eps', '.ept'],
-    'EPS' => ['.eps', '.ept'],
-    'JPEG' => ['.jpg', '.jpeg'],
-    'JPF' => ['.jp2', '.j2k', '.jpf', '.jpx', '.jpm', '.mj2'],
-    'PAM' => ['.webp'],
-    'PNG' => ['.png'],
-    'WEBP' => ['.webp'],
-    'GIF' => ['.gif'],
-    'HEIF' => [
-      '.heif',
-      '.heifs',
-      '.heic',
-      '.heics',
-      '.avci',
-      '.avcs',
-      '.avif',
-      '.avifs'
+    "BMP" => [".bmp"],
+    "EPT" => [".eps", ".ept"],
+    "EPS" => [".eps", ".ept"],
+    "JPEG" => [".jpg", ".jpeg"],
+    "JPF" => [".jp2", ".j2k", ".jpf", ".jpx", ".jpm", ".mj2"],
+    "PAM" => [".webp"],
+    "PNG" => [".png"],
+    "WEBP" => [".webp"],
+    "GIF" => [".gif"],
+    "HEIF" => [
+      ".heif",
+      ".heifs",
+      ".heic",
+      ".heics",
+      ".avci",
+      ".avcs",
+      ".avif",
+      ".avifs"
     ],
-    'TIFF' => ['.tif', '.tiff'],
-    'PS' => ['.eps', '.ept'],
-    'PDF' => ['.pdf'],
-    'SVG' => ['.svg']
+    "TIFF" => [".tif", ".tiff"],
+    "PS" => [".eps", ".ept"],
+    "PDF" => [".pdf"],
+    "SVG" => [".svg"]
   }.freeze
 
   # Extends MiniMagick::Image class with custom functionality
   class Image
     def image_type
-      return 'raster' if raster?
+      return "raster" if raster?
 
-      return 'vector' if vector?
+      return "vector" if vector?
 
-      'unknown'
+      "unknown"
     end
 
     def raster?
@@ -46,7 +46,7 @@ module MiniMagick
     end
 
     def pdf?
-      type.upcase.match(/PDF/) ? true : false
+      /PDF/.match?(type.upcase) ? true : false # standard:disable Style/IfWithBooleanLiteralBranches
     end
 
     def postscript?
