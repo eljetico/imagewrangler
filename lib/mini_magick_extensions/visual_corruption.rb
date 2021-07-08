@@ -7,12 +7,12 @@ module MiniMagick
 
     def histogram_for_sample(options = {})
       opts = {
-        gravity: 'SouthEast',
-        crop: '20%x1%'
+        gravity: "SouthEast",
+        crop: "20%x1%"
       }.merge(options)
 
       # rubocop:disable Layout/LineLength
-      run_command('convert', path, '-gravity', opts[:gravity], '-crop', opts[:crop], '-format', '%c', '-depth', 8, 'histogram:info:').split("\n").compact
+      run_command("convert", path, "-gravity", opts[:gravity], "-crop", opts[:crop], "-format", "%c", "-depth", 8, "histogram:info:").split("\n").compact
       # rubocop:enable Layout/LineLength
     end
 
@@ -32,13 +32,13 @@ module MiniMagick
     def visually_corrupt?(opts = {})
       return false unless raster?
 
-      test_opts = { max_gray: 180, min_gray: 120 }.merge(opts)
+      test_opts = {max_gray: 180, min_gray: 120}.merge(opts)
 
       rgb = rgb_values_from_histogram(histogram_for_sample(test_opts))
 
       return false if rgb.empty? || (rgb.length > 1)
 
-      (test_opts[:min_gray]..test_opts[:max_gray]).include?(rgb[0].to_i)
+      (test_opts[:min_gray]..test_opts[:max_gray]).cover?(rgb[0].to_i)
     end
   end
 end

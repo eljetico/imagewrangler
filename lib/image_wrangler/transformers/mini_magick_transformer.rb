@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'mini_magick/variant'
-require_relative 'mini_magick/option'
-require_relative 'mini_magick/component_list'
+require_relative "mini_magick/variant"
+require_relative "mini_magick/option"
+require_relative "mini_magick/component_list"
 
 module ImageWrangler
   module Transformers

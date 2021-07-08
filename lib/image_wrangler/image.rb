@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'down'
-require 'timeliness'
+require "down"
+require "timeliness"
 
 module ImageWrangler
   # Default wrapper for image handling
@@ -57,14 +57,14 @@ module ImageWrangler
 
     def mtime
       @mtime ||= remote? ? remote_mtime : File.mtime(@filepath)
-    rescue StandardError => _e
+    rescue => _e
       nil
     end
 
     def remote?
       @remote ||= ImageWrangler::Image.remote_location?(@filepath)
     end
-    alias url? remote?
+    alias_method :url?, :remote?
 
     # See DEFAULT_TRANSFORMER for options
     def transformer(component_list, klass = nil, options = {})
@@ -107,13 +107,13 @@ module ImageWrangler
     end
 
     def remote_mtime
-      date = remote_headers.fetch('Last-Modified', nil)
+      date = remote_headers.fetch("Last-Modified", nil)
       return nil if date.nil?
 
       # This is a little constrictive
-      t_format = 'ddd, dd mmm yyyy hh:nn:ss GMT'
+      t_format = "ddd, dd mmm yyyy hh:nn:ss GMT"
       Timeliness.parse(date, format: t_format, zone: :utc)
-    rescue StandardError => _e
+    rescue => _e
       nil
     end
 

@@ -34,9 +34,10 @@ GEM
     guard-minitest (2.4.6)
       guard-compat (~> 1.2)
       minitest (>= 3.0)
-    guard-rubocop (1.4.0)
-      guard (~> 2.0)
-      rubocop (< 2.0)
+    guard-standardrb (0.2.2)
+      guard (>= 2.0.0)
+      guard-compat (~> 1.0)
+      standardrb
     hashdiff (1.0.1)
     listen (3.5.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -79,8 +80,16 @@ GEM
       unicode-display_width (>= 1.4.0, < 3.0)
     rubocop-ast (1.7.0)
       parser (>= 3.0.1.1)
+    rubocop-performance (1.11.4)
+      rubocop (>= 1.7.0, < 2.0)
+      rubocop-ast (>= 0.4.0)
     ruby-progressbar (1.11.0)
     shellany (0.0.1)
+    standard (1.1.5)
+      rubocop (= 1.18.3)
+      rubocop-performance (= 1.11.4)
+    standardrb (1.0.0)
+      standard
     thor (1.1.0)
     timeliness (0.4.4)
     unicode-display_width (2.0.0)
@@ -95,11 +104,10 @@ PLATFORMS
 DEPENDENCIES
   guard
   guard-minitest
-  guard-rubocop
+  guard-standardrb
   imagewrangler!
   minitest-reporters
   rb-readline
-  rubocop
   webmock
 
 BUNDLED WITH

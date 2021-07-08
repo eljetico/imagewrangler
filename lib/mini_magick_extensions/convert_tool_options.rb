@@ -38,13 +38,13 @@ module MiniMagick
 
         def image_operators_options
           # rubocop:disable Style/ClassVars
-          @@image_operators_options ||= _convert_tool.extract_tool_options('Image Operators')
+          @@image_operators_options ||= _convert_tool.extract_tool_options("Image Operators")
           # rubocop:enable Style/ClassVars
         end
 
         def image_sequence_operators_options
           # rubocop:disable Style/ClassVars
-          @@image_sequence_operators_options ||= _convert_tool.extract_tool_options('Image Sequence Operators')
+          @@image_sequence_operators_options ||= _convert_tool.extract_tool_options("Image Sequence Operators")
           # rubocop:enable Style/ClassVars
         end
 
@@ -62,14 +62,14 @@ module MiniMagick
           # rubocop:enable Style/ClassVars
         end
 
-        def extract_tool_options(option_group = 'Image Settings')
+        def extract_tool_options(option_group = "Image Settings")
           tool_help = _convert_tool.tool_help
 
           # Take option group to first double newline
           tool_help.match(/\n#{option_group}:\n(.*?)(?:\n\n)/mi)[1].split("\n").map do |line|
             option = line.strip.split(/\s+/)[0]
             # Remove hyphen in performant way (better than 'sub' apparently)
-            option[0] = ''
+            option[0] = ""
             option
           end
         end

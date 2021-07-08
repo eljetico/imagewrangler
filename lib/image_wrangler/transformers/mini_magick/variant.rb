@@ -25,7 +25,7 @@ module ImageWrangler
       #   'profile' => ['transitional.icc', 'rgb.icc']
       # }
       #
-      require 'tempfile'
+      require "tempfile"
 
       # Individual component
       class Variant < ImageWrangler::Transformers::Variant
@@ -98,7 +98,7 @@ module ImageWrangler
         end
 
         def validate_empty_options
-          errors.add(:options, 'cannot be empty') if supplied_options.empty?
+          errors.add(:options, "cannot be empty") if supplied_options.empty?
         end
 
         # rubocop:disable Metrics/MethodLength
@@ -112,7 +112,7 @@ module ImageWrangler
               # Supplied values can be either String, Array or nil
               # Coercing nils to Array doesn't work, so send a special
               # string instead. See Option#value
-              Array(value || '_x_').each do |val|
+              Array(value || "_x_").each do |val|
                 option = @my_option.new(key.to_s, val)
                 @grouped_options[option.option_group].push(option)
               end
@@ -130,12 +130,12 @@ module ImageWrangler
         def handle_unrecognized_options
           return unless @unrecognized_options.any?
 
-          opts = @unrecognized_options.map { |opt| "'#{opt}'" }.join('; ')
+          opts = @unrecognized_options.map { |opt| "'#{opt}'" }.join("; ")
           errors.add(:options, "unrecognized #{opts}")
         end
 
         def skip_option?(key)
-          key.eql?('')
+          key.eql?("")
         end
       end
     end

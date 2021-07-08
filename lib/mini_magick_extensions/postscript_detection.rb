@@ -37,8 +37,8 @@ module MiniMagick
 
       (density * scaling_factor).ceil
     end
-    alias vector_resize_density postscript_resize_density
-    alias vector_rescale_density postscript_resize_density
+    alias_method :vector_resize_density, :postscript_resize_density
+    alias_method :vector_rescale_density, :postscript_resize_density
 
     def eps_metadata
       @eps_metadata ||= extract_eps_metadata
@@ -98,7 +98,7 @@ module MiniMagick
     private
 
     def _ps_get_line_sep(str_blob)
-      line = str_blob.gets.encode('UTF-8', 'binary', _ps_line_encode_opts)
+      line = str_blob.gets.encode("UTF-8", "binary", _ps_line_encode_opts)
       lsep = line[PS_LINE_SEP_REGEX]
       str_blob.rewind
       lsep
@@ -108,7 +108,7 @@ module MiniMagick
       {
         invalid: :replace,
         undef: :replace,
-        replace: ''
+        replace: ""
       }
     end
   end
