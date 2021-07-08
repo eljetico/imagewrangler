@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.authors     = ['Tim Davies']
   s.email       = 'eljetico+imagewrangler@gmail.com'
   s.files       = Dir['README.md', 'Rakefile', 'lib/**/*', 'resources/**/*']
-  s.required_ruby_version = '>= 2.3.0'
+  s.required_ruby_version = '>= 2.3'
 
   s.add_dependency 'down'
   s.add_dependency 'mini_magick'

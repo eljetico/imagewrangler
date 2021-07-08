@@ -46,7 +46,7 @@ module MiniMagick
     end
 
     def pdf?
-      type.upcase.match(/PDF/)
+      type.upcase.match(/PDF/) ? true : false
     end
 
     def postscript?
