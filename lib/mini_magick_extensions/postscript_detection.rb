@@ -18,7 +18,7 @@ module MiniMagick
     PS_LINE_SEP_REGEX = /[\r\n]+/.freeze
 
     def postscript_version
-      eps_metadata.fetch(:postscript_version)
+      eps_metadata[:postscript_version]
     end
 
     # Density required for 20mp by default
