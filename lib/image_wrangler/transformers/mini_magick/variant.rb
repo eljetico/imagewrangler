@@ -39,7 +39,9 @@ module ImageWrangler
           image_sequence_operators
         ].freeze
 
-        def initialize(config = {}, options = {})
+        OPTS = {}.freeze
+
+        def initialize(config = OPTS, options = OPTS)
           super(config, options)
 
           @tool = ::MiniMagick::Tool::Convert
@@ -85,7 +87,7 @@ module ImageWrangler
         end
 
         def supplied_options
-          @supplied_options ||= @config.fetch(:options, {})
+          @supplied_options ||= @config.fetch(:options, OPTS)
         end
 
         def valid?

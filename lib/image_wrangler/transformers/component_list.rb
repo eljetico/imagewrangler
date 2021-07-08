@@ -11,9 +11,11 @@ module ImageWrangler
       extend Forwardable
       delegate %i[each each_with_index to_a] => :@variants
 
+      OPTS = {}.freeze
+
       attr_reader :variants, :list
 
-      def initialize(list = [], options = {})
+      def initialize(list = [], options = OPTS)
         @options = {
           error_handler: ImageWrangler::Errors.new
         }.merge(options)

@@ -12,7 +12,9 @@ module ImageWrangler
     class Transformer
       attr_reader :component_list, :image, :menu, :options
 
-      def initialize(filepath, list, options = {})
+      OPTS = {}.freeze
+
+      def initialize(filepath, list, options = OPTS)
         @image = instantiate_source_image(filepath)
         @options = {
           cascade: false,

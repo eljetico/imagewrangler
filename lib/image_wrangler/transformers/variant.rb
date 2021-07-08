@@ -43,7 +43,9 @@ module ImageWrangler
         :source_image,
         :width
 
-      def initialize(config = {}, options = {})
+      OPTS = {}.freeze
+
+      def initialize(config = OPTS, options = OPTS)
         @source_image = nil
         @config = {}.merge(config)
         @options = {errors: ImageWrangler::Errors.new}.merge(options)

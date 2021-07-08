@@ -9,6 +9,7 @@ module ImageWrangler
     attr_reader :filepath
 
     DEFAULT_TRANSFORMER = ImageWrangler::Transformers::MiniMagick::Transformer
+    OPTS = {}.freeze
 
     class << self
       def checksum(path, format: :md5)
@@ -67,7 +68,7 @@ module ImageWrangler
     alias_method :url?, :remote?
 
     # See DEFAULT_TRANSFORMER for options
-    def transformer(component_list, klass = nil, options = {})
+    def transformer(component_list, klass = nil, options = OPTS)
       # Swap klass with options
       if klass.is_a?(Hash)
         options = klass
