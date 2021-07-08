@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    imagewrangler (0.1.4)
+    imagewrangler (0.1.5)
       down
       mini_magick
       timeliness

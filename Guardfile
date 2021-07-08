@@ -18,18 +18,10 @@
 # and, you'll have to watch "config/Guardfile" instead of "Guardfile"
 
 guard :minitest do
-  # with Minitest::Unit
-  # watch(%r{^test/(.*)/?(.+)_test\.rb$})
-  # watch(%r{^lib/(.*/)?([^/]+)\.rb$})     { 'test' }
   watch(%r{^test/test_helper\.rb$}) { "test" }
   watch(%r{^lib/(.*/)?([^/]+)\.rb$}) { |m| "test/#{m[1]}#{m[2]}_test.rb" }
   watch(%r{^test/.+_test\.rb$})
 end
-
-# guard :rubocop, cli: ['--display-cop-names'] do
-#   watch(/.+\.rb$/)
-#   watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
-# end
 
 guard :standardrb, fix: false, all_on_start: true, progress: true do
   watch(/.+\.rb$/)

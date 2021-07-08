@@ -17,6 +17,8 @@ module MiniMagick
 
     PS_LINE_SEP_REGEX = /[\r\n]+/.freeze
 
+    OPTS = {}.freeze
+
     def postscript_version
       eps_metadata[:postscript_version]
     end
@@ -46,8 +48,8 @@ module MiniMagick
 
     # rubocop:disable all
     def extract_eps_metadata
-      return {} unless vector?
-      return {} if pdf?
+      return OPTS unless vector?
+      return OPTS if pdf?
 
       begin
         f = StringIO.new to_blob

@@ -47,7 +47,7 @@ module ImageWrangler
 
       def initialize(config = OPTS, options = OPTS)
         @source_image = nil
-        @config = {}.merge(config)
+        @config = OPTS.merge(config) # we have no defaults, but this may change
         @options = {errors: ImageWrangler::Errors.new}.merge(options)
 
         # Simple data about our output file

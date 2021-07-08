@@ -16,9 +16,7 @@ module ImageWrangler
           end
 
           def available_options
-            # rubocop:disable Style/ClassVars
             @@available_options ||= ::MiniMagick::Tool::Convert.available_options
-            # rubocop:enable Style/ClassVars
           end
         end
 

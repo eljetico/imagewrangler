@@ -104,7 +104,7 @@ module ImageWrangler
     end
 
     def remote_headers
-      @remote_headers ||= remote_data.fetch(:headers, {})
+      @remote_headers ||= remote_data.fetch(:headers, OPTS)
     end
 
     def remote_mtime

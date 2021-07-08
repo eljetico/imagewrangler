@@ -12,7 +12,9 @@ module MiniMagick
       end
 
       def noisy_property?(value)
-        value =~ /8BIM:/i
+        # standard:disable Performance/RegexpMatch
+        value.match(/(8BIM:|Decoded)/i) ? true : false # standard:disable Performance/RedundantMatch
+        # standard:enable Performance/RegexpMatch
       end
 
       def suppress_warnings

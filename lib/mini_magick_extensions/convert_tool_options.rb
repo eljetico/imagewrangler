@@ -9,57 +9,43 @@ module MiniMagick
           %w[
             image_settings image_operators image_sequence_operators
           ].each do |grp|
-            # rubocop:disable Style/RedundantSelf
+            # standard:disable Style/RedundantSelf
             options = self.send("#{grp}_options".to_sym)
-            # rubocop:enable Style/RedundantSelf
+            # standard:enable Style/RedundantSelf
             return grp if options.include?(option)
           end
 
           nil
         end
 
-        # rubocop:disable Style/ClassVars
         def available_options
           @@available_options ||= [
-            # rubocop:disable Style/RedundantSelf
-            self.image_settings_options,
-            self.image_operators_options,
-            self.image_sequence_operators_options
-            # rubocop:enable Style/RedundantSelf
+            image_settings_options,
+            image_operators_options,
+            image_sequence_operators_options
           ].flatten.uniq
         end
-        # rubocop:enable Style/ClassVars
 
         def image_settings_options
-          # rubocop:disable Style/ClassVars
           @@image_settings_options ||= _convert_tool.extract_tool_options
-          # rubocop:enable Style/ClassVars
         end
 
         def image_operators_options
-          # rubocop:disable Style/ClassVars
           @@image_operators_options ||= _convert_tool.extract_tool_options("Image Operators")
-          # rubocop:enable Style/ClassVars
         end
 
         def image_sequence_operators_options
-          # rubocop:disable Style/ClassVars
           @@image_sequence_operators_options ||= _convert_tool.extract_tool_options("Image Sequence Operators")
-          # rubocop:enable Style/ClassVars
         end
 
         def tool_help
-          # rubocop:disable Style/ClassVars
-          # rubocop:disable Style/RedundantBegin
+          # standard:disable Style/RedundantBegin
           @@tool_help ||= begin
-            # rubocop:disable Style/SymbolProc
             _convert_tool.new(whiny: false) do |b|
               b.help
             end
-            # rubocop:enable Style/SymbolProc
           end
-          # rubocop:enable Style/RedundantBegin
-          # rubocop:enable Style/ClassVars
+          # standard:enable Style/RedundantBegin
         end
 
         def extract_tool_options(option_group = "Image Settings")

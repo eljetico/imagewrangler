@@ -4,7 +4,8 @@
 module ImageWrangler
   # Abstract Handler class (eg MiniMagick)
   class Handler
-    GRAYSCALE_PEAK_SATURATION_THRESHOLD = 0.15 # ESP value
+    # Helps determine 'black and white' images
+    GRAYSCALE_PEAK_SATURATION_THRESHOLD = 0.15
 
     attr_accessor :filepath
 
