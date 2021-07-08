@@ -210,7 +210,7 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal 2, subject.layers.length
   end
 
-  def test_valid_jpeg_2000
+  def test_valid_jpeg_two_k
     @subject.load_image(raster_path('valid_jpeg_2000.jp2'))
     assert_equal 'JP2', @subject.type
     assert @subject.raster?

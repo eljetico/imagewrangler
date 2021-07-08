@@ -66,7 +66,7 @@ module ImageWrangler
 
           subject.validate!
 
-          assert subject.filepath.match(%r(\A\/tmp\/\w{6,}))
+          assert subject.filepath.match(%r(\A/tmp/\w{6,}))
         end
 
         # rubocop:disable Metrics/MethodLength
@@ -83,12 +83,10 @@ module ImageWrangler
 
           subject.validate!
 
-          # rubocop:disable Layout/LineLength
           assert_equal(3, subject.grouped_options.keys.length)
           assert_equal(1, subject.grouped_options['image_settings'].length, 'image_settings')
           assert_equal(2, subject.grouped_options['image_operators'].length, 'image_operators')
           assert_equal(1, subject.grouped_options['image_sequence_operators'].length, 'image_sequence_operators')
-          # rubocop:enable Layout/LineLength
         end
         # rubocop:enable Metrics/AbcSize
 

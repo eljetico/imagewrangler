@@ -32,54 +32,50 @@ module MiniMagick
 
         def image_settings_options
           # rubocop:disable Style/ClassVars
-          @@image_settings_options ||= begin
-            MiniMagick::Tool::Convert.extract_tool_options
-          end
+          @@image_settings_options ||= _convert_tool.extract_tool_options
           # rubocop:enable Style/ClassVars
         end
 
         def image_operators_options
           # rubocop:disable Style/ClassVars
-          @@image_operators_options ||= begin
-            MiniMagick::Tool::Convert.extract_tool_options('Image Operators')
-          end
+          @@image_operators_options ||= _convert_tool.extract_tool_options('Image Operators')
           # rubocop:enable Style/ClassVars
         end
 
         def image_sequence_operators_options
           # rubocop:disable Style/ClassVars
-          @@image_sequence_operators_options ||= begin
-            # rubocop:disable Layout/LineLength
-            MiniMagick::Tool::Convert.extract_tool_options('Image Sequence Operators')
-            # rubocop:enable Layout/LineLength
-          end
+          @@image_sequence_operators_options ||= _convert_tool.extract_tool_options('Image Sequence Operators')
           # rubocop:enable Style/ClassVars
         end
 
         def tool_help
           # rubocop:disable Style/ClassVars
+          # rubocop:disable Style/RedundantBegin
           @@tool_help ||= begin
             # rubocop:disable Style/SymbolProc
-            MiniMagick::Tool::Convert.new(whiny: false) do |b|
+            _convert_tool.new(whiny: false) do |b|
               b.help
             end
             # rubocop:enable Style/SymbolProc
           end
+          # rubocop:enable Style/RedundantBegin
           # rubocop:enable Style/ClassVars
         end
 
         def extract_tool_options(option_group = 'Image Settings')
-          tool_help = MiniMagick::Tool::Convert.tool_help
+          tool_help = _convert_tool.tool_help
 
           # Take option group to first double newline
-          # rubocop:disable Layout/LineLength
-          tool_help.match(/\n#{option_group}\:\n(.*?)(?:\n\n)/mi)[1].split("\n").map do |line|
+          tool_help.match(/\n#{option_group}:\n(.*?)(?:\n\n)/mi)[1].split("\n").map do |line|
             option = line.strip.split(/\s+/)[0]
             # Remove hyphen in performant way (better than 'sub' apparently)
             option[0] = ''
             option
           end
-          # rubocop:enable Layout/LineLength
+        end
+
+        def _convert_tool
+          MiniMagick::Tool::Convert
         end
       end
     end

@@ -31,7 +31,6 @@ module ImageWrangler
       end
 
       # rubocop:disable Metrics/MethodLength
-      # rubocop:disable Metrics/AbcSize
       def instantiate_variants
         @variants.clear
 
@@ -41,15 +40,12 @@ module ImageWrangler
           if variant.valid?
             @variants.push(variant)
           else
-            # rubocop:disable Layout/LineLength
             errors.add(:variant, "#{index}: #{variant.errors.full_messages.join('; ')}")
-            # rubocop:enable Layout/LineLength
           end
         end
 
         @variants.any?
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
 
       def valid?

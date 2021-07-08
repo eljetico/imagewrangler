@@ -49,11 +49,7 @@ module ImageWrangler
       # Note `identify -format "%[channels]"` returns colorspace (lowercased)
       # with current IM version so we use bruteforce method
       def channel_count
-        @channel_count ||= begin
-          # rubocop:disable Style/RedundantSelf
-          self.colorspace.match(/\Agray/i) ? 1 : self.colorspace.length
-          # rubocop:enable Style/RedundantSelf
-        end
+        @channel_count ||= colorspace.match(/\Agray/i) ? 1 : colorspace.length
       end
       alias channels channel_count
 
@@ -259,13 +255,8 @@ module ImageWrangler
       def handle_mini_magick_error(error)
         example = error.message.split("\n")[1]
 
-        if example.match(/premature end/i)
-          raise ImageWrangler::Error, 'corrupted file'
-        end
-
-        if example.match(/empty input file/i)
-          raise ImageWrangler::Error, 'empty file'
-        end
+        raise ImageWrangler::Error, 'corrupted file' if example.match(/premature end/i)
+        raise ImageWrangler::Error, 'empty file' if example.match(/empty input file/i)
 
         # In calling code, use err.cause to access nested exception
         raise ImageWrangler::Error, 'MiniMagick error'

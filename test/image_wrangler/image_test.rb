@@ -52,9 +52,7 @@ class ImageTest < Minitest::Test
     wrangler = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
 
     wrangler.validate do |img|
-      unless img.colorspace.eql?('CMYK')
-        img.errors.add(:colorspace, 'must be CMYK')
-      end
+      img.errors.add(:colorspace, 'must be CMYK') unless img.colorspace.eql?('CMYK')
     end
 
     assert_includes wrangler.errors, :colorspace
@@ -71,9 +69,7 @@ class ImageTest < Minitest::Test
 
     assert_includes wrangler.errors, :postscript_version
 
-    # rubocop:disable Layout/LineLength
     assert_equal ['postscript_version must be <= 3.0'], wrangler.errors.full_messages
-    # rubocop:enable Layout/LineLength
   end
 
   def test_transformer_defaults

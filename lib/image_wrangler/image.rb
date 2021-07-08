@@ -56,9 +56,7 @@ module ImageWrangler
     end
 
     def mtime
-      @mtime ||= begin
-        remote? ? remote_mtime : File.mtime(@filepath)
-      end
+      @mtime ||= remote? ? remote_mtime : File.mtime(@filepath)
     rescue StandardError => _e
       nil
     end

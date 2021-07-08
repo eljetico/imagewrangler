@@ -39,9 +39,7 @@ class ConvertToolOptionsTest < Minitest::Test
       'smush' => 'image_sequence_operators',
       'gamma' => 'image_operators'
     }.each_pair do |opt, group|
-      # rubocop:disable Layout/LineLength
       assert_equal(group, MiniMagick::Tool::Convert.option_group(opt), "#{opt} grouped")
-      # rubocop:enable Layout/LineLength
     end
   end
 end

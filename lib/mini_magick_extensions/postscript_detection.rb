@@ -3,17 +3,17 @@
 module MiniMagick
   # Parse file as text to derive version, bounding box etc
   class Image
-    PS_VERSION_REGEX = /.*?\%
-      \!PS-Adobe-(\d\.\d)\s+?(?:EP[S|T]F*?-.*?)
+    PS_VERSION_REGEX = /.*?%
+      !PS-Adobe-(\d\.\d)\s+?(?:EP[S|T]F*?-.*?)
       \W*?
     /x.freeze
 
     PS_BOUNDING_BOX_REGEX = /
-      \%\%BoundingBox:
+      %%BoundingBox:
       \s(-?\d+)\s(-?\d+)\s(-?\d+)\s(-?\d+)
     /x.freeze
 
-    PS_EOF_REGEX = /\%\%EOF/.freeze
+    PS_EOF_REGEX = /%%EOF/.freeze
 
     PS_LINE_SEP_REGEX = /[\r\n]+/.freeze
 
