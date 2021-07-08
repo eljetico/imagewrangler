@@ -2,8 +2,8 @@ version: '2'
 services:
   app:
     build: .
+    container_name: imagewrangler
     volumes:
       - .:/apps/imagewrangler
     command: ["bundle", "exec", "guard"]
     tty: true
-
