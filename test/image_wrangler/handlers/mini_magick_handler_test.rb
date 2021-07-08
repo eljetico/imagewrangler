@@ -182,6 +182,19 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal 3.0, @subject.postscript_version
   end
 
+  # Two different file structure formats
+  def test_vector_metadata_regular_format
+    @subject.load_image(vector_path('valid.eps'))
+    assert_equal 503, @subject.height
+    assert_equal 990, @subject.width
+  end
+
+  def test_vector_metadata_second_format
+    @subject.load_image(vector_path('valid_2.eps'))
+    assert_equal 348, @subject.height
+    assert_equal 649, @subject.width
+  end
+
   def test_pages_detection
     @subject.load_image(vector_path('multi_page_scanned.pdf'))
     assert_equal 2, @subject.pages.length

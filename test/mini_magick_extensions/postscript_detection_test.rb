@@ -12,6 +12,9 @@ class PostscriptDetectionTest < Minitest::Test
 
     image = MiniMagick::Image.new(vector_path('not_valid_v3.1.eps'))
     assert_equal 3.1, image.postscript_version
+
+    image = MiniMagick::Image.new(vector_path('valid_2.eps'))
+    assert_equal 3.1, image.postscript_version
   end
 
   def test_resize_density
