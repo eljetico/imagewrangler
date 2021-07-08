@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-require_relative '../test_helper'
-require 'image_wrangler'
+require_relative "../test_helper"
+require "image_wrangler"
 
 class ConvertToolOptionsTest < Minitest::Test
-  def setup; end
+  def setup
+  end
 
   def test_image_settings_options
     all_options = MiniMagick::Tool::Convert.image_settings_options
@@ -32,16 +33,14 @@ class ConvertToolOptionsTest < Minitest::Test
 
   def test_option_group
     {
-      'geometry' => 'image_operators',
-      'depth' => 'image_settings',
-      'colorspace' => 'image_settings',
-      'append' => 'image_sequence_operators',
-      'smush' => 'image_sequence_operators',
-      'gamma' => 'image_operators'
+      "geometry" => "image_operators",
+      "depth" => "image_settings",
+      "colorspace" => "image_settings",
+      "append" => "image_sequence_operators",
+      "smush" => "image_sequence_operators",
+      "gamma" => "image_operators"
     }.each_pair do |opt, group|
-      # rubocop:disable Layout/LineLength
       assert_equal(group, MiniMagick::Tool::Convert.option_group(opt), "#{opt} grouped")
-      # rubocop:enable Layout/LineLength
     end
   end
 end

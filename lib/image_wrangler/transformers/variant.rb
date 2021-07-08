@@ -24,7 +24,7 @@ module ImageWrangler
     #   'profile' => ['transitional.icc', 'rgb.icc']
     # }
     #
-    require 'tempfile'
+    require "tempfile"
 
     # Handler to configure and process required variant using chosen
     # cli via concrete class, eg ::Transformers::MiniMagick::Variant
@@ -34,19 +34,21 @@ module ImageWrangler
     # `options` should override errors handler etc
     class Variant
       attr_accessor :attributes,
-                    :checksum,
-                    :height,
-                    :image_type,
-                    :mime_type,
-                    :mtime,
-                    :size,
-                    :source_image,
-                    :width
+        :checksum,
+        :height,
+        :image_type,
+        :mime_type,
+        :mtime,
+        :size,
+        :source_image,
+        :width
 
-      def initialize(config = {}, options = {})
+      OPTS = {}.freeze
+
+      def initialize(config = OPTS, options = OPTS)
         @source_image = nil
-        @config = {}.merge(config)
-        @options = { errors: ImageWrangler::Errors.new }.merge(options)
+        @config = OPTS.merge(config) # we have no defaults, but this may change
+        @options = {errors: ImageWrangler::Errors.new}.merge(options)
 
         # Simple data about our output file
         @checksum = nil
@@ -68,11 +70,9 @@ module ImageWrangler
 
       # Output filepath, as supplied, or a /tmp file
       def filepath
-        @filepath ||= begin
-          @config[:filepath] || generate_tmp_filepath
-        end
+        @filepath ||= (@config[:filepath] || generate_tmp_filepath)
       end
-      alias file_path filepath
+      alias_method :file_path, :filepath
 
       def filesize
         @size
@@ -85,7 +85,7 @@ module ImageWrangler
           return nil
         end
         assign_output_attributes(image)
-      rescue StandardError => e
+      rescue => e
         errors.add(:result, e.full_message)
       end
 
@@ -121,7 +121,7 @@ module ImageWrangler
       end
 
       def generate_tmp_filepath
-        File.join('/', 'tmp', generate_filename)
+        File.join("/", "tmp", generate_filename)
       end
 
       def random_token

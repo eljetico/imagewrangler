@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # frozen_string_literal: true
 
-require_relative '../../test_helper'
+require_relative "../../test_helper"
 
 module ImageWrangler
   module Transformers
@@ -25,15 +25,15 @@ module ImageWrangler
       end
 
       def test_filename_when_supplied
-        subject = @variant.new({ filename: 'something.jpg' })
+        subject = @variant.new({filename: "something.jpg"})
 
-        assert_equal('something.jpg', subject.filename)
+        assert_equal("something.jpg", subject.filename)
       end
 
       def test_filename_from_supplied_filepath
-        subject = @variant.new({ filepath: '/path/to/something.jpg' })
+        subject = @variant.new({filepath: "/path/to/something.jpg"})
 
-        assert_equal('something.jpg', subject.filename)
+        assert_equal("something.jpg", subject.filename)
       end
 
       def test_filename_when_none_supplied

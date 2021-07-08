@@ -2,6 +2,7 @@ version: '2'
 services:
   app:
     build: .
+    image: imagewrangler
     container_name: imagewrangler
     volumes:
       - .:/apps/imagewrangler

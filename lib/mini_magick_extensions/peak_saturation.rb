@@ -9,16 +9,20 @@ module MiniMagick
 
     def peak_saturation
       @peak_saturation ||= begin
-        # rubocop:disable Layout/LineLength
-        result = run_command('convert', path, '-colorspace', 'HCL', '-format', '"%M avg=%[fx:mean.g] peak=%[fx:maxima.g]\n"', 'info:')
-        # rubocop:enable Layout/LineLength
+        result = run_command(
+          "convert",
+          path,
+          "-colorspace", "HCL",
+          "-format", '"%M avg=%[fx:mean.g] peak=%[fx:maxima.g]\n"',
+          "info:"
+        )
 
         match = result.match(SATURATION_VALUE_REGEX)
         raise if match.nil?
 
         match[:peak_sat].to_f
       end
-    rescue StandardError => e
+    rescue => e
       message = "failed extracting peak_saturation: #{result}, #{e.message}"
       raise MiniMagick::Error, message
     end

@@ -3,19 +3,21 @@
 module MiniMagick
   # Parse file as text to derive version, bounding box etc
   class Image
-    PS_VERSION_REGEX = /.*?\%
-      \!PS-Adobe-(\d\.\d)\s+?(?:EP[S|T]F*?-.*?)
+    PS_VERSION_REGEX = /.*?%
+      !PS-Adobe-(\d\.\d)\s+?(?:EP[S|T]F*?-.*?)
       \W*?
     /x.freeze
 
     PS_BOUNDING_BOX_REGEX = /
-      \%\%BoundingBox:
+      %%BoundingBox:
       \s(-?\d+)\s(-?\d+)\s(-?\d+)\s(-?\d+)
     /x.freeze
 
-    PS_EOF_REGEX = /\%\%EOF/.freeze
+    PS_EOF_REGEX = /%%EOF/.freeze
 
     PS_LINE_SEP_REGEX = /[\r\n]+/.freeze
+
+    OPTS = {}.freeze
 
     def postscript_version
       eps_metadata[:postscript_version]
@@ -37,8 +39,8 @@ module MiniMagick
 
       (density * scaling_factor).ceil
     end
-    alias vector_resize_density postscript_resize_density
-    alias vector_rescale_density postscript_resize_density
+    alias_method :vector_resize_density, :postscript_resize_density
+    alias_method :vector_rescale_density, :postscript_resize_density
 
     def eps_metadata
       @eps_metadata ||= extract_eps_metadata
@@ -46,8 +48,8 @@ module MiniMagick
 
     # rubocop:disable all
     def extract_eps_metadata
-      return {} unless vector?
-      return {} if pdf?
+      return OPTS unless vector?
+      return OPTS if pdf?
 
       begin
         f = StringIO.new to_blob
@@ -98,7 +100,7 @@ module MiniMagick
     private
 
     def _ps_get_line_sep(str_blob)
-      line = str_blob.gets.encode('UTF-8', 'binary', _ps_line_encode_opts)
+      line = str_blob.gets.encode("UTF-8", "binary", _ps_line_encode_opts)
       lsep = line[PS_LINE_SEP_REGEX]
       str_blob.rewind
       lsep
@@ -108,7 +110,7 @@ module MiniMagick
       {
         invalid: :replace,
         undef: :replace,
-        replace: ''
+        replace: ""
       }
     end
   end

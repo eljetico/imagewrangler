@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require_relative '../../test_helper'
-require 'image_wrangler'
+require_relative "../../test_helper"
+require "image_wrangler"
 
 module ImageWrangler
   module Transformers
     # rubocop:disable Metrics/ClassLength
     class MiniMagickTransformerTest < Minitest::Test
-      OUTFILE_KEY = 'imagewrangler'
+      OUTFILE_KEY = "imagewrangler"
 
       def setup
         # MiniMagick.logger.level = Logger::DEBUG
@@ -21,18 +21,16 @@ module ImageWrangler
       end
 
       def test_invalid_with_empty_component_list
-        image = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
+        image = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
         subject = @transformer.new(image, [])
 
         refute subject.valid?
-        # rubocop:disable Layout/LineLength
-        assert_equal('component_list cannot be empty', subject.errors.full_messages[0])
-        # rubocop:enable Layout/LineLength
+        assert_equal("component_list cannot be empty", subject.errors.full_messages[0])
       end
 
       # rubocop:disable Metrics/AbcSize
       def test_simple_resize
-        image = ImageWrangler::Image.new(raster_path('valid_jpg.jpg'))
+        image = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
         menu = menu_simple_resize
         subject = @transformer.new(image, menu)
 
@@ -47,23 +45,21 @@ module ImageWrangler
       end
 
       def test_remove_outfile_on_profile_error
-        image = ImageWrangler::Image.new(raster_path('grayscale.jpg'))
+        image = ImageWrangler::Image.new(raster_path("grayscale.jpg"))
 
         menu = menu_grayscale_to_rgb
-        menu[0][:options]['profile'] = 'icc:/path/to/missing_profile.icc'
+        menu[0][:options]["profile"] = "icc:/path/to/missing_profile.icc"
 
         subject = @transformer.new(image, menu)
 
         refute subject.process
         refute File.exist?(menu[0][:filepath])
 
-        # rubocop:disable Layout/LineLength
         assert_match(/variant failed at index 0/i, subject.errors.full_messages[0])
-        # rubocop:enable Layout/LineLength
       end
 
       def test_conversion_with_rgb_profile
-        image = ImageWrangler::Image.new(raster_path('grayscale.jpg'))
+        image = ImageWrangler::Image.new(raster_path("grayscale.jpg"))
         menu = menu_grayscale_to_rgb
         subject = @transformer.new(image, menu)
 
@@ -71,13 +67,13 @@ module ImageWrangler
 
         rendered = ImageWrangler::Image.new(menu[0][:filepath])
         assert_equal 100, rendered.width
-        assert_equal 'RGB', rendered.colorspace
+        assert_equal "RGB", rendered.colorspace
         assert_equal 80, rendered.quality
       end
 
       def test_conversion_cmyk_to_rgb
         menu = menu_cmyk_to_rgb
-        image = ImageWrangler::Image.new(raster_path('cmyk_no_profile.jpg'))
+        image = ImageWrangler::Image.new(raster_path("cmyk_no_profile.jpg"))
         subject = @transformer.new(image, menu)
 
         assert subject.valid?
@@ -85,7 +81,7 @@ module ImageWrangler
 
         rendered = ImageWrangler::Image.new(menu[0][:filepath])
         assert_equal 100, rendered.width
-        assert_equal 'RGB', rendered.colorspace
+        assert_equal "RGB", rendered.colorspace
         assert_equal 80, rendered.quality
       end
       # rubocop:enable Metrics/AbcSize
@@ -98,17 +94,17 @@ module ImageWrangler
           {
             filepath: "/tmp/#{OUTFILE_KEY}.lo_res_100.jpg",
             options: {
-              'geometry' => '100x100',
-              'type' => 'TrueColor',
-              'auto-orient' => nil
+              "geometry" => "100x100",
+              "type" => "TrueColor",
+              "auto-orient" => nil
             }
           },
           {
             filepath: "/tmp/#{OUTFILE_KEY}.lo_res_200.jpg",
             options: {
-              'geometry' => '200x200',
-              'type' => 'TrueColor',
-              'auto-orient' => nil
+              "geometry" => "200x200",
+              "type" => "TrueColor",
+              "auto-orient" => nil
             }
           }
         ]
@@ -119,10 +115,10 @@ module ImageWrangler
           {
             filepath: "/tmp/#{OUTFILE_KEY}.grayscale_to_rgb_100.jpg",
             options: {
-              'geometry' => '100x100',
-              'type' => 'TrueColor',
-              'profile' => "icc:#{ImageWrangler::Profiles.sRGB}",
-              'quality' => 80
+              "geometry" => "100x100",
+              "type" => "TrueColor",
+              "profile" => "icc:#{ImageWrangler::Profiles.sRGB}",
+              "quality" => 80
             }
           }
         ]
@@ -133,10 +129,10 @@ module ImageWrangler
           {
             filepath: "/tmp/#{OUTFILE_KEY}.cmyk_to_rgb_100.jpg",
             options: {
-              'geometry' => '100x100',
-              'type' => 'TrueColor',
-              'profile' => [ImageWrangler::Profiles.sRGB],
-              'quality' => 80
+              "geometry" => "100x100",
+              "type" => "TrueColor",
+              "profile" => [ImageWrangler::Profiles.sRGB],
+              "quality" => 80
             }
           }
         ]
@@ -144,7 +140,7 @@ module ImageWrangler
       # rubocop:enable Metrics/MethodLength
 
       def profile_path(icc_name)
-        File.join(ImageWrangler.root, 'resources', 'color_profiles', icc_name)
+        File.join(ImageWrangler.root, "resources", "color_profiles", icc_name)
       end
     end
     # rubocop:enable Metrics/ClassLength

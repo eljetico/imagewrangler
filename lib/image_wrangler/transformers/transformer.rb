@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'fileutils'
+require "fileutils"
 
-require_relative 'component_list'
-require_relative 'variant'
+require_relative "component_list"
+require_relative "variant"
 
 module ImageWrangler
   # Transformer process images
@@ -12,7 +12,9 @@ module ImageWrangler
     class Transformer
       attr_reader :component_list, :image, :menu, :options
 
-      def initialize(filepath, list, options = {})
+      OPTS = {}.freeze
+
+      def initialize(filepath, list, options = OPTS)
         @image = instantiate_source_image(filepath)
         @options = {
           cascade: false,
@@ -35,9 +37,7 @@ module ImageWrangler
 
         if @options[:cascade]
           variant = component_list[variant_index - 1]
-          if variant && File.exist?(variant.filepath)
-            return instantiate_source_image(variant.filepath)
-          end
+          return instantiate_source_image(variant.filepath) if variant && File.exist?(variant.filepath)
         end
 
         source_image
@@ -60,15 +60,9 @@ module ImageWrangler
       end
 
       def ensure_compliance
-        unless component_list.valid?
-          errors.add(:config, component_list.errors.full_messages)
-        end
+        errors.add(:config, component_list.errors.full_messages) unless component_list.valid?
 
-        # rubocop:disable Style/GuardClause
-        unless component_list.variants.any?
-          errors.add(:component_list, 'cannot be empty')
-        end
-        # rubocop:enable Style/GuardClause
+        errors.add(:component_list, "cannot be empty") unless component_list.variants.any?
       end
 
       def ensure_outfile_removed(filepath)
@@ -80,14 +74,16 @@ module ImageWrangler
         return false unless valid?
 
         component_list.each_with_index do |variant, index|
+          # rubocop:disable Style/RedundantBegin
           begin
             variant.source_image = assert_source_image(index)
             variant.process
-          rescue StandardError => e
+          rescue => e
             new_message = "failed at index #{index}: #{e.message}"
             ensure_outfile_removed(variant.filepath)
             errors.add(:variant, new_message)
           end
+          # rubocop:enable Style/RedundantBegin
         end
 
         valid?

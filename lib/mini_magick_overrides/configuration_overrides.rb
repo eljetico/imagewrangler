@@ -8,9 +8,7 @@ module MiniMagick
     end
 
     def quiet_warnings
-      if instance_variable_defined?('@quiet_warnings')
-        return instance_variable_get('@quiet_warnings')
-      end
+      return instance_variable_get("@quiet_warnings") if instance_variable_defined?("@quiet_warnings")
 
       false
     end

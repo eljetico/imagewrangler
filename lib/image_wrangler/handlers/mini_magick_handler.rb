@@ -28,9 +28,9 @@ module ImageWrangler
       end
 
       def bit_depth
-        @bit_depth ||= nil_or_integer(raw_attribute('bit-depth'))
+        @bit_depth ||= nil_or_integer(raw_attribute("bit-depth"))
       end
-      alias bitdepth bit_depth
+      alias_method :bitdepth, :bit_depth
 
       def black_and_white?
         return false if peak_saturation.nil?
@@ -39,23 +39,19 @@ module ImageWrangler
       end
 
       def camera_make
-        @camera_make ||= nil_or_string(raw_attribute('EXIF:Make'))
+        @camera_make ||= nil_or_string(raw_attribute("EXIF:Make"))
       end
 
       def camera_model
-        @camera_model ||= nil_or_string(raw_attribute('EXIF:Model'))
+        @camera_model ||= nil_or_string(raw_attribute("EXIF:Model"))
       end
 
       # Note `identify -format "%[channels]"` returns colorspace (lowercased)
       # with current IM version so we use bruteforce method
       def channel_count
-        @channel_count ||= begin
-          # rubocop:disable Style/RedundantSelf
-          self.colorspace.match(/\Agray/i) ? 1 : self.colorspace.length
-          # rubocop:enable Style/RedundantSelf
-        end
+        @channel_count ||= /\Agray/i.match?(colorspace) ? 1 : colorspace.length
       end
-      alias channels channel_count
+      alias_method :channels, :channel_count
 
       def checksum
         @checksum ||= begin
@@ -81,8 +77,8 @@ module ImageWrangler
       def create_date
         extract_create_date
       end
-      alias date_created create_date
-      alias shoot_date create_date
+      alias_method :date_created, :create_date
+      alias_method :shoot_date, :create_date
 
       def exif_date_time_original
         @exif_date_time_original ||= extract_exif_date_time_original
@@ -96,24 +92,24 @@ module ImageWrangler
       # Need to handle URLs/blobs too
       def extname
         @extname ||= begin
-          path = @magick.path || ''
+          path = @magick.path || ""
           nil_or_string(File.extname(path))
         end
       end
-      alias ext extname
-      alias extension extname
+      alias_method :ext, :extname
+      alias_method :extension, :extname
 
       def format
-        attribute('type') || 'UNKNOWN'
+        attribute("type") || "UNKNOWN"
       end
-      alias file_format format
+      alias_method :file_format, :format
 
       def height
-        @height ||= (nil_or_integer(attribute('height')) || 0)
+        @height ||= (nil_or_integer(attribute("height")) || 0)
       end
 
       def icc_name
-        @icc_name ||= nil_or_string(raw_attribute('ICC:model'))
+        @icc_name ||= nil_or_string(raw_attribute("ICC:model"))
       end
 
       def image_sequence?
@@ -121,7 +117,7 @@ module ImageWrangler
       end
 
       def width
-        @width ||= (nil_or_integer(attribute('width')) || 0)
+        @width ||= (nil_or_integer(attribute("width")) || 0)
       end
 
       def loaded?
@@ -168,7 +164,7 @@ module ImageWrangler
       end
 
       def orientation
-        @orientation ||= nil_or_string(raw_attribute('orientation'))
+        @orientation ||= nil_or_string(raw_attribute("orientation"))
       end
 
       def paths
@@ -181,7 +177,7 @@ module ImageWrangler
 
       def peak_saturation
         @peak_saturation ||= @analyzer.peak_saturation
-      rescue StandardError
+      rescue
         # Should log the error somewhere
         nil
       end
@@ -192,11 +188,11 @@ module ImageWrangler
       end
 
       def quality
-        @quality ||= nil_or_integer(raw_attribute('Q'))
+        @quality ||= nil_or_integer(raw_attribute("Q"))
       end
 
       def size
-        @size ||= nil_or_integer(attribute('size'))
+        @size ||= nil_or_integer(attribute("size"))
       end
 
       def stat
@@ -217,7 +213,7 @@ module ImageWrangler
 
       def extract_color_space
         # TODO: check MiniMagick handling of image.colorspace 'method'
-        color_mode = raw_attribute('colorspace')
+        color_mode = raw_attribute("colorspace")
         return nil if color_mode.nil?
 
         normalized_color_space(color_mode)
@@ -229,29 +225,29 @@ module ImageWrangler
       end
 
       def extract_embedded_paths
-        nil_or_string(raw_attribute('8BIM:2000,2999'))
+        nil_or_string(raw_attribute("8BIM:2000,2999"))
       end
 
       def extract_exif_date_time_original
-        value = nil_or_string(raw_attribute('EXIF:DateTimeOriginal'))
-        parse_date(value, '%Y:%m:%d %H:%M:%S')
-      rescue StandardError => e
+        value = nil_or_string(raw_attribute("EXIF:DateTimeOriginal"))
+        parse_date(value, "%Y:%m:%d %H:%M:%S")
+      rescue => e
         @context.errors.add("Error parsing EXIF:DateTimeOriginal #{e.message}")
         nil
       end
 
       def extract_exif_date_time_digitized
-        value = nil_or_string(raw_attribute('EXIF:DateTimeDigitized'))
-        parse_date(value, '%Y:%m:%d %H:%M:%S')
-      rescue StandardError => e
+        value = nil_or_string(raw_attribute("EXIF:DateTimeDigitized"))
+        parse_date(value, "%Y:%m:%d %H:%M:%S")
+      rescue => e
         @context.errors.add("Error parsing EXIF:DateTimeOriginal #{e.message}")
         nil
       end
 
       def extract_iptc_date_created
-        value = nil_or_string(raw_attribute('IPTC:2:55'))
-        parse_date(value, '%Y%m%d')
-      rescue StandardError => e
+        value = nil_or_string(raw_attribute("IPTC:2:55"))
+        parse_date(value, "%Y%m%d")
+      rescue => e
         @context.errors.add("Error parsing IPTC:2:55 #{e.message}")
         nil
       end
@@ -259,16 +255,11 @@ module ImageWrangler
       def handle_mini_magick_error(error)
         example = error.message.split("\n")[1]
 
-        if example.match(/premature end/i)
-          raise ImageWrangler::Error, 'corrupted file'
-        end
-
-        if example.match(/empty input file/i)
-          raise ImageWrangler::Error, 'empty file'
-        end
+        raise ImageWrangler::Error, "corrupted file" if /premature end/i.match?(example)
+        raise ImageWrangler::Error, "empty file" if /empty input file/i.match?(example)
 
         # In calling code, use err.cause to access nested exception
-        raise ImageWrangler::Error, 'MiniMagick error'
+        raise ImageWrangler::Error, "MiniMagick error"
       end
 
       def handle_mini_magick_invalid(error)
@@ -276,8 +267,8 @@ module ImageWrangler
       end
 
       def raw_attribute(attr_key)
-        v = loaded? ? @magick["%[#{attr_key}]"] : ''
-        v.match(/^$/) ? nil : v
+        v = loaded? ? @magick["%[#{attr_key}]"] : ""
+        /^$/.match?(v) ? nil : v
       end
 
       # TODO: enable set_log_level here
