@@ -6,6 +6,7 @@ module ImageWrangler
     # MiniMagick-specific handler
     class MiniMagickHandler < Handler
       DEFAULT_QUIET_WARNINGS = true
+      EMPTY_STRING_REGEX = /^$/.freeze
 
       def initialize(**options)
         opts = {
@@ -49,7 +50,7 @@ module ImageWrangler
       # Note `identify -format "%[channels]"` returns colorspace (lowercased)
       # with current IM version so we use bruteforce method
       def channel_count
-        @channel_count ||= /\Agray/i.match?(colorspace) ? 1 : colorspace.length
+        @channel_count ||= colorspace =~ /\Agray/i ? 1 : colorspace.length # standard:disable Performance/RegexpMatch
       end
       alias_method :channels, :channel_count
 
@@ -255,8 +256,10 @@ module ImageWrangler
       def handle_mini_magick_error(error)
         example = error.message.split("\n")[1]
 
-        raise ImageWrangler::Error, "corrupted file" if /premature end/i.match?(example)
-        raise ImageWrangler::Error, "empty file" if /empty input file/i.match?(example)
+        # standard:disable Performance/RegexpMatch
+        raise ImageWrangler::Error, "corrupted file" if example =~ /premature end/i
+        raise ImageWrangler::Error, "empty file" if example =~ /empty input file/i
+        # standard:enable Performance/RegexpMatch
 
         # In calling code, use err.cause to access nested exception
         raise ImageWrangler::Error, "MiniMagick error"
@@ -268,7 +271,7 @@ module ImageWrangler
 
       def raw_attribute(attr_key)
         v = loaded? ? @magick["%[#{attr_key}]"] : ""
-        /^$/.match?(v) ? nil : v
+        v =~ EMPTY_STRING_REGEX ? nil : v # standard:disable Performance/RegexpMatch
       end
 
       # TODO: enable set_log_level here
