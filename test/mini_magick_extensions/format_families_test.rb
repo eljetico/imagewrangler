@@ -21,6 +21,7 @@ class FormatFamiliesTest < Minitest::Test
     image = MiniMagick::Image.new(raster_path("valid_jpg.jpg"))
     assert image.raster?
     refute image.vector?
+    refute image.pdf?
   end
 
   def test_not_a_raster
@@ -33,6 +34,7 @@ class FormatFamiliesTest < Minitest::Test
     image = MiniMagick::Image.new(vector_path("valid.pdf"))
     assert image.vector?
     assert image.postscript?
+    assert image.pdf?
     refute image.raster?
   end
 
