@@ -46,7 +46,7 @@ module MiniMagick
     end
 
     def pdf?
-      /PDF/.match?(type.upcase) ? true : false # standard:disable Style/IfWithBooleanLiteralBranches
+      type.casecmp("PDF").zero?
     end
 
     def postscript?
