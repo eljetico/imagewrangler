@@ -13,6 +13,10 @@ module ImageWrangler
       [width, height]
     end
 
+    def to_h
+      {width: width, height: height}
+    end
+
     def to_s
       "#{width}x#{height}"
     end
