@@ -6,6 +6,8 @@ require "timeliness"
 module ImageWrangler
   # Default wrapper for image handling
   class Image
+    include ScalingHelper
+
     attr_reader :filepath
 
     DEFAULT_TRANSFORMER = ImageWrangler::Transformers::MiniMagick::Transformer

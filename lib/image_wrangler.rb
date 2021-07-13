@@ -35,10 +35,12 @@ module ImageWrangler
   end
 end
 
+require "image_wrangler/dimensions"
 require "image_wrangler/errors"
 require "image_wrangler/handler"
 require "image_wrangler/handlers/mini_magick_handler"
 require "image_wrangler/profiles"
+require "image_wrangler/scaling_helper"
 require "image_wrangler/transformers/transformer"
 require "image_wrangler/transformers/mini_magick_transformer"
 require "image_wrangler/image"

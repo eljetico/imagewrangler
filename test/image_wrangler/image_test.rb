@@ -7,8 +7,6 @@ class ImageTest < Minitest::Test
   def setup
   end
 
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/MethodLength
   def test_basic_attributes_raster
     image = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
 
@@ -23,7 +21,13 @@ class ImageTest < Minitest::Test
     assert_predicate image, :raster?
     refute_predicate image, :vector?
   end
-  # rubocop:enable Metrics/MethodLength
+
+  def test_scaling_included
+    image = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
+    scaling = image.dimensions_for_target_pixel_area(3_000_000)
+    assert_equal 1447, scaling.width
+    assert_equal 2076, scaling.height
+  end
 
   def test_identifies_cloaked_file
     image = ImageWrangler::Image.new(raster_path("png_as_jpg.jpg"))
@@ -87,7 +91,6 @@ class ImageTest < Minitest::Test
     assert(subject < Time.now)
   end
 
-  # rubocop:disable Metrics/MethodLength
   def test_mtime_with_remote_file
     filepath = raster_path("valid_jpg.jpg")
 
@@ -112,6 +115,4 @@ class ImageTest < Minitest::Test
     assert(subject.is_a?(Time))
     assert(subject < Time.now)
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
 end
