@@ -17,6 +17,8 @@ module ImageWrangler
       def initialize(filepath, list, options = OPTS)
         @image = instantiate_source_image(filepath)
         @options = {
+          callback: proc {},
+          verbose: false,
           cascade: false,
           errors: ImageWrangler::Errors.new
         }.merge(options)
@@ -69,8 +71,7 @@ module ImageWrangler
         FileUtils.rm_f(filepath) if File.exist?(filepath)
       end
 
-      # rubocop:disable Metrics/MethodLength
-      def process
+      def process &block
         return false unless valid?
 
         component_list.each_with_index do |variant, index|
@@ -78,6 +79,7 @@ module ImageWrangler
           begin
             variant.source_image = assert_source_image(index)
             variant.process
+            yield(variant) if block
           rescue => e
             new_message = "failed at index #{index}: #{e.message}"
             ensure_outfile_removed(variant.filepath)
@@ -88,7 +90,6 @@ module ImageWrangler
 
         valid?
       end
-      # rubocop:enable Metrics/MethodLength
 
       def source_image
         @image
