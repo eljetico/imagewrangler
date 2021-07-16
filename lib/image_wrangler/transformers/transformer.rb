@@ -17,6 +17,7 @@ module ImageWrangler
       def initialize(filepath, list, options = OPTS)
         @image = instantiate_source_image(filepath)
         @options = {
+          verbose: false,
           cascade: false,
           errors: ImageWrangler::Errors.new
         }.merge(options)
@@ -77,7 +78,7 @@ module ImageWrangler
           # rubocop:disable Style/RedundantBegin
           begin
             variant.source_image = assert_source_image(index)
-            variant.process
+            variant.process(@options)
           rescue => e
             new_message = "failed at index #{index}: #{e.message}"
             ensure_outfile_removed(variant.filepath)
