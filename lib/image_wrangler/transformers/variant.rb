@@ -52,14 +52,14 @@ module ImageWrangler
         @options = {errors: ImageWrangler::Errors.new}.merge(options)
 
         # Simple data about our output file
-        @command = nil
-        @checksum = nil
-        @height = nil
-        @image_type = nil
-        @mime_type = nil
-        @mtime = nil
-        @size = nil
-        @width = nil
+        # @command = nil
+        # @checksum = nil
+        # @height = nil
+        # @image_type = nil
+        # @mime_type = nil
+        # @mtime = nil
+        # @size = nil
+        # @width = nil
       end
 
       def errors

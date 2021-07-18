@@ -36,7 +36,7 @@ module ImageWrangler
       class Variant < ImageWrangler::Transformers::Variant
         # Order of operations is important for IM convert so we
         # handle the various groups in the following sequence
-        attr_reader :grouped_options, :preprocess_options, :unrecognized_options
+        attr_reader :grouped_options, :read_options, :unrecognized_options
 
         OPTION_GROUP_ORDER = %w[
           image_settings
@@ -52,7 +52,7 @@ module ImageWrangler
           @command = nil
           @tool = ::MiniMagick::Tool::Convert
           @my_option = ImageWrangler::Transformers::MiniMagick::Option
-          @preprocess_options = Hash.new { |hash, key| hash[key] = [] }
+          @read_options = Hash.new { |hash, key| hash[key] = [] }
           @grouped_options = Hash.new { |hash, key| hash[key] = [] }
         end
 
@@ -78,7 +78,7 @@ module ImageWrangler
           tool = @tool.new
 
           # Prepend processing args if available
-          tool.merge! merged_options(@preprocess_options)
+          tool.merge! merged_options(@read_options)
 
           # Use the validated image filepath
           tool << source_image.filepath
@@ -149,8 +149,8 @@ module ImageWrangler
           @unrecognized_options = []
 
           # Handle preprocessing options, eg vector density settings
-          preprocess_opts = supplied_options.delete("preprocess") || OPTS
-          build_options(preprocess_opts, @preprocess_options)
+          read_opts = supplied_options.delete("read_options") || OPTS
+          build_options(read_opts, @read_options)
 
           # Handle remaining options ('between filenames')
           build_options(supplied_options)

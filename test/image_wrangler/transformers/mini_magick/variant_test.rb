@@ -110,7 +110,7 @@ module ImageWrangler
           assert_equal "crop", result[-1].clean_option
         end
 
-        def test_preprocessor_options_non_vector
+        def test_read_options_non_vector
           subject = @variant.new(
             {
               options: {
@@ -123,9 +123,9 @@ module ImageWrangler
           )
 
           subject.validate!
-          result = subject.preprocess_options
+          result = subject.read_options
 
-          assert result.empty?, "preprocess options should be empty"
+          assert result.empty?, "read options should be empty"
 
           result = subject.ordered_options
 
@@ -133,11 +133,11 @@ module ImageWrangler
           assert_equal "sharpen", result[-1].clean_option
         end
 
-        def test_preprocessor_options_vector
+        def test_read_options_vector
           subject = @variant.new(
             {
               options: {
-                "preprocess" => {
+                "read_options" => {
                   "density" => "570"
                 },
                 "colorspace" => "RGB",
@@ -148,9 +148,9 @@ module ImageWrangler
           )
 
           subject.validate!
-          result = subject.preprocess_options
+          result = subject.read_options
 
-          refute result.empty?, "preprocess options should not be empty"
+          refute result.empty?, "read_options should not be empty"
           assert_equal "density", result["image_settings"][0].clean_option
 
           result = subject.ordered_options

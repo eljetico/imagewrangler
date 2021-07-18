@@ -17,8 +17,6 @@ module ImageWrangler
       def initialize(filepath, list, options = OPTS)
         @image = instantiate_source_image(filepath)
         @options = {
-          callback: proc {},
-          verbose: false,
           cascade: false,
           errors: ImageWrangler::Errors.new
         }.merge(options)
