@@ -9,8 +9,9 @@ module ImageWrangler
       # {
       #   filepath: '/path/to/my-small-thumb.jpg',
       #   options: {
-      #     'preprocess' => {
-      #        'density' => 72
+      #     'read_options' => {
+      #        'density' => 72,
+      #        'antialias' => nil
       #     },
       #     'geometry' => '100x100',
       #     'gamma' => 0.1,
