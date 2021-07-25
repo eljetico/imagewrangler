@@ -34,6 +34,7 @@ module ImageWrangler
     # `options` should override errors handler etc
     class Variant
       attr_accessor :attributes,
+        :command,
         :checksum,
         :height,
         :image_type,
@@ -51,13 +52,14 @@ module ImageWrangler
         @options = {errors: ImageWrangler::Errors.new}.merge(options)
 
         # Simple data about our output file
-        @checksum = nil
-        @height = nil
-        @image_type = nil
-        @mime_type = nil
-        @mtime = nil
-        @size = nil
-        @width = nil
+        # @command = nil
+        # @checksum = nil
+        # @height = nil
+        # @image_type = nil
+        # @mime_type = nil
+        # @mtime = nil
+        # @size = nil
+        # @width = nil
       end
 
       def errors
@@ -92,7 +94,7 @@ module ImageWrangler
       # Create/generate the variant.
       # Errors should be added to errors handler and return
       # by calling `valid?`
-      def process
+      def process(options = OPTS)
         raise NotImplementedError
       end
 
