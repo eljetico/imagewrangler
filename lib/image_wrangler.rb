@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "mini_exiftool"
 require "open3"
 require "securerandom"
 require "shellwords"
@@ -17,6 +18,9 @@ require "mini_magick_extensions/visual_corruption"
 
 # Top level module
 module ImageWrangler
+  OPTS = {}.freeze
+  EMPTY_ARRAY = [].freeze
+
   # Use this when referring to resources, eg color profiles
   def self.root
     File.expand_path "..", File.dirname(__FILE__)
@@ -33,12 +37,15 @@ module ImageWrangler
   # Container for various ICC color profile handlers
   module Profiles
   end
+
+  MiniExiftool.command = File.join(root, "vendor", "Image-ExifTool-12.29", "exiftool")
 end
 
 require "image_wrangler/dimensions"
 require "image_wrangler/errors"
 require "image_wrangler/handler"
 require "image_wrangler/handlers/mini_magick_handler"
+require "image_wrangler/metadata"
 require "image_wrangler/profiles"
 require "image_wrangler/scaling_helper"
 require "image_wrangler/transformers/transformer"
