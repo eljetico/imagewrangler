@@ -17,8 +17,6 @@ module MiniMagick
 
     PS_LINE_SEP_REGEX = /[\r\n]+/.freeze
 
-    OPTS = {}.freeze
-
     def postscript_version
       eps_metadata[:postscript_version]
     end

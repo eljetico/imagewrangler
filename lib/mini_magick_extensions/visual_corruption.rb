@@ -4,7 +4,6 @@ module MiniMagick
   # Check for visual corruption of supplied image
   class Image
     RGB_VALUE_REGEX = Regexp.new('\((\d{1,3}),(\d{1,3}),(\d{1,3})\)')
-    OPTS = {}.freeze
 
     def histogram_for_sample(options = OPTS)
       opts = {

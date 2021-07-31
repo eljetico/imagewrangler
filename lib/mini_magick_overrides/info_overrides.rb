@@ -2,6 +2,8 @@
 
 module MiniMagick
   class Image
+    OPTS = {}.freeze
+
     # Override MiniMagick raw method to quiet noisy identify calls
     class Info
       def raw(value)
