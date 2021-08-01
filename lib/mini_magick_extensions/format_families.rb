@@ -58,7 +58,7 @@ module MiniMagick
     end
 
     def valid_extensions
-      PERMITTED_EXTENSIONS.fetch(type.upcase, [])
+      PERMITTED_EXTENSIONS.fetch(type.upcase, EMPTY_ARRAY)
     end
   end
 end

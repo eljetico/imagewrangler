@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "mini_exiftool"
 require "open3"
 require "securerandom"
 require "shellwords"
@@ -9,13 +8,8 @@ require "json"
 
 require "mini_exiftool"
 require "mini_magick"
-require "mini_magick_overrides/info_overrides"
-require "mini_magick_overrides/configuration_overrides"
-require "mini_magick_extensions/convert_tool_options"
-require "mini_magick_extensions/format_families"
-require "mini_magick_extensions/peak_saturation"
-require "mini_magick_extensions/postscript_detection"
-require "mini_magick_extensions/visual_corruption"
+require "mini_magick_extensions"
+require "mini_magick_overrides"
 
 # Top level module
 module ImageWrangler
@@ -24,8 +18,14 @@ module ImageWrangler
   EXIFTOOL_VERSION = "12.29"
 
   # Use this when referring to resources, eg color profiles
-  def self.root
-    File.expand_path "..", File.dirname(__FILE__)
+  class << self
+    def root
+      File.expand_path "..", File.dirname(__FILE__)
+    end
+
+    def exiftool_lib
+      @exiftool_lib ||= File.join(root, "vendor", "Image-ExifTool-#{EXIFTOOL_VERSION}")
+    end
   end
 
   # Transformers to process images
@@ -43,8 +43,8 @@ module ImageWrangler
   # Ensure we're using the correct Exiftool executable
   # Pstore is committed to repo/image and specified here to prevent Exiftool
   # from building tags on first invocation
-  MiniExiftool.command = File.join(root, "vendor", "Image-ExifTool-#{EXIFTOOL_VERSION}", "exiftool")
-  MiniExiftool.pstore_dir = File.join(root, "vendor", "Image-ExifTool-#{EXIFTOOL_VERSION}", "pstore")
+  MiniExiftool.command = File.join(exiftool_lib, "exiftool")
+  MiniExiftool.pstore_dir = File.join(exiftool_lib, "pstore")
 end
 
 require "image_wrangler/dimensions"

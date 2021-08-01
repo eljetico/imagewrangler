@@ -5,7 +5,7 @@ module MiniMagick
   class Image
     RGB_VALUE_REGEX = Regexp.new('\((\d{1,3}),(\d{1,3}),(\d{1,3})\)')
 
-    def histogram_for_sample(options = OPTS)
+    def histogram_for_sample(options = MiniMagick::OPTS)
       opts = {
         gravity: "SouthEast",
         crop: "20%x1%"
@@ -28,7 +28,7 @@ module MiniMagick
     def rgb_values_from_histogram(hist)
       return [] if hist.length > 1
 
-      (hist[0].scan(RGB_VALUE_REGEX).flatten || []).uniq
+      (hist[0].scan(RGB_VALUE_REGEX).flatten || MiniMagick::EMPTY_ARRAY).uniq
     end
 
     # User can pass in full options such as
@@ -38,7 +38,7 @@ module MiniMagick
     #    crop: "30%x2%",
     #    gravity: "SouthEast"
     # }
-    def visually_corrupt?(opts = OPTS)
+    def visually_corrupt?(opts = MiniMagick::OPTS)
       return false unless raster?
 
       test_opts = {max_gray: 180, min_gray: 120}.merge(opts)
