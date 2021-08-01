@@ -45,8 +45,6 @@ module ImageWrangler
           image_sequence_operators
         ].freeze
 
-        OPTS = {}.freeze
-
         def initialize(config = OPTS, options = OPTS)
           super(config, options)
 
@@ -64,7 +62,7 @@ module ImageWrangler
         end
 
         def ordered_options(options = @grouped_options)
-          return [] if options.empty?
+          return EMPTY_ARRAY if options.empty?
 
           ordered = []
 

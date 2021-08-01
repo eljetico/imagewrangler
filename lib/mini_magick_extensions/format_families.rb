@@ -42,23 +42,27 @@ module MiniMagick
     end
 
     def raster?
-      RASTER_FORMATS.include?(type.upcase)
+      @raster ||= RASTER_FORMATS.include?(_type_upcased)
     end
 
     def pdf?
-      type.casecmp("PDF").zero?
+      _type_upcased == "PDF"
     end
 
     def postscript?
-      POSTSCRIPT_FORMATS.include?(type.upcase)
+      @postscript ||= POSTSCRIPT_FORMATS.include?(_type_upcased)
     end
 
     def vector?
-      VECTOR_FORMATS.include?(type.upcase)
+      @vector ||= VECTOR_FORMATS.include?(_type_upcased)
     end
 
     def valid_extensions
-      PERMITTED_EXTENSIONS.fetch(type.upcase, EMPTY_ARRAY)
+      PERMITTED_EXTENSIONS.fetch(_type_upcased, EMPTY_ARRAY)
+    end
+
+    def _type_upcased
+      @_type_upcased ||= type.upcase
     end
   end
 end

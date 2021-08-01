@@ -11,7 +11,7 @@ module ImageWrangler
     attr_reader :filepath
 
     DEFAULT_TRANSFORMER = ImageWrangler::Transformers::MiniMagick::Transformer
-    OPTS = {}.freeze
+    # OPTS = {}.freeze
 
     class << self
       def checksum(path, format: :md5)
@@ -98,7 +98,7 @@ module ImageWrangler
       remote_file.close
       data
     rescue Down::Error => _e
-      {}
+      OPTS
     end
 
     def remote_data

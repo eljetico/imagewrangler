@@ -8,8 +8,6 @@ require "json"
 
 require "mini_exiftool"
 require "mini_magick"
-require "mini_magick_extensions"
-require "mini_magick_overrides"
 
 # Top level module
 module ImageWrangler
@@ -47,6 +45,18 @@ module ImageWrangler
   MiniExiftool.pstore_dir = File.join(exiftool_lib, "pstore")
 end
 
+module MiniMagick
+  OPTS = {}.freeze
+  EMPTY_ARRAY = [].freeze
+end
+
+require "mini_magick_overrides/info_overrides"
+require "mini_magick_overrides/configuration_overrides"
+require "mini_magick_extensions/convert_tool_options"
+require "mini_magick_extensions/format_families"
+require "mini_magick_extensions/peak_saturation"
+require "mini_magick_extensions/postscript_detection"
+require "mini_magick_extensions/visual_corruption"
 require "image_wrangler/dimensions"
 require "image_wrangler/errors"
 require "image_wrangler/handler"

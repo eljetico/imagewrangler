@@ -10,7 +10,7 @@ module MiniMagick
             image_settings image_operators image_sequence_operators
           ].each do |grp|
             # standard:disable Style/RedundantSelf
-            options = self.send("#{grp}_options".to_sym)
+            options = self.send(:"#{grp}_options")
             # standard:enable Style/RedundantSelf
             return grp if options.include?(option)
           end

@@ -46,8 +46,8 @@ module MiniMagick
 
     # rubocop:disable all
     def extract_eps_metadata
-      return OPTS unless vector?
-      return OPTS if pdf?
+      return MiniMagick::OPTS unless vector?
+      return MiniMagick::OPTS if pdf?
 
       begin
         f = StringIO.new to_blob
