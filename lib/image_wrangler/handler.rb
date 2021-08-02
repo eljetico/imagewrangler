@@ -26,6 +26,11 @@ module ImageWrangler
     end
     alias_method :mp_h, :megapixels_humanized
 
+    def pixel_area
+      width * height
+    end
+    alias_method :pixelarea, :pixel_area
+
     private
 
     def nil_or_integer(value = nil)

@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 module MiniMagick
-  # Check for visual corruption of supplied image
+  # Check for visual corruption of supplied (raster) image
   class Image
     RGB_VALUE_REGEX = Regexp.new('\((\d{1,3}),(\d{1,3}),(\d{1,3})\)')
-    OPTS = {}.freeze
 
-    def histogram_for_sample(options = OPTS)
+    def histogram_for_sample(options = MiniMagick::OPTS)
       opts = {
         gravity: "SouthEast",
         crop: "20%x1%"
@@ -27,9 +26,9 @@ module MiniMagick
     end
 
     def rgb_values_from_histogram(hist)
-      return [] if hist.length > 1
+      return MiniMagick::EMPTY_ARRAY if hist.length > 1
 
-      (hist[0].scan(RGB_VALUE_REGEX).flatten || []).uniq
+      (hist[0].scan(RGB_VALUE_REGEX).flatten || MiniMagick::EMPTY_ARRAY).uniq
     end
 
     # User can pass in full options such as
@@ -39,7 +38,7 @@ module MiniMagick
     #    crop: "30%x2%",
     #    gravity: "SouthEast"
     # }
-    def visually_corrupt?(opts = OPTS)
+    def visually_corrupt?(opts = MiniMagick::OPTS)
       return false unless raster?
 
       test_opts = {max_gray: 180, min_gray: 120}.merge(opts)

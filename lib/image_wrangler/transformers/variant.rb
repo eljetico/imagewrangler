@@ -44,22 +44,10 @@ module ImageWrangler
         :source_image,
         :width
 
-      OPTS = {}.freeze
-
       def initialize(config = OPTS, options = OPTS)
         @source_image = nil
         @config = OPTS.merge(config) # we have no defaults, but this may change
         @options = {errors: ImageWrangler::Errors.new}.merge(options)
-
-        # Simple data about our output file
-        # @command = nil
-        # @checksum = nil
-        # @height = nil
-        # @image_type = nil
-        # @mime_type = nil
-        # @mtime = nil
-        # @size = nil
-        # @width = nil
       end
 
       def errors
