@@ -17,5 +17,10 @@ module ImageWrangler
       scf = scaling_factor(target_pixel_area, width, height)
       ImageWrangler::Dimensions.new((width * scf).ceil, (height * scf).ceil)
     end
+
+    def pixel_area_for_fixed_size(fixed_size)
+      sf = fixed_side.to_f / [width, height].max
+      (sf * width).ceil * (sf * width).ceil
+    end
   end
 end
