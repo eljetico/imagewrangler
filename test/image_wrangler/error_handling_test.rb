@@ -21,7 +21,7 @@ module ImageWrangler
       # assert transformer.valid?
       refute image.transform(component_list)
 
-      assert_equal "variant failed at index 0: colorspace/profile mismatch", image.errors.to_s
+      assert_equal "transformation at index 0 failed: colorspace/profile mismatch", image.errors.to_s
     end
 
     private

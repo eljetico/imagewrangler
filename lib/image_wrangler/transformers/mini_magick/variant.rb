@@ -74,7 +74,9 @@ module ImageWrangler
         end
 
         def prepare_tool
-          tool = @tool.new
+          # Avoid raising errors when IM 'whines' (reports non-zero status
+          # when command, in fact, succeeds)
+          tool = @tool.new(whiny: false)
 
           # Prepend processing args if available
           tool.merge! merged_options(@read_options)

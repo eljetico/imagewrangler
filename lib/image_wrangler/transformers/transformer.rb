@@ -59,7 +59,7 @@ module ImageWrangler
       def ensure_compliance
         errors.add(:config, component_list.errors.to_s) unless component_list.valid?
 
-        errors.add(:component_list, "cannot be empty") unless component_list.variants.any?
+        errors.add(:"transformations list", "cannot be empty") unless component_list.variants.any?
       end
 
       def ensure_outfile_removed(filepath)
@@ -77,9 +77,9 @@ module ImageWrangler
             yield(variant) if block
           rescue => e
             message = translate_message(e.message)
-            new_message = "failed at index #{index}: #{message}"
+            new_message = "at index #{index} failed: #{message}"
             ensure_outfile_removed(variant.filepath)
-            errors.add(:variant, new_message)
+            errors.add(:transformation, new_message)
           end
           # rubocop:enable Style/RedundantBegin
         end
