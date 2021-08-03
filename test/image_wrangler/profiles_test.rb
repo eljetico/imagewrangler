@@ -17,6 +17,11 @@ module ImageWrangler
       assert File.exist?(subject)
     end
 
+    def test_generic_rgb
+      subject = ImageWrangler::Profiles.GenericRGB
+      assert File.exist?(subject)
+    end
+
     def test_adobergb
       subject = ImageWrangler::Profiles.AdobeRGB
       assert File.exist?(subject)

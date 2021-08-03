@@ -5,7 +5,7 @@ module MiniMagick
   class Image
     SATURATION_VALUE_REGEX = Regexp.new(
       'avg=(?<avg_sat>[\d\.]+)\speak=(?<peak_sat>[\d\.]+)'
-    )
+    ).freeze
 
     def peak_saturation
       @peak_saturation ||= begin

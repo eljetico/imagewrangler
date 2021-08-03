@@ -3,7 +3,7 @@
 module MiniMagick
   # Check for visual corruption of supplied (raster) image
   class Image
-    RGB_VALUE_REGEX = Regexp.new('\((\d{1,3}),(\d{1,3}),(\d{1,3})\)')
+    RGB_VALUE_REGEX = Regexp.new('\((\d{1,3}),(\d{1,3}),(\d{1,3})\)').freeze
 
     def histogram_for_sample(options = MiniMagick::OPTS)
       opts = {

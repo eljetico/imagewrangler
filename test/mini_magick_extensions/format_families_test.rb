@@ -32,9 +32,9 @@ class FormatFamiliesTest < Minitest::Test
 
   def test_valid_pdf
     image = MiniMagick::Image.new(vector_path("valid.pdf"))
-    assert image.vector?
     assert image.postscript?
     assert image.pdf?
+    refute image.vector?
     refute image.raster?
   end
 

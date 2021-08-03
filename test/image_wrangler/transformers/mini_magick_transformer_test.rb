@@ -7,17 +7,13 @@ module ImageWrangler
   module Transformers
     # rubocop:disable Metrics/ClassLength
     class MiniMagickTransformerTest < Minitest::Test
-      OUTFILE_KEY = "imagewrangler"
-
       def setup
         # MiniMagick.logger.level = Logger::DEBUG
         @transformer = ImageWrangler::Transformers::MiniMagick::Transformer
       end
 
       def teardown
-        Dir.glob("/tmp/#{OUTFILE_KEY}.*").each do |file|
-          File.unlink(file)
-        end
+        clear_outfiles
       end
 
       def test_invalid_with_empty_component_list
@@ -92,7 +88,7 @@ module ImageWrangler
       def menu_simple_resize
         [
           {
-            filepath: "/tmp/#{OUTFILE_KEY}.lo_res_100.jpg",
+            filepath: "/tmp/#{outfile_key}.lo_res_100.jpg",
             options: {
               "geometry" => "100x100",
               "type" => "TrueColor",
@@ -100,7 +96,7 @@ module ImageWrangler
             }
           },
           {
-            filepath: "/tmp/#{OUTFILE_KEY}.lo_res_200.jpg",
+            filepath: "/tmp/#{outfile_key}.lo_res_200.jpg",
             options: {
               "geometry" => "200x200",
               "type" => "TrueColor",
@@ -113,7 +109,7 @@ module ImageWrangler
       def menu_grayscale_to_rgb
         [
           {
-            filepath: "/tmp/#{OUTFILE_KEY}.grayscale_to_rgb_100.jpg",
+            filepath: "/tmp/#{outfile_key}.grayscale_to_rgb_100.jpg",
             options: {
               "geometry" => "100x100",
               "type" => "TrueColor",
@@ -127,7 +123,7 @@ module ImageWrangler
       def menu_cmyk_to_rgb
         [
           {
-            filepath: "/tmp/#{OUTFILE_KEY}.cmyk_to_rgb_100.jpg",
+            filepath: "/tmp/#{outfile_key}.cmyk_to_rgb_100.jpg",
             options: {
               "geometry" => "100x100",
               "type" => "TrueColor",

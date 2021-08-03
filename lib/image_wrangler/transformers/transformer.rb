@@ -77,7 +77,8 @@ module ImageWrangler
             variant.process
             yield(variant) if block
           rescue => e
-            new_message = "failed at index #{index}: #{e.message}"
+            message = translate_message(e.message)
+            new_message = "failed at index #{index}: #{message}"
             ensure_outfile_removed(variant.filepath)
             errors.add(:variant, new_message)
           end
@@ -89,6 +90,14 @@ module ImageWrangler
 
       def source_image
         @image
+      end
+
+      def translate_message(message)
+        if message =~ /color profile operates on another colorspace/i
+          message = "colorspace/profile mismatch"
+        end
+
+        message
       end
 
       def valid?

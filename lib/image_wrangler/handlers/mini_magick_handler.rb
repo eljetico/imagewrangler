@@ -50,7 +50,7 @@ module ImageWrangler
       # Note `identify -format "%[channels]"` returns colorspace (lowercased)
       # with current IM version so we use bruteforce method
       def channel_count
-        @channel_count ||= colorspace =~ /\Agray/i ? 1 : colorspace.length # standard:disable Performance/RegexpMatch
+        @channel_count ||= colorspace =~ /\Agray/i ? 1 : colorspace.length
       end
       alias_method :channels, :channel_count
 
@@ -256,10 +256,8 @@ module ImageWrangler
       def handle_mini_magick_error(error)
         example = error.message.split("\n")[1]
 
-        # standard:disable Performance/RegexpMatch
         raise ImageWrangler::Error, "corrupted file" if example =~ /premature end/i
         raise ImageWrangler::Error, "empty file" if example =~ /empty input file/i
-        # standard:enable Performance/RegexpMatch
 
         # In calling code, use err.cause to access nested exception
         raise ImageWrangler::Error, "MiniMagick error"
@@ -271,7 +269,7 @@ module ImageWrangler
 
       def raw_attribute(attr_key)
         v = loaded? ? @magick["%[#{attr_key}]"] : ""
-        v =~ EMPTY_STRING_REGEX ? nil : v # standard:disable Performance/RegexpMatch
+        v =~ EMPTY_STRING_REGEX ? nil : v
       end
 
       # TODO: enable set_log_level here

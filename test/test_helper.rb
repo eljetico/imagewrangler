@@ -10,12 +10,22 @@ require "image_wrangler"
 
 Minitest::Reporters.use! Minitest::Reporters::DefaultReporter.new
 
+def clear_outfiles
+  Dir.glob("/tmp/#{outfile_key}.*").each do |file|
+    File.unlink(file)
+  end
+end
+
 def fixtures_path
   "#{File.dirname(__FILE__)}/fixtures"
 end
 
 def ghostscipt_installed?
   MiniMagick.delegate_installed?("gs")
+end
+
+def outfile_key
+  "imagewrangler"
 end
 
 def raster_path(filename)
