@@ -33,7 +33,6 @@ module ImageWrangler
 
         transformer = image.transformer(component_list)
         assert transformer.is_a?(ImageWrangler::Image::DEFAULT_TRANSFORMER)
-        assert transformer.options.key?(:errors)
       end
 
       # rubocop:disable Metrics/MethodLength

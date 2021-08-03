@@ -82,6 +82,12 @@ module ImageWrangler
       transformer_klass.new(self, component_list, options)
     end
 
+    def transform(component_config, transformer_klass = nil, options = OPTS)
+      transformer = transformer(component_config, transformer_klass, options)
+      return false unless transformer.valid? # Sets errors on this instance
+      transformer.process
+    end
+
     def validate
       errors.clear
 

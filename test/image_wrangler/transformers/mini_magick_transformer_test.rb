@@ -21,7 +21,7 @@ module ImageWrangler
         subject = @transformer.new(image, [])
 
         refute subject.valid?
-        assert_equal("component_list cannot be empty", subject.errors.full_messages[0])
+        assert_equal("component_list cannot be empty", image.errors.full_messages[0])
       end
 
       # rubocop:disable Metrics/AbcSize
@@ -51,7 +51,7 @@ module ImageWrangler
         refute subject.process
         refute File.exist?(menu[0][:filepath])
 
-        assert_match(/variant failed at index 0/i, subject.errors.full_messages[0])
+        assert_match(/variant failed at index 0/i, image.errors.full_messages[0])
       end
 
       def test_conversion_with_rgb_profile

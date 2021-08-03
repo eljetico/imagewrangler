@@ -15,8 +15,7 @@ module ImageWrangler
       def initialize(filepath, list, options = OPTS)
         @image = instantiate_source_image(filepath)
         @options = {
-          cascade: false,
-          errors: ImageWrangler::Errors.new
+          cascade: false
         }.merge(options)
 
         @component_list = instantiate_component_list(list)
@@ -46,7 +45,7 @@ module ImageWrangler
       end
 
       def errors
-        @errors ||= @options[:errors]
+        @image.errors
       end
 
       def instantiate_source_image(item)

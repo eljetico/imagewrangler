@@ -10,7 +10,10 @@ module ImageWrangler
       # Transformer dedicated to MiniMagick
       class Transformer < ImageWrangler::Transformers::Transformer
         def instantiate_component_list(list)
-          clist = ImageWrangler::Transformers::MiniMagick::ComponentList.new(list)
+          options = {
+            errors: errors
+          }
+          clist = ImageWrangler::Transformers::MiniMagick::ComponentList.new(list, options)
           clist.instantiate_variants
           clist
         end

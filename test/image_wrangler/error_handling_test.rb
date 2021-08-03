@@ -17,11 +17,11 @@ module ImageWrangler
       assert_equal "Coated FOGRA39 (ISO 12647-2:2004)", image.icc_name
 
       component_list = to_rgb
-      transformer = image.transformer(component_list)
-      assert transformer.valid?
-      refute transformer.process
+      # transformer = image.transformer(component_list)
+      # assert transformer.valid?
+      refute image.transform(component_list)
 
-      assert_equal "variant failed at index 0: colorspace/profile mismatch", transformer.errors.to_s
+      assert_equal "variant failed at index 0: colorspace/profile mismatch", image.errors.to_s
     end
 
     private
