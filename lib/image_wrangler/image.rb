@@ -32,7 +32,8 @@ module ImageWrangler
       @filepath = filepath
       @options = {
         handler: ImageWrangler::Handlers::MiniMagickHandler.new,
-        errors: ImageWrangler::Errors.new
+        errors: ImageWrangler::Errors.new,
+        logger: ImageWrangler::Logger.new($stdout, level: Logger::FATAL)
       }.merge(options)
 
       load_image
@@ -56,6 +57,10 @@ module ImageWrangler
 
     def handler
       @handler ||= @options[:handler]
+    end
+
+    def logger
+      @logger ||= @options[:logger]
     end
 
     def mtime
