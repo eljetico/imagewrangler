@@ -6,7 +6,6 @@ module ImageWrangler
     # MiniMagick-specific handler
     class MiniMagickHandler < Handler
       DEFAULT_QUIET_WARNINGS = true
-      EMPTY_STRING_REGEX = /^$/.freeze
 
       def initialize(**options)
         opts = {
@@ -269,7 +268,7 @@ module ImageWrangler
 
       def raw_attribute(attr_key)
         v = loaded? ? @magick["%[#{attr_key}]"] : ""
-        v =~ EMPTY_STRING_REGEX ? nil : v
+        v.eql?("") ? nil : v
       end
 
       # TODO: enable set_log_level here

@@ -58,7 +58,7 @@ module ImageWrangler
       end
 
       def ensure_compliance
-        errors.add(:config, component_list.errors.full_messages) unless component_list.valid?
+        errors.add(:config, component_list.errors.to_s) unless component_list.valid?
 
         errors.add(:component_list, "cannot be empty") unless component_list.variants.any?
       end

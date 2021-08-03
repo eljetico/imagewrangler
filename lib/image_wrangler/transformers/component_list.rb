@@ -40,7 +40,7 @@ module ImageWrangler
           if variant.valid?
             @variants.push(variant)
           else
-            errors.add(:variant, "#{index}: #{variant.errors.full_messages.join("; ")}")
+            errors.add(:variant, "#{index}: #{variant.errors}")
           end
         end
 
