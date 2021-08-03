@@ -18,9 +18,9 @@ module ImageWrangler
       ImageWrangler::Dimensions.new((width * scf).ceil, (height * scf).ceil)
     end
 
-    def pixel_area_for_fixed_size(fixed_size)
+    def pixel_area_for_fixed_side(fixed_side)
       sf = fixed_side.to_f / [width, height].max
-      (sf * width).ceil * (sf * width).ceil
+      (sf * width).ceil * (sf * height).ceil
     end
   end
 end
