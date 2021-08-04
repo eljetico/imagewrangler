@@ -9,12 +9,16 @@ module ImageWrangler
       @height = height
     end
 
+    def area
+      @width * @height
+    end
+
     def to_a
       [width, height]
     end
 
     def to_h
-      {width: width, height: height}
+      {width: width, height: height, area: area}
     end
 
     def to_s

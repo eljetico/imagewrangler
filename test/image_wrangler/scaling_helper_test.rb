@@ -66,5 +66,11 @@ module ImageWrangler
       assert_equal(3209, result.width)
       assert_equal(1631, result.height)
     end
+
+    def test_dimensions_for_fixed_side
+      subject = DummyImage.new(990, 503)
+      result = subject.dimensions_for_fixed_size(240)
+      assert_equal([240, 122], result.to_a)
+    end
   end
 end

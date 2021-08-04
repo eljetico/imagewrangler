@@ -13,6 +13,11 @@ module ImageWrangler
       scf.round(4)
     end
 
+    def dimensions_for_fixed_size(fixed_side)
+      sf = fixed_side.to_f / [width, height].max
+      ImageWrangler::Dimensions.new((width * sf).ceil, (height * sf).ceil)
+    end
+
     def dimensions_for_target_pixel_area(target_pixel_area)
       scf = scaling_factor(target_pixel_area, width, height)
       ImageWrangler::Dimensions.new((width * scf).ceil, (height * scf).ceil)
