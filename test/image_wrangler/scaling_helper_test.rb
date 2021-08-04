@@ -69,7 +69,7 @@ module ImageWrangler
 
     def test_dimensions_for_fixed_side
       subject = DummyImage.new(990, 503)
-      result = subject.dimensions_for_fixed_size(240)
+      result = subject.dimensions_for_fixed_side(240)
       assert_equal([240, 122], result.to_a)
     end
   end
