@@ -187,6 +187,27 @@ module ImageWrangler
 
           assert_equal expected, subject.merged_options
         end
+
+        def test_relegated_options
+          subject = @variant.new(
+            {
+              options: {
+                "colorspace" => "RGB",
+                "+profile" => %w[8BIMTEXT IPTC],
+                "append" => nil,
+                "relegated_options" => {
+                  "strip" => nil
+                }
+              }
+            }
+          )
+
+          subject.validate!
+
+          tool = subject.prepare_tool("/path/somewhere.jpg")
+          assert_equal "-strip", tool.command[-2]
+        end
+        # END TESTS
       end
     end
   end
