@@ -4,12 +4,15 @@ FROM ruby:2.5-slim
 WORKDIR /tmp/install
 
 # Install specific versions
-ENV GS_URL 'https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs918/ghostscript-9.18.tar.gz'
-ENV GS_VER 9.18
-ENV MAGICK_VER 6.8.9-10
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-ENV RUBYOPT W0
+ENV GS_URL='https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs918/ghostscript-9.18.tar.gz'
+ENV GS_VER=9.18
+ENV MAGICK_VER=6.8.9-10
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV RUBYOPT=W0
+
+# MAGICK RESOURCES
+ENV MAGICK_THREAD_LIMIT=1
 
 # Get basic utils
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
