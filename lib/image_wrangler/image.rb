@@ -2,6 +2,7 @@
 
 require "down"
 require "timeliness"
+require_relative "metadata"
 
 module ImageWrangler
   # Default wrapper for image handling
@@ -11,7 +12,6 @@ module ImageWrangler
     attr_reader :filepath
 
     DEFAULT_TRANSFORMER = ImageWrangler::Transformers::MiniMagick::Transformer
-    # OPTS = {}.freeze
 
     class << self
       def checksum(path, format: :md5)
@@ -51,8 +51,29 @@ module ImageWrangler
       handler.respond_to?(method) || super
     end
 
+    def checksum(opts = OPTS)
+      options = {
+        format: :md5,
+        force: false
+      }.merge(opts)
+
+      if options[:force]
+        return Image.checksum(@handler.loaded_path, format: options[:format])
+      end
+
+      @checksum ||= Image.checksum(@handler.loaded_path, format: options[:format])
+    end
+
     def errors
       @options[:errors]
+    end
+
+    def get_tag(tag)
+      metadata_delegate.get_tag(tag)
+    end
+
+    def get_all_tags
+      metadata_delegate.to_hash
     end
 
     def handler
@@ -61,6 +82,10 @@ module ImageWrangler
 
     def logger
       @logger ||= @options[:logger]
+    end
+
+    def metadata_delegate
+      @metadata_delegate ||= ImageWrangler::Metadata.new(@filepath)
     end
 
     def mtime
@@ -101,6 +126,12 @@ module ImageWrangler
       errors.empty?
     end
 
+    # `tags` should be string-keyed hash
+    def write_tags(tags, reload = true)
+      metadata_delegate.write_tags(tags)
+      reload! if reload # could be slow
+    end
+
     private
 
     def gather_remote_data
@@ -110,6 +141,11 @@ module ImageWrangler
       data
     rescue Down::Error => _e
       OPTS
+    end
+
+    # Use after manipulations which may alter filesize, checksum etc
+    def reload!
+      load_image
     end
 
     def remote_data

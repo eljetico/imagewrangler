@@ -20,6 +20,12 @@ module ImageWrangler
       @temp_file.delete
     end
 
+    # def test_image_delegates_to_metadata_instance
+    #   image = ImageWrangler::Image.new(@temp_filename)
+    #   assert image.write_tags({"AssetID" => "9089898"})
+    #   assert image.get_tag({"AssetID" => "9089898"})
+    # end
+
     def test_ensure_using_local_exiftool
       assert_match(/vendor\/Image-ExifTool/, MiniExiftool.command)
     end

@@ -53,7 +53,7 @@ module ImageWrangler
       end
       alias_method :channels, :channel_count
 
-      def checksum
+      def checksum(opts = OPTS)
         @checksum ||= begin
           md5 = Digest::MD5.file @magick.path
           md5.hexdigest
@@ -116,6 +116,10 @@ module ImageWrangler
         pages.length > 1
       end
 
+      def loaded_path
+        @magick.path
+      end
+
       def width
         @width ||= (nil_or_integer(attribute("width")) || 0)
       end
@@ -128,7 +132,7 @@ module ImageWrangler
         filepath
       end
 
-      def filesize
+      def filesize(opts = OPTS)
         @filesize ||= stat.size
       end
 
