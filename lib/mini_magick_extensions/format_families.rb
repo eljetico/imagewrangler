@@ -3,8 +3,9 @@
 module MiniMagick
   BASE_POSTSCRIPT = %w[EPI EPS EPSF EPSI EPS2 EPS3 EPT PS PS2 PS3].freeze
   RASTER_FORMATS = %w[BMP JPEG JPF JP2 PAM PNG WEBP GIF HEIF TIFF].freeze
-  VECTOR_FORMATS = BASE_POSTSCRIPT + %w[SVG].freeze
+
   POSTSCRIPT_FORMATS = BASE_POSTSCRIPT + %w[PDF].freeze
+  VECTOR_FORMATS = POSTSCRIPT_FORMATS + %w[SVG].freeze
 
   PERMITTED_EXTENSIONS = {
     "BMP" => [".bmp"],
@@ -40,6 +41,10 @@ module MiniMagick
       return "vector" if vector?
 
       "unknown"
+    end
+
+    def eps?
+      @eps ||= BASE_POSTSCRIPT.include?(_type_upcased)
     end
 
     def raster?
