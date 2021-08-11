@@ -2,12 +2,12 @@
 
 set -e
 
-# The usual, add gems etc
+echo "Building dev/test environment ..."
+
 docker-compose build
 
-# Followed by copy of Gemfile.lock back to cwd
 echo "Copying Gemfile.lock back to repo..."
+
 docker run -it -v $(pwd):/copy_dir imagewrangler cp Gemfile.lock /copy_dir/
 
 echo "Done"
-
