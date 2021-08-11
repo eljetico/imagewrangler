@@ -24,6 +24,7 @@ class ImageTest < Minitest::Test
     assert_equal ".jpg", image.preferred_extension
     assert_predicate image, :raster?
     refute_predicate image, :vector?
+    refute_predicate image, :eps?
   end
 
   def test_scaling_included
@@ -45,6 +46,15 @@ class ImageTest < Minitest::Test
     assert_equal ".jpg", image.preferred_extension
   end
 
+  def test_pdf_load
+    image = ImageWrangler::Image.new(vector_path("valid.pdf"))
+    assert_equal ".pdf", image.preferred_extension
+    assert_equal "PDF", image.file_format
+    assert_predicate image, :vector?
+    assert_predicate image, :pdf?
+    refute_predicate image, :eps?
+  end
+
   def test_basic_attributes_vector
     image = ImageWrangler::Image.new(vector_path("valid.eps"))
 
@@ -55,6 +65,8 @@ class ImageTest < Minitest::Test
     assert_equal "21de1f0f359eb03f0224f4bcc00384fe", image.checksum
     refute_predicate image, :raster?
     assert_predicate image, :vector?
+    assert_predicate image, :eps?
+    refute_predicate image, :pdf?
   end
 
   def test_validate_with_raster

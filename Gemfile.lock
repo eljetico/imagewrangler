@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    imagewrangler (0.1.6)
+    imagewrangler (0.1.7)
       down
       mini_exiftool
       mini_magick

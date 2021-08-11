@@ -28,6 +28,8 @@ class FormatFamiliesTest < Minitest::Test
     image = MiniMagick::Image.new(vector_path("valid.eps"))
     assert image.vector?
     refute image.raster?
+    refute image.pdf?
+    assert image.eps?
   end
 
   def test_valid_pdf
