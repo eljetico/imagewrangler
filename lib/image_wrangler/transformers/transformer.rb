@@ -15,8 +15,7 @@ module ImageWrangler
       def initialize(filepath, list, options = OPTS)
         @image = instantiate_source_image(filepath)
         @options = {
-          cascade: false,
-          errors: ImageWrangler::Errors.new
+          cascade: false
         }.merge(options)
 
         @component_list = instantiate_component_list(list)
@@ -46,7 +45,7 @@ module ImageWrangler
       end
 
       def errors
-        @errors ||= @options[:errors]
+        @image.errors
       end
 
       def instantiate_source_image(item)
@@ -58,9 +57,9 @@ module ImageWrangler
       end
 
       def ensure_compliance
-        errors.add(:config, component_list.errors.full_messages) unless component_list.valid?
+        errors.add(:config, component_list.errors.to_s) unless component_list.valid?
 
-        errors.add(:component_list, "cannot be empty") unless component_list.variants.any?
+        errors.add(:"transformations list", "cannot be empty") unless component_list.variants.any?
       end
 
       def ensure_outfile_removed(filepath)
@@ -77,9 +76,10 @@ module ImageWrangler
             variant.process
             yield(variant) if block
           rescue => e
-            new_message = "failed at index #{index}: #{e.message}"
+            message = translate_message(e.message)
+            new_message = "at index #{index} failed: #{message}"
             ensure_outfile_removed(variant.filepath)
-            errors.add(:variant, new_message)
+            errors.add(:transformation, new_message)
           end
           # rubocop:enable Style/RedundantBegin
         end
@@ -89,6 +89,14 @@ module ImageWrangler
 
       def source_image
         @image
+      end
+
+      def translate_message(message)
+        if message =~ /color profile operates on another colorspace/i
+          message = "colorspace/profile mismatch"
+        end
+
+        message
       end
 
       def valid?

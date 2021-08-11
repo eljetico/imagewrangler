@@ -8,6 +8,10 @@ module ImageWrangler
     end
 
     # rubocop:disable Naming/VariableName
+    def self.GenericRGB
+      @@GenericRGB ||= File.join(path, "Generic_RGB_Profile.icc")
+    end
+
     def self.sRGB
       @@sRGB ||= File.join(path, "sRGB-IEC61966-2.1.icc")
     end

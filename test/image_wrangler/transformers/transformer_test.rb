@@ -7,16 +7,12 @@ module ImageWrangler
   module Transformers
     # rubocop:disable Metrics/ClassLength
     class TransformerTest < Minitest::Test
-      OUTFILE_KEY = "imagewrangler"
-
       def setup
         @transformer = ImageWrangler::Transformers::MiniMagick::Transformer
       end
 
       def teardown
-        Dir.glob("/tmp/#{OUTFILE_KEY}.*").each do |file|
-          File.unlink(file)
-        end
+        clear_outfiles
       end
 
       def test_instantiate_menu_not_implemented
@@ -37,7 +33,6 @@ module ImageWrangler
 
         transformer = image.transformer(component_list)
         assert transformer.is_a?(ImageWrangler::Image::DEFAULT_TRANSFORMER)
-        assert transformer.options.key?(:errors)
       end
 
       # rubocop:disable Metrics/MethodLength
@@ -52,7 +47,7 @@ module ImageWrangler
         render_one = transformer.components[0]
         assert_equal 200, render_one.height
         assert_equal(render_one.checksum, "b0630a34c11024dc352f9c5a9d4014c0")
-        assert_equal(render_one.filename, "#{OUTFILE_KEY}.lo_res_200.jpg")
+        assert_equal(render_one.filename, "#{outfile_key}.lo_res_200.jpg")
         assert(render_one.mtime.is_a?(Time))
 
         # Source for first render is our main image ^
@@ -75,7 +70,7 @@ module ImageWrangler
       def simple_resize_components
         [
           {
-            filepath: "/tmp/#{OUTFILE_KEY}.lo_res_200.jpg",
+            filepath: "/tmp/#{outfile_key}.lo_res_200.jpg",
             options: {
               "geometry" => "200x200",
               "type" => "TrueColor",
@@ -83,7 +78,7 @@ module ImageWrangler
             }
           },
           {
-            filepath: "/tmp/#{OUTFILE_KEY}.lo_res_100.jpg",
+            filepath: "/tmp/#{outfile_key}.lo_res_100.jpg",
             options: {
               "geometry" => "100x100",
               "type" => "TrueColor",
@@ -98,7 +93,7 @@ module ImageWrangler
 
         [
           {
-            filepath: "/tmp/#{OUTFILE_KEY}..grayscale_to_rgb_100.jpg",
+            filepath: "/tmp/#{outfile_key}.grayscale_to_rgb_100.jpg",
             options: {
               "geometry" => "100x100",
               "type" => "TrueColor",
@@ -117,7 +112,7 @@ module ImageWrangler
 
         [
           {
-            filepath: "/tmp/#{OUTFILE_KEY}.cmyk_to_rgb_100.jpg",
+            filepath: "/tmp/#{outfile_key}.cmyk_to_rgb_100.jpg",
             options: {
               "geometry" => "100x100",
               "type" => "TrueColor",

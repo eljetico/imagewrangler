@@ -11,8 +11,8 @@ module ImageWrangler
           end
 
           def recognized?(key)
-            clean_key = ImageWrangler::Transformers::MiniMagick::Option.cleaned_option(key)
-            ImageWrangler::Transformers::MiniMagick::Option.available_options.include?(clean_key)
+            clean_key = cleaned_option(key)
+            available_options.include?(clean_key)
           end
 
           def available_options

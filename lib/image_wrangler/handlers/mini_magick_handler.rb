@@ -6,7 +6,6 @@ module ImageWrangler
     # MiniMagick-specific handler
     class MiniMagickHandler < Handler
       DEFAULT_QUIET_WARNINGS = true
-      EMPTY_STRING_REGEX = /^$/.freeze
 
       def initialize(**options)
         opts = {
@@ -50,11 +49,11 @@ module ImageWrangler
       # Note `identify -format "%[channels]"` returns colorspace (lowercased)
       # with current IM version so we use bruteforce method
       def channel_count
-        @channel_count ||= colorspace =~ /\Agray/i ? 1 : colorspace.length # standard:disable Performance/RegexpMatch
+        @channel_count ||= colorspace =~ /\Agray/i ? 1 : colorspace.length
       end
       alias_method :channels, :channel_count
 
-      def checksum
+      def checksum(opts = OPTS)
         @checksum ||= begin
           md5 = Digest::MD5.file @magick.path
           md5.hexdigest
@@ -117,6 +116,10 @@ module ImageWrangler
         pages.length > 1
       end
 
+      def loaded_path
+        @magick.path
+      end
+
       def width
         @width ||= (nil_or_integer(attribute("width")) || 0)
       end
@@ -129,7 +132,7 @@ module ImageWrangler
         filepath
       end
 
-      def filesize
+      def filesize(opts = OPTS)
         @filesize ||= stat.size
       end
 
@@ -256,10 +259,8 @@ module ImageWrangler
       def handle_mini_magick_error(error)
         example = error.message.split("\n")[1]
 
-        # standard:disable Performance/RegexpMatch
         raise ImageWrangler::Error, "corrupted file" if example =~ /premature end/i
         raise ImageWrangler::Error, "empty file" if example =~ /empty input file/i
-        # standard:enable Performance/RegexpMatch
 
         # In calling code, use err.cause to access nested exception
         raise ImageWrangler::Error, "MiniMagick error"
@@ -271,7 +272,7 @@ module ImageWrangler
 
       def raw_attribute(attr_key)
         v = loaded? ? @magick["%[#{attr_key}]"] : ""
-        v =~ EMPTY_STRING_REGEX ? nil : v # standard:disable Performance/RegexpMatch
+        v.eql?("") ? nil : v
       end
 
       # TODO: enable set_log_level here

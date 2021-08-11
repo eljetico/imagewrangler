@@ -15,7 +15,7 @@ module ImageWrangler
 
       def initialize(list = [], options = OPTS)
         @options = {
-          error_handler: ImageWrangler::Errors.new
+          errors: ImageWrangler::Errors.new # ImageWrangler::Image.errors by default
         }.merge(options)
 
         @variants = []
@@ -27,7 +27,7 @@ module ImageWrangler
       end
 
       def errors
-        @errors ||= @options[:error_handler]
+        @errors ||= @options[:errors]
       end
 
       # rubocop:disable Metrics/MethodLength
@@ -40,7 +40,7 @@ module ImageWrangler
           if variant.valid?
             @variants.push(variant)
           else
-            errors.add(:variant, "#{index}: #{variant.errors.full_messages.join("; ")}")
+            errors.add(:variant, "#{index}: #{variant.errors}")
           end
         end
 

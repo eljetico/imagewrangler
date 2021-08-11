@@ -23,6 +23,11 @@ module ImageWrangler
       assert_equal 0.3126, subject.scaling_factor(target_px_area, 3000, 4000)
     end
 
+    def test_pixel_area_for_fixed_side
+      subject = DummyImage.new(4048, 3032)
+      assert_equal 43200, subject.pixel_area_for_fixed_side(240)
+    end
+
     def test_upscaling_factor_volume
       skip("Enable when volume testing")
       subject = DummyImage.new(nil, nil)
@@ -60,6 +65,12 @@ module ImageWrangler
       result = subject.dimensions_for_target_pixel_area(5_230_000)
       assert_equal(3209, result.width)
       assert_equal(1631, result.height)
+    end
+
+    def test_dimensions_for_fixed_side
+      subject = DummyImage.new(990, 503)
+      result = subject.dimensions_for_fixed_side(240)
+      assert_equal([240, 122], result.to_a)
     end
   end
 end

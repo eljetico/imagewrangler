@@ -21,6 +21,8 @@ Gem::Specification.new do |s|
   s.add_dependency "mini_magick"
   s.add_dependency "timeliness"
 
+  s.add_development_dependency "benchmark-ips"
+  s.add_development_dependency "benchmark-memory"
   s.add_development_dependency "guard"
   s.add_development_dependency "guard-minitest"
   s.add_development_dependency "minitest-reporters"

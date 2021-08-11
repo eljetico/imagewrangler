@@ -18,7 +18,11 @@ module ImageWrangler
       #     '+profile' => %w(8BIMTEXT IPTC IPTCTEXT XMP),
       #     'profile' => 'icc:/path/to/profile.icc',
       #     'sharpen' => '1x0.5'
+      #    },
+      #    'relegated_options' => {
+      #      'strip' => nil
       #    }
+      # }
       #
       # Options can be prefixed with '-' or '+' but hyphens are ignored.
       #
@@ -37,7 +41,10 @@ module ImageWrangler
       class Variant < ImageWrangler::Transformers::Variant
         # Order of operations is important for IM convert so we
         # handle the various groups in the following sequence
-        attr_reader :grouped_options, :read_options, :unrecognized_options
+        #
+        # Relegated options include '-strip' and others which would normally
+        # come at the end of the command line and prior to output filename
+        attr_reader :grouped_options, :read_options, :relegated_options, :unrecognized_options
 
         OPTION_GROUP_ORDER = %w[
           image_settings
@@ -52,6 +59,7 @@ module ImageWrangler
           @tool = ::MiniMagick::Tool::Convert
           @my_option = ImageWrangler::Transformers::MiniMagick::Option
           @read_options = Hash.new { |hash, key| hash[key] = [] }
+          @relegated_options = Hash.new { |hash, key| hash[key] = [] }
           @grouped_options = Hash.new { |hash, key| hash[key] = [] }
         end
 
@@ -73,19 +81,22 @@ module ImageWrangler
           ordered.flatten
         end
 
-        def prepare_tool
+        def prepare_tool(source_filepath = source_image.filepath)
           tool = @tool.new
 
           # Prepend processing args if available
           tool.merge! merged_options(@read_options)
 
           # Use the validated image filepath
-          tool << source_image.filepath
+          tool << source_filepath
 
           # There are a few ways to do this in MiniMagick, using merge! is
           # the most flexible although requires some care when constructing
           # the options/values
           tool.merge! merged_options(@grouped_options)
+
+          # Add the relegated options last
+          tool.merge! merged_options(@relegated_options)
 
           # Finally, add the output filepath
           tool << filepath
@@ -157,6 +168,11 @@ module ImageWrangler
           # Handle preprocessing options, eg vector density settings
           read_opts = supplied_options.delete("read_options") || OPTS
           build_options(read_opts, @read_options)
+
+          # Handle relegated options, those which come last and prior
+          # to the output filename
+          relegated_opts = supplied_options.delete("relegated_options") || OPTS
+          build_options(relegated_opts, @relegated_options)
 
           # Handle remaining options ('between filenames')
           build_options(supplied_options)
