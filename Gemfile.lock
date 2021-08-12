@@ -10,7 +10,6 @@ PATH
   specs:
     imagewrangler (0.1.7)
       down
-      mini_exiftool
       mini_magick
       timeliness
 

@@ -10,6 +10,7 @@ module ImageWrangler
     def setup
       @temp_file = Tempfile.new("test")
       @org_filename = raster_path("valid_jpg_600px.jpg")
+
       @temp_filename = @temp_file.path
       FileUtils.cp(@org_filename, @temp_filename)
       @subject = ImageWrangler::Metadata.new(@temp_filename)
@@ -37,6 +38,12 @@ module ImageWrangler
 
     def test_xmp_tag_write
       assert @subject.write_tags({"AssetID" => "12345"})
+    end
+
+    def test_custom_xmp
+      custom_xmp = raster_path("custom_xmp.jpg")
+      subject = ImageWrangler::Metadata.new(custom_xmp)
+      assert subject.to_hash.key?("CustomField24")
     end
   end
 end

@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 2.3"
 
   s.add_dependency "down"
-  s.add_dependency "mini_exiftool"
+  # s.add_dependency "mini_exiftool"
   s.add_dependency "mini_magick"
   s.add_dependency "timeliness"
 
