@@ -16,6 +16,10 @@ def clear_outfiles
   end
 end
 
+def config_path(filename)
+  File.join(fixtures_path, "configurations", filename)
+end
+
 def fixtures_path
   "#{File.dirname(__FILE__)}/fixtures"
 end

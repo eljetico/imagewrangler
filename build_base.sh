@@ -4,6 +4,6 @@ set -e
 
 echo "Building base image for dev/test environment ..."
 
-docker build -f Dockerfile.base . -t imagewrangler_base
+docker build -f Dockerfile.base . -t imagewrangler-base
 
 echo "Done"

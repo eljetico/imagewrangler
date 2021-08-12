@@ -6,10 +6,11 @@ require "tempfile"
 require_relative "../test_helper"
 
 module ImageWrangler
-  class MetdadataTest < Minitest::Test
+  class MetadataTest < Minitest::Test
     def setup
       @temp_file = Tempfile.new("test")
       @org_filename = raster_path("valid_jpg_600px.jpg")
+      @config_file = config_path("ExifTool_config")
       @temp_filename = @temp_file.path
       FileUtils.cp(@org_filename, @temp_filename)
       @subject = ImageWrangler::Metadata.new(@temp_filename)
@@ -19,12 +20,6 @@ module ImageWrangler
       @temp_file.close
       @temp_file.delete
     end
-
-    # def test_image_delegates_to_metadata_instance
-    #   image = ImageWrangler::Image.new(@temp_filename)
-    #   assert image.write_tags({"AssetID" => "9089898"})
-    #   assert image.get_tag({"AssetID" => "9089898"})
-    # end
 
     def test_ensure_using_local_exiftool
       assert_match(/vendor\/Image-ExifTool/, MiniExiftool.command)
@@ -36,7 +31,55 @@ module ImageWrangler
     end
 
     def test_xmp_tag_write
-      assert @subject.write_tags({"AssetID" => "12345"})
+      @subject.write_tags({"AssetID" => "12345"})
+      @subject.exiftool.reload
+
+      assert_equal "12345", @subject.get_tag("AssetID").to_s
+    end
+
+    def test_custom_xmp_tags_discoverable
+      custom_xmp = raster_path("custom_xmp.jpg")
+      subject = ImageWrangler::Metadata.new(custom_xmp)
+      assert subject.to_hash.key?("CustomField24")
+    end
+
+    def test_can_supply_exiftool_config_file
+      custom_xmp = raster_path("custom_xmp.jpg")
+      subject = ImageWrangler::Metadata.new(custom_xmp, {exiftool_config: @config_file})
+      assert_equal @config_file, subject.exiftool.config_file
+    end
+
+    # CustomField24 only works because overridden MiniExiftool passes the tag through
+    # and it is recognized by the config file.
+    def test_can_write_to_namespaced_tag_with_config
+      subject = ImageWrangler::Metadata.new(@temp_filename, {exiftool_config: @config_file})
+      content = "New value"
+      subject.write_tags("CustomField24" => content)
+      assert_equal content, subject.get_tag("CustomField24")
+    end
+
+    # CustomField24 works because overridden MiniExiftool parses the embedded tag
+    # into its internal TagHash.
+    # CustomField59 does not work because even though parsed to TagHash, the config
+    # file does not recognize it
+    def test_can_write_to_custom_tag_with_config
+      custom_xmp = raster_path("custom_xmp.jpg")
+      FileUtils.cp(custom_xmp, @temp_filename)
+
+      subject = ImageWrangler::Metadata.new(@temp_filename, {exiftool_config: @config_file})
+      content = "New value"
+      subject.write_tags("CustomField24" => content)
+      assert_equal content, subject.get_tag("CustomField24")
+
+      assert_raises MiniExiftool::Error do
+        subject.write_tags("CustomField59" => "Should fail")
+      end
+    end
+
+    def test_cannot_write_to_custom_tag_without_config
+      assert_raises MiniExiftool::Error do
+        @subject.write_tags("CustomField49" => "Timbo")
+      end
     end
   end
 end

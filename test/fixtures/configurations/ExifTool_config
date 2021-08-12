@@ -1,0 +1,21 @@
+# This is an example of an .ExifTool_config file.
+# More info at https://exiftool.org/config.html
+
+%Image::ExifTool::UserDefined = (
+  'Image::ExifTool::XMP::Main' => {
+        TestXmp => {
+            SubDirectory => {
+                TagTable => 'Image::ExifTool::UserDefined::TestXmp',
+            },
+        },
+        # add more user-defined XMP namespaces here...
+    },
+);
+
+%Image::ExifTool::UserDefined::TestXmp = (
+    GROUPS => { 0 => 'XMP', 1 => 'XMP-TestXmp', 2 => 'Image' },
+    NAMESPACE => { 'TestXmp' => 'http://www.testxmp.com/TestXmpNamespace/' },
+    CustomField24 => { Writable => 'string' }
+);
+
+1;

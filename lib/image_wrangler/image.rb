@@ -31,6 +31,7 @@ module ImageWrangler
     def initialize(filepath, **options)
       @filepath = filepath
       @options = {
+        exiftool_config: nil,
         handler: ImageWrangler::Handlers::MiniMagickHandler.new,
         errors: ImageWrangler::Errors.new,
         logger: ImageWrangler::Logger.new($stdout, level: Logger::FATAL)
@@ -85,7 +86,10 @@ module ImageWrangler
     end
 
     def metadata_delegate
-      @metadata_delegate ||= ImageWrangler::Metadata.new(@filepath)
+      @metadata_delegate ||= begin
+        config = @options.keep_if { |k| k == :exiftool_config }
+        ImageWrangler::Metadata.new(@filepath, config)
+      end
     end
 
     def mtime

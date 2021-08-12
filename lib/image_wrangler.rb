@@ -9,6 +9,8 @@ require "json"
 require "mini_exiftool"
 require "mini_magick"
 
+require "mini_exiftool_overrides/all_overrides"
+
 # Top level module
 module ImageWrangler
   OPTS = {}.freeze
