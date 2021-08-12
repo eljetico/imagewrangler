@@ -1,5 +1,6 @@
 fix: false
 parallel: true
 ignore:
+  - 'lib/mini_exiftool_overrides/*'
   - 'lib/**/*':
     - Performance/RegexpMatch

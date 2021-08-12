@@ -5,8 +5,10 @@ require "mini_exiftool"
 module ImageWrangler
   # Interface to Exif, XMP, IPTC metadata
   class Metadata
-    def initialize(filepath)
-      @exiftool = MiniExiftool.new(filepath)
+    attr_reader :exiftool
+
+    def initialize(filepath, opts = OPTS)
+      @exiftool = MiniExiftool.new(filepath, opts)
     end
 
     def get_tag(tag)
@@ -24,7 +26,9 @@ module ImageWrangler
         @exiftool.send("#{tag}=", value)
       end
 
-      @exiftool.save
+      @exiftool.save!
+
+      true
     end
   end
 end
