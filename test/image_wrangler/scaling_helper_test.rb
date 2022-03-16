@@ -11,16 +11,29 @@ module ImageWrangler
     def setup
     end
 
+    def test_downscale_to_pixelarea
+      filepath = raster_path("valid_jpg.jpeg")
+      im = ImageWrangler::Image.new(filepath)
+      target_pixelarea = (im.pixelarea / 1.5).to_i
+      outfile = "/tmp/out.jpg"
+
+      assert im.downscale_to_pixelarea(target_pixelarea, outfile)
+
+      new_im = ImageWrangler::Image.new(outfile)
+      assert(new_im.pixelarea <= target_pixelarea)
+    end
+
     def test_upscaling_factor
       subject = DummyImage.new(nil, nil)
       target_px_area = 5_230_000
       assert_equal 3.2413, subject.scaling_factor(target_px_area, 990, 503)
     end
 
+    # No rounding when downscaling as we want to be as close as possible
     def test_downscaling_factor
       subject = DummyImage.new(nil, nil)
       target_px_area = 1_168_561 # 1080x1080
-      assert_equal 0.3126, subject.scaling_factor(target_px_area, 3000, 4000)
+      assert_equal 0.3120578204969927, subject.scaling_factor(target_px_area, 3000, 4000)
     end
 
     def test_pixel_area_for_fixed_side
