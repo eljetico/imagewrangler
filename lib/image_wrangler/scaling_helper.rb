@@ -3,14 +3,43 @@
 module ImageWrangler
   # Methods for scaling calculations
   module ScalingHelper
-    def scaling_factor(target_pixel_area, width, height)
-      current_area = width * height
+    def downscale_to_pixelarea(target_pixelarea, filepath)
+      # Only raster images
+      return false unless raster?
+
+      scf = scaling_factor(target_pixelarea)
+      max_dim = [(scf * width).to_i, (scf * height).to_i].max
+
+      transform = {
+        filepath: filepath,
+        options: {
+          "quality" => 99,
+          "format" => file_format,
+          "auto-orient" => nil,
+          "geometry" => "#{max_dim}x#{max_dim}"
+        }
+      }
+
+      transformer = transformer([transform])
+
+      if transformer.valid? && transformer.process
+        return File.exist?(filepath)
+      end
+
+      # Errors are asserted on the Image instance
+      false
+    end
+
+    def scaling_factor(target_pixel_area, w = width, h = height)
+      current_area = w * h
       return 1.0 if current_area == target_pixel_area
 
-      # Using a fudge factor here to help ensure resulting factor meets or
-      # exceeds desired area when multiplied.
-      scf = Math.sqrt(target_pixel_area / (width * height).to_f) + 0.0005
-      scf.round(4)
+      downscaling = target_pixel_area < current_area
+
+      # Unless downscaling, we need to meet or exceed the required target area.
+      # Add a fudge factor to accomplish this but omit if we're downscaling
+      scf = Math.sqrt(target_pixel_area / (w * h).to_f) + (downscaling ? 0 : 0.0005)
+      downscaling ? scf : scf.round(4)
     end
 
     def dimensions_for_fixed_side(fixed_side)
