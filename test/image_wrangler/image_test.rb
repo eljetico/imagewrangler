@@ -47,6 +47,16 @@ class ImageTest < Minitest::Test
     assert_equal ".jpg", image.preferred_extension
   end
 
+  def test_mime_type_for_masquerading_png
+    image = ImageWrangler::Image.new(raster_path("png_as_jpg.jpg"))
+    assert_equal "image/png", image.mime_type
+  end
+
+  def test_mime_type_for_webp
+    image = ImageWrangler::Image.new(raster_path("valid_pam_format.webp"))
+    assert_equal "image/png", image.mime_type
+  end
+
   def test_pdf_load
     image = ImageWrangler::Image.new(vector_path("valid.pdf"))
     assert_equal "application/pdf", image.mime_type

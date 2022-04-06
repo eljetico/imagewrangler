@@ -169,7 +169,7 @@ module ImageWrangler
 
       #
       # MiniMagick messes up mime type by prefixing detected format string
-      # with "image", eg "image/pdf", ignoring the value returned from Magick
+      # with "image", eg "image/pdf", ignoring the value from ImageMagick
       #
       # Magick retrieves the correct? value, but accessing in MiniMagick is
       # complicated by switch from image.details to image.data (see warning).
@@ -181,13 +181,14 @@ module ImageWrangler
       # Running image.data on some files throws parse errors, while details
       # returns raw string keys (data returns camelcased versions)
       #
-      # Options, use details/data parsing and search for "mimeType" or "Mime type"
-      # or, use MIME::Types to interrogate the file
+      # Options: use details/data parsing and search for "mimeType" or "Mime type"
+      # or, use MIME::Types to interrogate the file. Here we're using the info
+      # already available
       #
       def mime_type
-        @mime_type ||= ["mimeType", "Mime type"].each_with_object([]) do |k, ary|
-          ary.push raw_magick_data.fetch(k, nil)
-        end.compact.first
+        @mime_type ||= ["mimeType", "Mime type"].map { |k|
+          raw_magick_data.fetch(k, nil)
+        }.compact.first
       end
 
       def orientation
