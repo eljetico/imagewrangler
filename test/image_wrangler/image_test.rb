@@ -54,7 +54,18 @@ class ImageTest < Minitest::Test
 
   def test_mime_type_for_webp
     image = ImageWrangler::Image.new(raster_path("valid_pam_format.webp"))
-    assert_equal "image/png", image.mime_type
+    assert_equal "image/webp", image.mime_type
+  end
+
+  def test_mime_type_for_jpg_2000
+    image = ImageWrangler::Image.new(raster_path("valid_jpeg_2000.jp2"))
+    assert_equal "image/jp2", image.mime_type
+  end
+
+  # MiniMagick handler specifies `image/psd`
+  def test_mime_type_for_psd
+    image = ImageWrangler::Image.new(raster_path("layers.psd"))
+    assert_equal "image/vnd.adobe.photoshop", image.mime_type
   end
 
   def test_pdf_load
@@ -120,7 +131,7 @@ class ImageTest < Minitest::Test
     assert(subject < Time.now)
   end
 
-  def test_mtime_with_remote_file
+  def test_remote_file
     filepath = raster_path("valid_jpg.jpg")
 
     stub_request(:get, "https://example.com/image.jpg")
@@ -143,5 +154,27 @@ class ImageTest < Minitest::Test
 
     assert(subject.is_a?(Time))
     assert(subject < Time.now)
+    assert_equal "image/jpeg", wrangler.mime_type
+  end
+
+  def test_remote_file_mime_type
+    filepath = vector_path("valid.eps")
+
+    stub_request(:get, "https://example.com/image.eps")
+      .to_return(
+        {
+          body: File.read(filepath),
+          headers: {
+            "Date" => "Thu, 01 Apr 2021 12:09:35 GMT",
+            "Last-Modified" => "Thu, 18 Mar 2021 22:34:32 GMT",
+            "Etag" => '"a0a368ca9cffcac6bdc0bcf69138dd0c-201"',
+            "Accept-Ranges" => "bytes",
+            "Content-Length" => File.size(filepath)
+          }
+        }
+      )
+
+    wrangler = ImageWrangler::Image.new("https://example.com/image.eps")
+    assert_equal "application/postscript", wrangler.mime_type
   end
 end
