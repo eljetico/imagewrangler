@@ -167,6 +167,30 @@ module ImageWrangler
         @iptc_date_created ||= extract_iptc_date_created
       end
 
+      #
+      # MiniMagick messes up mime type by prefixing detected format string
+      # with "image", eg "image/pdf".
+      #
+      # IM retrieves the correct? value, so we can access this via the `data`
+      # method, which calls `convert json:`
+      #
+      # IM can often return invalid JSON from this call, so we have to fall
+      # back to the deprecated `details` method which runs `identify -verbose`
+      #
+      # Options: use MIME::Types to interrogate the file.
+      #
+      # https://github.com/minimagick/minimagick/blob/master/lib/mini_magick/image/info.rb
+      #
+      # rubocop:disable Style/RedundantBegin
+      def mime_type
+        @mime_type ||= begin
+          ["mimeType", "Mime type"].map { |k|
+            raw_magick_data.fetch(k, nil)
+          }.compact.first || @magick.mime_type
+        end
+      end
+      # rubocop:enable Style/RedundantBegin
+
       def orientation
         @orientation ||= nil_or_string(raw_attribute("orientation"))
       end
@@ -281,6 +305,22 @@ module ImageWrangler
         MiniMagick.configure do |config|
           config.quiet_warnings = options.fetch(:quiet_warnings)
         end
+      end
+
+      private
+
+      def extract_raw_data
+        @magick.data
+      rescue JSON::ParserError => _
+        warn "JSON parser error, dropping to deprecated MiniMagick.details method"
+        @magick.details
+      rescue
+        warn "Unhandled raw data error"
+        {}
+      end
+
+      def raw_magick_data
+        @raw_magick_data ||= extract_raw_data
       end
     end
     # rubocop:enable Metrics/ClassLength

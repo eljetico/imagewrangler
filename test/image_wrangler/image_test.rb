@@ -10,6 +10,7 @@ class ImageTest < Minitest::Test
   def test_basic_attributes_raster
     image = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
 
+    assert_equal "image/jpeg", image.mime_type
     assert_equal "808-185", image.get_tag("title")
     refute_empty image.get_all_tags
     assert_equal 1000, image.height
@@ -46,8 +47,19 @@ class ImageTest < Minitest::Test
     assert_equal ".jpg", image.preferred_extension
   end
 
+  def test_mime_type_for_masquerading_png
+    image = ImageWrangler::Image.new(raster_path("png_as_jpg.jpg"))
+    assert_equal "image/png", image.mime_type
+  end
+
+  def test_mime_type_for_webp
+    image = ImageWrangler::Image.new(raster_path("valid_pam_format.webp"))
+    assert_equal "image/png", image.mime_type
+  end
+
   def test_pdf_load
     image = ImageWrangler::Image.new(vector_path("valid.pdf"))
+    assert_equal "application/pdf", image.mime_type
     assert_equal ".pdf", image.preferred_extension
     assert_equal "PDF", image.file_format
     assert_predicate image, :vector?
@@ -58,6 +70,7 @@ class ImageTest < Minitest::Test
   def test_basic_attributes_vector
     image = ImageWrangler::Image.new(vector_path("valid.eps"))
 
+    assert_equal "application/postscript", image.mime_type
     assert_equal 503, image.height
     assert_equal 990, image.width
     assert_equal "CMYK", image.colorspace
