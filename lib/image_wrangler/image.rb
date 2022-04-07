@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "down"
+require "marcel"
+require "pathname"
 require "timeliness"
 require_relative "metadata"
 
@@ -92,6 +94,19 @@ module ImageWrangler
       end
     end
 
+    # Handler may return spurious values
+    # rubocop:disable Style/RedundantBegin
+    def mime_type
+      @mime_type ||= begin
+        if remote?
+          remote_mime_type || handler.mime_type
+        else
+          extract_mime_type || handler.mime_type
+        end
+      end
+    end
+    # rubocop:enable Style/RedundantBegin
+
     def mtime
       @mtime ||= remote? ? remote_mtime : File.mtime(@filepath)
     rescue => _e
@@ -138,6 +153,10 @@ module ImageWrangler
 
     private
 
+    def extract_mime_type
+      File.open(@filepath) { |file| Marcel::MimeType.for file }
+    end
+
     def gather_remote_data
       remote_file = Down.open(@filepath)
       data = remote_file.data
@@ -169,6 +188,12 @@ module ImageWrangler
       Timeliness.parse(date, format: t_format, zone: :utc)
     rescue => _e
       nil
+    end
+
+    def remote_mime_type
+      return nil unless remote?
+
+      remote_headers.fetch("Content-Type", nil)
     end
 
     def load_image

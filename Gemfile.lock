@@ -3,6 +3,7 @@ PATH
   specs:
     imagewrangler (0.1.7)
       down
+      marcel
       mini_exiftool
       mini_magick
       timeliness
@@ -47,6 +48,7 @@ GEM
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     lumberjack (1.2.8)
+    marcel (1.0.2)
     memory_profiler (0.9.14)
     method_source (1.0.0)
     mini_exiftool (2.10.2)
@@ -119,4 +121,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   2.2.25
+   2.3.11
