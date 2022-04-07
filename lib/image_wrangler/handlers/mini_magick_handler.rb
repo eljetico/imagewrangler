@@ -169,27 +169,27 @@ module ImageWrangler
 
       #
       # MiniMagick messes up mime type by prefixing detected format string
-      # with "image", eg "image/pdf", ignoring the value from ImageMagick
+      # with "image", eg "image/pdf".
       #
-      # Magick retrieves the correct? value, but accessing in MiniMagick is
-      # complicated by switch from image.details to image.data (see warning).
+      # IM retrieves the correct? value, so we can access this via the `data`
+      # method, which calls `convert json:`
       #
-      # MiniMagick.details calls `identify.verbose`
+      # IM can often return invalid JSON from this call, so we have to fall
+      # back to the deprecated `details` method which runs `identify -verbose`
       #
-      # MiniMagick.data calls `convert -format JSON`
+      # Options: use MIME::Types to interrogate the file.
       #
-      # Running image.data on some files throws parse errors, while details
-      # returns raw string keys (data returns camelcased versions)
+      # https://github.com/minimagick/minimagick/blob/master/lib/mini_magick/image/info.rb
       #
-      # Options: use details/data parsing and search for "mimeType" or "Mime type"
-      # or, use MIME::Types to interrogate the file. Here we're using the info
-      # already available
-      #
+      # rubocop:disable Style/RedundantBegin
       def mime_type
-        @mime_type ||= ["mimeType", "Mime type"].map { |k|
-          raw_magick_data.fetch(k, nil)
-        }.compact.first
+        @mime_type ||= begin
+          ["mimeType", "Mime type"].map { |k|
+            raw_magick_data.fetch(k, nil)
+          }.compact.first || @magick.mime_type
+        end
       end
+      # rubocop:enable Style/RedundantBegin
 
       def orientation
         @orientation ||= nil_or_string(raw_attribute("orientation"))

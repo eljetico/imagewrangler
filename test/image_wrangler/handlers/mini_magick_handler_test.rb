@@ -176,6 +176,7 @@ class MiniMagickHandlerTest < Minitest::Test
 
   def test_vector_detection
     @subject.load_image(vector_path("valid.eps"))
+    assert_equal "application/postscript", @subject.mime_type
     assert @subject.vector?
     assert @subject.postscript?
     refute @subject.raster?
@@ -197,21 +198,32 @@ class MiniMagickHandlerTest < Minitest::Test
 
   def test_pages_detection
     @subject.load_image(vector_path("multi_page_scanned.pdf"))
+    assert_equal "application/pdf", @subject.mime_type
     assert_equal 2, @subject.pages.length
     assert_predicate @subject, :image_sequence?
   end
 
+  # PSD mime type can be any of:
+  # application/x-photoshop
+  # application/photoshop
+  # application/psd
+  # image/vnd.adobe.photoshop
+  # image/psd
+  #
+  # This result is a fall-through (IM doesn't report via info methods)
   def test_layers_detection
     @subject.load_image(raster_path("valid_jpg.jpg"))
     assert_equal 1, @subject.layers.length
 
     subject = @handler.new
     subject.load_image(raster_path("layers.psd"))
+    assert_equal "image/psd", subject.mime_type
     assert_equal 2, subject.layers.length
   end
 
   def test_valid_jpeg_two_k
     @subject.load_image(raster_path("valid_jpeg_2000.jp2"))
+    assert_equal "image/jp2", @subject.mime_type
     assert_equal "JP2", @subject.type
     assert @subject.raster?
   end
