@@ -30,7 +30,6 @@ module ImageWrangler
         @errors ||= @options[:errors]
       end
 
-      # rubocop:disable Metrics/MethodLength
       def instantiate_variants
         @variants.clear
 
@@ -46,7 +45,6 @@ module ImageWrangler
 
         @variants.any?
       end
-      # rubocop:enable Metrics/MethodLength
 
       def valid?
         errors.empty?

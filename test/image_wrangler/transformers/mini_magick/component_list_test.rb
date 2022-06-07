@@ -32,7 +32,6 @@ module ImageWrangler
 
         private
 
-        # rubocop:disable Metrics/MethodLength
         def bad_list
           [
             {
@@ -51,7 +50,6 @@ module ImageWrangler
             }
           ]
         end
-        # rubocop:enable Metrics/MethodLength
       end
     end
   end

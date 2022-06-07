@@ -35,6 +35,7 @@ module ImageWrangler
       @options = {
         exiftool_config: nil,
         handler: ImageWrangler::Handlers::MiniMagickHandler.new,
+        down_backend: nil,
         errors: ImageWrangler::Errors.new,
         logger: ImageWrangler::Logger.new($stdout, level: Logger::FATAL)
       }.merge(options)
@@ -158,11 +159,13 @@ module ImageWrangler
     end
 
     def gather_remote_data
+      Down.backend @options.fetch(:down_backend, Down::NetHttp)
       remote_file = Down.open(@filepath)
       data = remote_file.data
       remote_file.close
       data
-    rescue Down::Error => _e
+    rescue Down::Error => e
+      @logger.debug("Down error: #{e.backtrace.join("\n")}")
       OPTS
     end
 

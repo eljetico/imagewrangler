@@ -5,7 +5,6 @@ require "image_wrangler"
 
 module ImageWrangler
   module Transformers
-    # rubocop:disable Metrics/ClassLength
     class MiniMagickTransformerTest < Minitest::Test
       def setup
         # MiniMagick.logger.level = Logger::DEBUG
@@ -24,7 +23,6 @@ module ImageWrangler
         assert_equal("transformations list cannot be empty", image.errors.full_messages[0])
       end
 
-      # rubocop:disable Metrics/AbcSize
       def test_simple_resize
         image = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
         menu = menu_simple_resize
@@ -80,11 +78,9 @@ module ImageWrangler
         assert_equal "RGB", rendered.colorspace
         assert_equal 80, rendered.quality
       end
-      # rubocop:enable Metrics/AbcSize
 
       private
 
-      # rubocop:disable Metrics/MethodLength
       def menu_simple_resize
         [
           {
@@ -133,12 +129,10 @@ module ImageWrangler
           }
         ]
       end
-      # rubocop:enable Metrics/MethodLength
 
       def profile_path(icc_name)
         File.join(ImageWrangler.root, "resources", "color_profiles", icc_name)
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

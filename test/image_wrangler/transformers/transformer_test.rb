@@ -5,7 +5,6 @@ require "image_wrangler"
 
 module ImageWrangler
   module Transformers
-    # rubocop:disable Metrics/ClassLength
     class TransformerTest < Minitest::Test
       def setup
         @transformer = ImageWrangler::Transformers::MiniMagick::Transformer
@@ -23,7 +22,6 @@ module ImageWrangler
         end
       end
 
-      # rubocop:disable Metrics/AbcSize
       def test_transformer_can_accept_optional_args
         image = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
         component_list = simple_resize_components
@@ -35,7 +33,6 @@ module ImageWrangler
         assert transformer.is_a?(ImageWrangler::Image::DEFAULT_TRANSFORMER)
       end
 
-      # rubocop:disable Metrics/MethodLength
       def test_transformer_can_cascade_components
         image = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
         component_list = simple_resize_components
@@ -61,12 +58,9 @@ module ImageWrangler
         source_image = transformer.components[1].source_image
         assert_equal render_one.filepath, source_image.filepath
       end
-      # rubocop:enable Metrics/MethodLength
-      # rubocop:enable Metrics/AbcSize
 
       private
 
-      # rubocop:disable Metrics/MethodLength
       def simple_resize_components
         [
           {
@@ -103,9 +97,7 @@ module ImageWrangler
           }
         ]
       end
-      # rubocop:enable Metrics/MethodLength
 
-      # rubocop:disable Metrics/MethodLength
       def menu_cmyk_to_rgb
         # cmyk_profile = profile_path('USWebCoatedSWOP.icc')
         rgb_profile = profile_path("sRGB-IEC61966-2.1.icc")
@@ -122,7 +114,6 @@ module ImageWrangler
           }
         ]
       end
-      # rubocop:enable Metrics/MethodLength
 
       def profile_path(icc_name)
         File.expand_path(
@@ -133,6 +124,5 @@ module ImageWrangler
         )
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end
