@@ -2,7 +2,6 @@
 
 require_relative "../../test_helper"
 
-# rubocop:disable Metrics/ClassLength
 class MiniMagickHandlerTest < Minitest::Test
   def setup
     @handler = ImageWrangler::Handlers::MiniMagickHandler
@@ -79,8 +78,6 @@ class MiniMagickHandlerTest < Minitest::Test
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/MethodLength
   def test_attributes_retrieval_local_file
     @subject.load_image(raster_path("valid_jpg.jpg"))
 
@@ -96,7 +93,6 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal "Adobe RGB (1998)", @subject.icc_name
     refute @subject.visually_corrupt?
   end
-  # rubocop:enable Metrics/MethodLength
 
   def test_attributes_retrieval_remote_file
     stub_request(:get, "https://example.com/image.jpg")
@@ -112,7 +108,6 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal "U.S. Web Coated (SWOP) v2", @subject.icc_name
     refute @subject.visually_corrupt?
   end
-  # rubocop:enable Metrics/AbcSize
 
   def test_clipping_paths
     @subject.load_image(raster_path("clipping_path.jpg"))
@@ -252,4 +247,3 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_match(/Not a JPEG file/, err.cause.message)
   end
 end
-# rubocop:enable Metrics/ClassLength

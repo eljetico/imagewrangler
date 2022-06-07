@@ -2,7 +2,6 @@
 
 module ImageWrangler
   module Handlers
-    # rubocop:disable Metrics/ClassLength
     # MiniMagick-specific handler
     class MiniMagickHandler < Handler
       DEFAULT_QUIET_WARNINGS = true
@@ -136,7 +135,6 @@ module ImageWrangler
         @filesize ||= stat.size
       end
 
-      # rubocop:disable Metrics/MethodLength
       def load_image(filepath)
         @loaded = false
         @filepath = filepath
@@ -161,7 +159,6 @@ module ImageWrangler
       rescue OpenURI::HTTPError => e
         raise ImageWrangler::Error, e.message
       end
-      # rubocop:enable Metrics/MethodLength
 
       def iptc_date_created
         @iptc_date_created ||= extract_iptc_date_created
@@ -323,6 +320,5 @@ module ImageWrangler
         @raw_magick_data ||= extract_raw_data
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end
