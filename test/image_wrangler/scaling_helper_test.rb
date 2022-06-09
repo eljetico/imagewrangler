@@ -23,61 +23,51 @@ module ImageWrangler
       assert(new_im.pixelarea <= target_pixelarea)
     end
 
-    def test_upscaling_factor
-      subject = DummyImage.new(nil, nil)
-      target_px_area = 5_230_000
-      assert_equal 3.2413, subject.scaling_factor(target_px_area, 990, 503)
-    end
-
-    # No rounding when downscaling as we want to be as close as possible
-    def test_downscaling_factor
-      subject = DummyImage.new(nil, nil)
-      target_px_area = 1_168_561 # 1080x1080
-      assert_equal 0.3120578204969927, subject.scaling_factor(target_px_area, 3000, 4000)
-    end
-
     def test_pixel_area_for_fixed_side
       subject = DummyImage.new(4048, 3032)
       assert_equal 43200, subject.pixel_area_for_fixed_side(240)
     end
 
-    def test_upscaling_factor_volume
-      skip("Enable when volume testing")
+    def test_dimensions_for_target_pixel_area_upscaling_volume
+      skip("enable when volume testing")
       subject = DummyImage.new(nil, nil)
       target_px_area = 5_230_000
 
       dims = (100..2286)
       dims.each do |w|
         dims.each do |h|
-          scf = subject.scaling_factor(target_px_area, w, h)
-          new_w = (w * scf).ceil
-          new_h = (h * scf).ceil
-          assert((new_w * new_h) >= target_px_area, "#{w} x #{h} @ #{scf} failed")
+          result = subject.dimensions_for_target_pixel_area(target_px_area, w, h)
+          assert(result.area >= target_px_area, "#{w} x #{h} -> #{result.area}")
         end
       end
     end
 
-    def test_downscaling_factor_volume
-      skip("Enable when volume testing")
+    def test_dimensions_for_target_pixel_area_downscaling_volume
+      skip("enable when volume testing")
       subject = DummyImage.new(nil, nil)
       target_px_area = 1_168_561
 
       dims = (2000..5000)
       dims.each do |w|
         dims.each do |h|
-          scf = subject.scaling_factor(target_px_area, w, h)
-          new_w = (w * scf).ceil
-          new_h = (h * scf).ceil
-          assert((new_w * new_h) >= target_px_area, "#{w} x #{h} @ #{scf} failed")
+          result = subject.dimensions_for_target_pixel_area(target_px_area, w, h)
+          assert(result.area <= target_px_area, "#{w} x #{h} -> #{result.area}")
         end
       end
     end
 
-    def test_dimensions_for_target_pixel_area
+    def test_dimensions_for_target_pixel_area_upscaling
       subject = DummyImage.new(990, 503)
       result = subject.dimensions_for_target_pixel_area(5_230_000)
       assert_equal(3209, result.width)
       assert_equal(1631, result.height)
+    end
+
+    def test_dimensions_for_target_pixel_area_downscaling
+      subject = DummyImage.new(21002, 12504)
+      result = subject.dimensions_for_target_pixel_area(256_000_000)
+      assert_equal(20736, result.width)
+      assert_equal(12345, result.height)
     end
 
     def test_dimensions_for_fixed_side

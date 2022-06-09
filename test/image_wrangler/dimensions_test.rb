@@ -11,7 +11,8 @@ module ImageWrangler
       dims = ImageWrangler::Dimensions.new(990, 503)
       assert_equal "990x503", dims.to_s
       assert_equal([990, 503], dims.to_a)
-      assert_equal({width: 990, height: 503, area: 497970}, dims.to_h)
+      assert_equal(4, dims.to_h.size)
+      assert_equal(990, dims.max)
     end
   end
 end

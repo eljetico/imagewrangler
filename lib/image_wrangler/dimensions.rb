@@ -17,8 +17,12 @@ module ImageWrangler
       [width, height]
     end
 
+    def max
+      to_a.max
+    end
+
     def to_h
-      {width: width, height: height, area: area}
+      {width: width, height: height, area: area, max: max}
     end
 
     def to_s
