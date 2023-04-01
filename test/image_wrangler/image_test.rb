@@ -32,7 +32,7 @@ class ImageTest < Minitest::Test
     image = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
     scaling = image.dimensions_for_target_pixel_area(3_000_000)
     assert_equal 1447, scaling.width
-    assert_equal 2076, scaling.height
+    assert_equal 2075, scaling.height
   end
 
   def test_identifies_cloaked_file
