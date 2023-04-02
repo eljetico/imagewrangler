@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.files = Dir["lib/**/*", "resources/**/*", "vendor/**/*"]
   s.required_ruby_version = ">= 2.3"
 
+  s.add_dependency "httpx"
   s.add_dependency "down"
   s.add_dependency "marcel"
   s.add_dependency "mini_exiftool"
@@ -26,8 +27,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency "benchmark-memory"
   s.add_development_dependency "guard"
   s.add_development_dependency "guard-minitest"
+  s.add_development_dependency "guard-standardrb"
+  s.add_development_dependency "http"
   s.add_development_dependency "minitest-reporters"
   s.add_development_dependency "rb-readline"
-  s.add_development_dependency "guard-standardrb"
   s.add_development_dependency "webmock"
 end

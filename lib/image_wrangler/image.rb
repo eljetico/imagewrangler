@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "down"
+# require "down/httpx"
 require "marcel"
 require "pathname"
 require "timeliness"
@@ -35,11 +36,13 @@ module ImageWrangler
       @options = {
         exiftool_config: nil,
         handler: ImageWrangler::Handlers::MiniMagickHandler.new,
-        down_backend: nil,
+        down_backend: :httpx,
         errors: ImageWrangler::Errors.new,
         logger: ImageWrangler::Logger.new($stdout, level: Logger::FATAL)
       }.merge(options)
 
+      # Set the Down global backend
+      Down.backend @options[:down_backend]
       load_image
     end
 
@@ -119,6 +122,10 @@ module ImageWrangler
     end
     alias_method :url?, :remote?
 
+    def remote_data
+      @remote_data ||= gather_remote_data
+    end
+
     # See DEFAULT_TRANSFORMER for options
     def transformer(component_list, klass = nil, options = OPTS)
       # Swap klass with options
@@ -159,14 +166,16 @@ module ImageWrangler
     end
 
     def gather_remote_data
-      Down.backend @options.fetch(:down_backend, Down::NetHttp)
       remote_file = Down.open(@filepath)
       data = remote_file.data
       remote_file.close
       data
     rescue Down::Error => e
-      @logger.debug("Down error: #{e.backtrace.join("\n")}")
-      OPTS
+      msg = "Down error: #{e.message} #{e.backtrace.join("\n")}"
+      logger.debug(msg)
+      {
+        error: msg
+      }
     end
 
     # Use after manipulations which may alter filesize, checksum etc
@@ -174,16 +183,12 @@ module ImageWrangler
       load_image
     end
 
-    def remote_data
-      @remote_data ||= gather_remote_data
-    end
-
     def remote_headers
       @remote_headers ||= remote_data.fetch(:headers, OPTS)
     end
 
     def remote_mtime
-      date = remote_headers.fetch("Last-Modified", nil)
+      date = remote_headers["Last-Modified"] || remote_headers["Date"]
       return nil if date.nil?
 
       # This is a little constrictive

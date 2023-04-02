@@ -1,9 +1,15 @@
 version: '2'
 services:
+  httpbin:
+    image: kennethreitz/httpbin
+    volumes:
+      - ./test/fixtures/httpbin:/httpbin/httpbin/templates/images
   app:
     build: .
     image: imagewrangler
     container_name: imagewrangler
+    environment:
+      - httpbin=http://httpbin
     volumes:
       - .:/apps/imagewrangler
     command: ["bundle", "exec", "guard"]
