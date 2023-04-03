@@ -82,11 +82,9 @@ module ImageWrangler
 
     # Remote read
     def test_remote_read
-      skip("need a clear way to use proxy/no-proxy settings here, prefer with Down")
-      # Also have to take into account Proxy/NoProxy use...
-      url = "#{httpbin}/image/jpeg"
-      json = `curl -s #{url} | #{MiniExiftool.command} -fast -ee3 -U -api requestall=3 -j -`
-      assert_equal("tim", json)
+      url = "#{httpserver}/images/raster/valid_jpg.jpg"
+      subject = ImageWrangler::Metadata.new(url)
+      assert_equal("Times Square", subject.get_tag("Sub-location"))
     end
   end
 end

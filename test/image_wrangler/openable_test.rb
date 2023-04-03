@@ -20,7 +20,7 @@ module ImageWrangler
     end
 
     def test_handles_remote_file_paths
-      url = "#{httpbin}/image/jpeg"
+      url = "#{httpserver}/images/raster/valid_jpg.jpg"
       subject = @klass.new url
       assert subject.respond_to?(:open)
       assert subject.respond_to?(:to_s)

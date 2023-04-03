@@ -37,7 +37,7 @@ class HttpServer
   end
 
   def missing_resource(msg = "Resource not found")
-    [404, {"Content-Type" => "application/json"}, [{message: msg}.to_json ]]
+    [404, {"Content-Type" => "application/json"}, [{message: msg}.to_json]]
   end
 end
 
@@ -52,7 +52,7 @@ run HttpServer.new
 #   }
 # end
 
-use Rack::Static, :urls => ["/images"], :root => "public",
-  :header_rules => [
-    [:all, {"Cache-Control" => "public, max-age=31536000"}],
+use Rack::Static, urls: ["/images"], root: "public",
+  header_rules: [
+    [:all, {"Cache-Control" => "public, max-age=31536000"}]
   ]

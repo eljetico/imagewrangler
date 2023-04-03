@@ -42,8 +42,12 @@ module ImageWrangler
       MiniExiftool.new(filepath, opts)
     end
 
+    # Extract metadata from remote location
+    # Using curl here to enable piping to Exiftool, and to
+    # ensure proxy and no_proxy settings are respected.
+    # See: https://exiftool.org/exiftool_pod.html#PIPING-EXAMPLES
     def from_remote(url, opts)
-      json = `curl -s #{url} | #{MiniExiftool.command} -fast -j -`
+      json = `curl -s "#{url}" | #{MiniExiftool.command} -fast -j -`
       MiniExiftool.from_hash(JSON.parse(json)[0], opts)
     end
   end

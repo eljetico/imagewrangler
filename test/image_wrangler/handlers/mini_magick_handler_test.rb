@@ -45,22 +45,16 @@ class MiniMagickHandlerTest < Minitest::Test
   end
 
   def test_initialize_with_corrupt_remote_file
-    stub_request(:get, "https://example.com/corrupt.jpg")
-      .to_return(body: File.read(raster_path("corrupt_premature_end.jpg")))
-
     err = assert_raises ImageWrangler::Error do
-      @subject.load_image("https://example.com/corrupt.jpg")
+      @subject.load_image("#{httpserver}/images/raster/corrupt_premature_end.jpg")
     end
 
     assert_match(/corrupted file/i, err.message)
   end
 
   def test_basic_initialization_with_missing_url
-    stub_request(:get, "https://example.com/image.jpg")
-      .to_return(status: 404, body: "Not found")
-
     err = assert_raises ImageWrangler::Error do
-      @subject.load_image("https://example.com/image.jpg")
+      @subject.load_image("#{httpserver}/images/raster/missing.jpg")
     end
 
     assert_match(/404/i, err.message)
@@ -95,10 +89,7 @@ class MiniMagickHandlerTest < Minitest::Test
   end
 
   def test_attributes_retrieval_remote_file
-    stub_request(:get, "https://example.com/image.jpg")
-      .to_return(body: File.read(raster_path("cmyk.jpg")))
-
-    @subject.load_image("https://example.com/image.jpg")
+    @subject.load_image("#{httpserver}/images/raster/cmyk.jpg")
 
     assert_equal "image/jpeg", @subject.mime_type
     assert_equal "CMYK", @subject.colorspace
