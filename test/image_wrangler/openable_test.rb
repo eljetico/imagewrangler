@@ -10,25 +10,34 @@ module ImageWrangler
     end
 
     def test_handles_on_disk_file_paths
-      subject = @klass.new raster_path("test_out.jpg")
-      assert subject.respond_to?(:open)
-      assert subject.respond_to?(:to_s)
+      uri = raster_path("test_out.jpg")
+      subject = @klass.for uri
+      assert subject.respond_to?(:stream)
+      assert_equal(".jpg", subject.extension)
 
-      f = subject.open
-      assert_equal "100644", f.lstat.mode.to_s(8)
-      f.close
+      stream = subject.stream
+      assert_equal "100644", stream.lstat.mode.to_s(8)
+      stream.close
     end
 
     def test_handles_remote_file_paths
-      url = "#{httpserver}/images/raster/valid_jpg.jpg"
-      subject = @klass.new url
-      assert subject.respond_to?(:open)
-      assert subject.respond_to?(:to_s)
+      uri = "#{httpserver}/images/raster/valid_jpg.jpg"
+      subject = @klass.for uri
 
       # Down.open provides access to headers
-      f = subject.open
-      assert_equal 200, f.data[:status]
-      f.close
+      stream = subject.stream
+      assert_equal 200, stream.data[:status]
+      stream.close
+    end
+
+    def test_handles_exceptions
+      uri = "#{httpserver}/images/raster/missing.jpg"
+
+      err = assert_raises ImageWrangler::Error do
+        @klass.for(uri).stream
+      end
+
+      assert_match(/missing/, err.message)
     end
   end
 end

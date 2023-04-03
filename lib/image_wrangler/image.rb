@@ -4,6 +4,7 @@ require "down"
 require "marcel"
 require "pathname"
 require "timeliness"
+require_relative "openable"
 require_relative "metadata"
 
 module ImageWrangler
@@ -40,9 +41,8 @@ module ImageWrangler
         logger: ImageWrangler::Logger.new($stdout, level: Logger::FATAL)
       }.merge(options)
 
-      # Set the Down global backend
-      Down.backend @options[:down_backend]
-      load_image
+      @openable = Openable.new(filepath, @options)
+      load_image(@openable, @options)
     end
 
     def method_missing(method, *args, &block)
@@ -117,12 +117,12 @@ module ImageWrangler
     end
 
     def remote?
-      @remote ||= ImageWrangler::Image.remote_location?(@filepath)
+      @openable.remote?
     end
     alias_method :url?, :remote?
 
     def remote_data
-      @remote_data ||= gather_remote_data
+      @remote_data ||= gather_remote_data(@openable)
     end
 
     # See DEFAULT_TRANSFORMER for options
@@ -164,11 +164,8 @@ module ImageWrangler
       File.open(@filepath) { |file| Marcel::MimeType.for file }
     end
 
-    def gather_remote_data
-      remote_file = Down.open(@filepath)
-      data = remote_file.data
-      remote_file.close
-      data
+    def gather_remote_data(openable)
+      openable.stream.data.dup
     rescue Down::Error => e
       msg = "Down error: #{e.message} #{e.backtrace.join("\n")}"
       logger.debug(msg)
@@ -203,8 +200,10 @@ module ImageWrangler
       remote_headers.fetch("Content-Type", nil)
     end
 
-    def load_image
-      handler.load_image(@filepath)
+    def load_image(openable, options)
+      @remote_data = gather_remote_data(openable) if openable.remote?
+      openable.stream.rewind
+      handler.load_image(openable, options)
     end
   end
 end

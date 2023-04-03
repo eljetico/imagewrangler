@@ -135,12 +135,10 @@ module ImageWrangler
         @filesize ||= stat.size
       end
 
-      def load_image(filepath)
+      def load_image(path_or_url, options = OPTS)
+        openable = ImageWrangler::Openable.for(path_or_url, options)
         @loaded = false
-        @filepath = filepath
-
-        # MiniMagick.logger.level = Logger::DEBUG
-        @magick = MiniMagick::Image.open(@filepath)
+        @magick = MiniMagick::Image.read(openable.stream, openable.extension)
 
         # Force IM to trigger read error
         # This is an arbitrary key, but one which triggers the error
@@ -150,14 +148,16 @@ module ImageWrangler
         @loaded = @magick.valid?
 
         @loaded
-      rescue Errno::ENOENT
-        raise ImageWrangler::Error, "not found at '#{filepath}'"
+      rescue ImageWrangler::Error => _e
+        raise
       rescue MiniMagick::Error => e
         handle_mini_magick_error(e)
       rescue MiniMagick::Invalid => e
         handle_mini_magick_invalid(e)
       rescue OpenURI::HTTPError => e
         raise ImageWrangler::Error, e.message
+      ensure
+        openable&.stream&.close
       end
 
       def iptc_date_created
@@ -284,7 +284,7 @@ module ImageWrangler
         raise ImageWrangler::Error, "empty file" if example =~ /empty input file/i
 
         # In calling code, use err.cause to access nested exception
-        raise ImageWrangler::Error, "MiniMagick error"
+        raise ImageWrangler::Error, "MiniMagick error #{error}"
       end
 
       def handle_mini_magick_invalid(error)

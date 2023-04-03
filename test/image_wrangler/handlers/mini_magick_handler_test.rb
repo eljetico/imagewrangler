@@ -57,7 +57,7 @@ class MiniMagickHandlerTest < Minitest::Test
       @subject.load_image("#{httpserver}/images/raster/missing.jpg")
     end
 
-    assert_match(/404/i, err.message)
+    assert_match(/not found/i, err.message)
   end
 
   def test_channel_count
@@ -223,7 +223,7 @@ class MiniMagickHandlerTest < Minitest::Test
       @subject.load_image(raster_path("valid_jpeg_2000"))
     end
 
-    assert_equal "MiniMagick error", err.message
+    assert_match(/MiniMagick error/, err.message)
     assert_match(/no decode delegate/, err.cause.message)
   end
 
@@ -234,7 +234,7 @@ class MiniMagickHandlerTest < Minitest::Test
       @subject.load_image(raster_path("jpeg_2000_as_jpg.jpg"))
     end
 
-    assert_equal "MiniMagick error", err.message
+    assert_match(/MiniMagick error/, err.message)
     assert_match(/Not a JPEG file/, err.cause.message)
   end
 end
