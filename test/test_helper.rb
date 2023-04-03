@@ -12,10 +12,10 @@ require "http"
 Minitest::Reporters.use! Minitest::Reporters::DefaultReporter.new
 
 begin
-  HTTP.get(ENV["httpbin"]).to_s
+  HTTP.get(ENV["httpserver"]).to_s
 rescue HTTP::ConnectionError
   puts <<~WARNING
-    The httpbin server is not running on port 80, which is required for tests.
+    The httpserver is not running on port 80, which is required for tests.
   WARNING
   exit 1
 end
@@ -38,8 +38,8 @@ def ghostscipt_installed?
   MiniMagick.delegate_installed?("gs")
 end
 
-def httpbin
-  ENV["httpbin"]
+def httpserver
+  ENV["httpserver"]
 end
 
 def outfile_key

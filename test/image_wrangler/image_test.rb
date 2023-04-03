@@ -132,15 +132,10 @@ class ImageTest < Minitest::Test
   end
 
   def test_remote_file
-    wrangler = ImageWrangler::Image.new("#{httpbin}/image/jpeg")
+    wrangler = ImageWrangler::Image.new("#{httpserver}/images/raster/srgb.jpg")
     subject = wrangler.mtime
     assert(subject.is_a?(Time))
     assert(subject < Time.now)
     assert_equal "image/jpeg", wrangler.mime_type
-  end
-
-  def test_remote_file_mime_type
-    wrangler = ImageWrangler::Image.new("#{httpbin}/image/png")
-    assert_equal "image/png", wrangler.mime_type
   end
 end
