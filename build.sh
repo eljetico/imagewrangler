@@ -4,6 +4,8 @@ set -e
 
 echo "Building dev/test environment ..."
 
+rm Gemfile.lock
+
 docker-compose build
 
 echo "Copying Gemfile.lock back to repo..."

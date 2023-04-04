@@ -1,9 +1,16 @@
 version: '2'
 services:
+  httpserver:
+    image: httpserver
+    container_name: httpserver
+    volumes:
+      - ./test/fixtures:/apps/httpserver/public/images
   app:
     build: .
     image: imagewrangler
     container_name: imagewrangler
+    environment:
+      - httpserver=http://httpserver
     volumes:
       - .:/apps/imagewrangler
     command: ["bundle", "exec", "guard"]

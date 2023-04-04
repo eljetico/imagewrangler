@@ -8,7 +8,7 @@ module ImageWrangler
     attr_reader :exiftool
 
     def initialize(filepath, opts = OPTS)
-      @exiftool = MiniExiftool.new(filepath, opts)
+      @exiftool = instantiate_exiftool(filepath, opts)
     end
 
     def get_tag(tag)
@@ -18,6 +18,7 @@ module ImageWrangler
     def to_hash
       @exiftool.to_hash
     end
+    alias_method :get_all_tags, :to_hash
 
     def write_tags(tags)
       return true if tags.empty?
@@ -29,6 +30,26 @@ module ImageWrangler
       @exiftool.save!
 
       true
+    end
+
+    private
+
+    def instantiate_exiftool(filepath, opts)
+      remote_file = filepath.to_s.match(/\Ahttps?:/i).to_a.any?
+      remote_file ? from_remote(filepath, opts) : from_local(filepath, opts)
+    end
+
+    def from_local(filepath, opts)
+      MiniExiftool.new(filepath, opts)
+    end
+
+    # Extract metadata from remote location
+    # Using curl here to enable piping to Exiftool, and to
+    # ensure proxy and no_proxy settings are respected.
+    # See: https://exiftool.org/exiftool_pod.html#PIPING-EXAMPLES
+    def from_remote(url, opts)
+      json = `curl -s "#{url}" | #{MiniExiftool.command} -fast -j -`
+      MiniExiftool.from_hash(JSON.parse(json)[0], opts)
     end
   end
 end

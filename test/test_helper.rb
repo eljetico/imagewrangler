@@ -4,11 +4,21 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "lib")
 
 require "minitest/autorun"
 require "minitest/reporters"
-require "webmock/minitest"
+# require "webmock/minitest"
 
 require "image_wrangler"
+require "http"
 
 Minitest::Reporters.use! Minitest::Reporters::DefaultReporter.new
+
+begin
+  HTTP.get(ENV["httpserver"]).to_s
+rescue HTTP::ConnectionError
+  puts <<~WARNING
+    The httpserver is not running on port 80, which is required for tests.
+  WARNING
+  exit 1
+end
 
 def clear_outfiles
   Dir.glob("/tmp/#{outfile_key}.*").each do |file|
@@ -26,6 +36,10 @@ end
 
 def ghostscipt_installed?
   MiniMagick.delegate_installed?("gs")
+end
+
+def httpserver
+  ENV["httpserver"]
 end
 
 def outfile_key

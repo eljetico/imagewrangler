@@ -135,12 +135,10 @@ module ImageWrangler
         @filesize ||= stat.size
       end
 
-      def load_image(filepath)
+      def load_from_stream(stream, extension)
         @loaded = false
-        @filepath = filepath
-
-        # MiniMagick.logger.level = Logger::DEBUG
-        @magick = MiniMagick::Image.open(@filepath)
+        @magick = MiniMagick::Image.read(stream, extension)
+        stream.rewind
 
         # Force IM to trigger read error
         # This is an arbitrary key, but one which triggers the error
@@ -148,16 +146,22 @@ module ImageWrangler
         # but this operation takes some time, calling 'identify -verbose'
         @magick.colorspace
         @loaded = @magick.valid?
-
         @loaded
-      rescue Errno::ENOENT
-        raise ImageWrangler::Error, "not found at '#{filepath}'"
+      rescue ImageWrangler::Error => _e
+        raise
       rescue MiniMagick::Error => e
         handle_mini_magick_error(e)
       rescue MiniMagick::Invalid => e
         handle_mini_magick_invalid(e)
       rescue OpenURI::HTTPError => e
         raise ImageWrangler::Error, e.message
+      end
+
+      def load_image(uri_or_openable, options = OPTS)
+        openable = instantiate_openable(uri_or_openable, options)
+        load_from_stream(openable.stream, openable.extension)
+      ensure
+        openable&.close_stream
       end
 
       def iptc_date_created
@@ -284,11 +288,17 @@ module ImageWrangler
         raise ImageWrangler::Error, "empty file" if example =~ /empty input file/i
 
         # In calling code, use err.cause to access nested exception
-        raise ImageWrangler::Error, "MiniMagick error"
+        raise ImageWrangler::Error, "MiniMagick error #{error}"
       end
 
       def handle_mini_magick_invalid(error)
         handle_mini_magick_error(error)
+      end
+
+      def instantiate_openable(uri_or_openable, options = OPTS)
+        return uri_or_openable if uri_or_openable.respond_to?(:stream)
+
+        ImageWrangler::Openable.new(uri_or_openable, options)
       end
 
       def raw_attribute(attr_key)

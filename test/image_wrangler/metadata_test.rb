@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "mini_exiftool"
 require "tempfile"
-
 require_relative "../test_helper"
 
 module ImageWrangler
@@ -80,6 +78,13 @@ module ImageWrangler
       assert_raises MiniExiftool::Error do
         @subject.write_tags("CustomField49" => "Timbo")
       end
+    end
+
+    # Remote read
+    def test_remote_read
+      url = "#{httpserver}/images/raster/valid_jpg.jpg"
+      subject = ImageWrangler::Metadata.new(url)
+      assert_equal("Times Square", subject.get_tag("Sub-location"))
     end
   end
 end

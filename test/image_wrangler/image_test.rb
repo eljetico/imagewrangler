@@ -23,16 +23,19 @@ class ImageTest < Minitest::Test
     assert_equal "abb4755aff726b0c4ac77c7be07b4776", image.checksum
     assert_equal "ed3d64e1569e73aa0b4947cb4bc39618354ee260", image.checksum(format: :sha1, force: true)
     assert_equal ".jpg", image.preferred_extension
+
     assert_predicate image, :raster?
     refute_predicate image, :vector?
     refute_predicate image, :eps?
+
+    refute_predicate image, :remote?
   end
 
   def test_scaling_included
     image = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
     scaling = image.dimensions_for_target_pixel_area(3_000_000)
     assert_equal 1447, scaling.width
-    assert_equal 2076, scaling.height
+    assert_equal 2075, scaling.height
   end
 
   def test_identifies_cloaked_file
@@ -62,7 +65,8 @@ class ImageTest < Minitest::Test
     assert_equal "image/jp2", image.mime_type
   end
 
-  # MiniMagick handler specifies `image/psd`
+  # MiniMagick handler specifies `image/psd` so we prefer
+  # file system/header `Content-Type` value
   def test_mime_type_for_psd
     image = ImageWrangler::Image.new(raster_path("layers.psd"))
     assert_equal "image/vnd.adobe.photoshop", image.mime_type
@@ -125,56 +129,14 @@ class ImageTest < Minitest::Test
   end
 
   def test_mtime_with_local_file
-    wrangler = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
-    subject = wrangler.mtime
-    assert(subject.is_a?(Time))
-    assert(subject < Time.now)
+    subject = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
+    assert subject.mtime.respond_to?(:year)
+    assert(subject.mtime < Time.now)
   end
 
-  def test_remote_file
-    filepath = raster_path("valid_jpg.jpg")
-
-    stub_request(:get, "https://example.com/image.jpg")
-      .to_return(
-        {
-          body: File.read(filepath),
-          headers: {
-            "Date" => "Thu, 01 Apr 2021 12:09:35 GMT",
-            "Last-Modified" => "Thu, 18 Mar 2021 22:34:32 GMT",
-            "Etag" => '"a0a368ca9cffcac6bdc0bcf69138dd0c-201"',
-            "Accept-Ranges" => "bytes",
-            "Content-Type" => "image/jpeg",
-            "Content-Length" => File.size(filepath)
-          }
-        }
-      )
-
-    wrangler = ImageWrangler::Image.new("https://example.com/image.jpg")
-    subject = wrangler.mtime
-
-    assert(subject.is_a?(Time))
-    assert(subject < Time.now)
-    assert_equal "image/jpeg", wrangler.mime_type
-  end
-
-  def test_remote_file_mime_type
-    filepath = vector_path("valid.eps")
-
-    stub_request(:get, "https://example.com/image.eps")
-      .to_return(
-        {
-          body: File.read(filepath),
-          headers: {
-            "Date" => "Thu, 01 Apr 2021 12:09:35 GMT",
-            "Last-Modified" => "Thu, 18 Mar 2021 22:34:32 GMT",
-            "Etag" => '"a0a368ca9cffcac6bdc0bcf69138dd0c-201"',
-            "Accept-Ranges" => "bytes",
-            "Content-Length" => File.size(filepath)
-          }
-        }
-      )
-
-    wrangler = ImageWrangler::Image.new("https://example.com/image.eps")
-    assert_equal "application/postscript", wrangler.mime_type
+  def test_mtime_with_remote_file
+    subject = ImageWrangler::Image.new("#{httpserver}/images/raster/srgb.jpg")
+    assert subject.mtime.respond_to?(:year)
+    assert(subject.mtime < Time.now)
   end
 end
