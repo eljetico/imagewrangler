@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "mini_exiftool"
+require "open3"
 
 module ImageWrangler
   # Interface to Exif, XMP, IPTC metadata
@@ -48,7 +49,22 @@ module ImageWrangler
     # ensure proxy and no_proxy settings are respected.
     # See: https://exiftool.org/exiftool_pod.html#PIPING-EXAMPLES
     def from_remote(url, opts)
-      json = `curl -s "#{url}" | #{MiniExiftool.command} -fast -j -`
+      curl_cmd = ["curl", "-s", url].shelljoin
+      exif_cmd = [MiniExiftool.command, "-fast", "-j", "-"].shelljoin
+
+      # Using the interpolated form here is not ideal: not sure how
+      # to incorporate the pipe character...
+      # Using backticks is not safe, using Open3.pipeline_r opens
+      # two subprocesses which can be problematic with `Process.waitall`.
+      #
+      # Open3.pipeline_r example:
+      #
+      # json = Open3.pipeline_r(curl_cmd, exif_cmd) { |o, ts|
+      #  o.read
+      # }
+      # Process.waitall # waits for all children to finish
+      #
+      json, _status = Open3.capture2("#{curl_cmd} | #{exif_cmd}")
       MiniExiftool.from_hash(JSON.parse(json)[0], opts)
     end
   end
