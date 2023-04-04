@@ -5,6 +5,8 @@ require "timeliness"
 
 module ImageWrangler
   class FileAttributes
+    TIME_FORMAT = "ddd, dd mmm yyyy hh:nn:ss GMT".freeze
+
     def from_stream(stream)
       @attributes = stream.respond_to?(:data) ? from_data(stream) : from_file_io(stream)
       stream.rewind
@@ -41,9 +43,7 @@ module ImageWrangler
     def date_time_from_string(str)
       return nil if blank?(str)
 
-      # This is a little constrictive
-      t_format = "ddd, dd mmm yyyy hh:nn:ss GMT"
-      Timeliness.parse(str, format: t_format, zone: :utc)
+      Timeliness.parse(str, format: TIME_FORMAT, zone: :utc)
     rescue => _e
       nil
     end
