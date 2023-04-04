@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 require "down"
+require "marcel"
 require "uri"
 
 module ImageWrangler
-  # Factory class to return an IO-like object for use with
-  # MiniMagick and MiniExiftool
-  #
+  # Encapsulates URI handling. Provides methods for streaming URI contents
+  # to `Handler` and `Metadata` classes.
+  # Also attempts to gather basic file metadata from appropriate source:
+  # on-disk file location or remote.
   class Openable
     def self.for(uri_or_openable, options = OPTS)
       uri_or_openable.is_a?(ImageWrangler::Openable) ? uri_or_openable : ImageWrangler::Openable.new(uri_or_openable, options)
@@ -17,8 +19,14 @@ module ImageWrangler
       @path_or_url = path_or_url
       @options = {down_backend: :httpx}.merge(opts)
       Down.backend @options[:down_backend]
-    
+
       @remote = @path_or_url =~ %r{\A[A-Za-z][A-Za-z0-9+\-.]*://} ? true : false
+    end
+
+    # Close an opened stream and return nil (like IO)
+    def close_stream
+      return nil if @_stream.nil? || @_stream.closed?
+      @_stream.close
     end
 
     def extension
@@ -32,6 +40,7 @@ module ImageWrangler
     def remote?
       @remote
     end
+    alias_method :url?, :remote?
 
     # Returns an IO-like object for use with MiniMagick `read`.
     # Ensure this is closed after use.

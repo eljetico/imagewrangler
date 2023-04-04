@@ -18,6 +18,7 @@ module ImageWrangler
     def to_hash
       @exiftool.to_hash
     end
+    alias_method :get_all_tags, :to_hash
 
     def write_tags(tags)
       return true if tags.empty?

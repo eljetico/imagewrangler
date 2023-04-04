@@ -135,10 +135,10 @@ module ImageWrangler
         @filesize ||= stat.size
       end
 
-      def load_image(path_or_url, options = OPTS)
-        openable = ImageWrangler::Openable.for(path_or_url, options)
+      def load_from_stream(stream, extension)
         @loaded = false
-        @magick = MiniMagick::Image.read(openable.stream, openable.extension)
+        @magick = MiniMagick::Image.read(stream, extension)
+        stream.rewind
 
         # Force IM to trigger read error
         # This is an arbitrary key, but one which triggers the error
@@ -146,7 +146,6 @@ module ImageWrangler
         # but this operation takes some time, calling 'identify -verbose'
         @magick.colorspace
         @loaded = @magick.valid?
-
         @loaded
       rescue ImageWrangler::Error => _e
         raise
@@ -156,8 +155,13 @@ module ImageWrangler
         handle_mini_magick_invalid(e)
       rescue OpenURI::HTTPError => e
         raise ImageWrangler::Error, e.message
+      end
+
+      def load_image(uri_or_openable, options = OPTS)
+        openable = instantiate_openable(uri_or_openable, options)
+        load_from_stream(openable.stream, openable.extension)
       ensure
-        openable&.stream&.close
+        openable&.close_stream
       end
 
       def iptc_date_created
@@ -289,6 +293,12 @@ module ImageWrangler
 
       def handle_mini_magick_invalid(error)
         handle_mini_magick_error(error)
+      end
+
+      def instantiate_openable(uri_or_openable, options = OPTS)
+        return uri_or_openable if uri_or_openable.respond_to?(:stream)
+
+        ImageWrangler::Openable.new(uri_or_openable, options)
       end
 
       def raw_attribute(attr_key)

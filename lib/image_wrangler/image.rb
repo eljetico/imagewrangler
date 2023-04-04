@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "down"
+require "forwardable"
 require "marcel"
 require "pathname"
 require "timeliness"
@@ -10,11 +11,15 @@ require_relative "metadata"
 module ImageWrangler
   # Default wrapper for image handling
   class Image
+    extend Forwardable
     include ScalingHelper
+
+    DEFAULT_TRANSFORMER = ImageWrangler::Transformers::MiniMagick::Transformer
 
     attr_reader :filepath
 
-    DEFAULT_TRANSFORMER = ImageWrangler::Transformers::MiniMagick::Transformer
+    def_delegators :metadata_delegate, :get_tag, :get_all_tags
+    def_delegators :@openable, :remote?, :url?
 
     class << self
       def checksum(path, format: :md5)
@@ -41,8 +46,7 @@ module ImageWrangler
         logger: ImageWrangler::Logger.new($stdout, level: Logger::FATAL)
       }.merge(options)
 
-      @openable = Openable.new(filepath, @options)
-      load_image(@openable, @options)
+      load_image
     end
 
     def method_missing(method, *args, &block)
@@ -74,12 +78,8 @@ module ImageWrangler
       @options[:errors]
     end
 
-    def get_tag(tag)
-      metadata_delegate.get_tag(tag)
-    end
-
-    def get_all_tags
-      metadata_delegate.to_hash
+    def file_attributes
+      @file_attributes ||= ImageWrangler::FileAttributes.new
     end
 
     def handler
@@ -97,32 +97,12 @@ module ImageWrangler
       end
     end
 
-    # Handler may return spurious values
-    # rubocop:disable Style/RedundantBegin
     def mime_type
-      @mime_type ||= begin
-        if remote?
-          remote_mime_type || handler.mime_type
-        else
-          extract_mime_type || handler.mime_type
-        end
-      end
+      @mime_type = file_attributes.mime_type || handler.mime_type
     end
-    # rubocop:enable Style/RedundantBegin
 
     def mtime
-      @mtime ||= remote? ? remote_mtime : File.mtime(@filepath)
-    rescue => _e
-      nil
-    end
-
-    def remote?
-      @openable.remote?
-    end
-    alias_method :url?, :remote?
-
-    def remote_data
-      @remote_data ||= gather_remote_data(@openable)
+      file_attributes.mtime
     end
 
     # See DEFAULT_TRANSFORMER for options
@@ -160,50 +140,13 @@ module ImageWrangler
 
     private
 
-    def extract_mime_type
-      File.open(@filepath) { |file| Marcel::MimeType.for file }
+    def load_image
+      @openable = ImageWrangler::Openable.new(@filepath, @options)
+      file_attributes.from_stream(@openable.stream)
+      handler.load_from_stream(@openable.stream, @openable.extension)
+    ensure
+      @openable&.close_stream
     end
-
-    def gather_remote_data(openable)
-      openable.stream.data.dup
-    rescue Down::Error => e
-      msg = "Down error: #{e.message} #{e.backtrace.join("\n")}"
-      logger.debug(msg)
-      {
-        error: msg
-      }
-    end
-
-    # Use after manipulations which may alter filesize, checksum etc
-    def reload!
-      load_image
-    end
-
-    def remote_headers
-      @remote_headers ||= remote_data.fetch(:headers, OPTS)
-    end
-
-    def remote_mtime
-      date = remote_headers["Last-Modified"] || remote_headers["Date"]
-      return nil if date.nil?
-
-      # This is a little constrictive
-      t_format = "ddd, dd mmm yyyy hh:nn:ss GMT"
-      Timeliness.parse(date, format: t_format, zone: :utc)
-    rescue => _e
-      nil
-    end
-
-    def remote_mime_type
-      return nil unless remote?
-
-      remote_headers.fetch("Content-Type", nil)
-    end
-
-    def load_image(openable, options)
-      @remote_data = gather_remote_data(openable) if openable.remote?
-      openable.stream.rewind
-      handler.load_image(openable, options)
-    end
+    alias_method :reload!, :load_image
   end
 end

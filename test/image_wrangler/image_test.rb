@@ -23,9 +23,12 @@ class ImageTest < Minitest::Test
     assert_equal "abb4755aff726b0c4ac77c7be07b4776", image.checksum
     assert_equal "ed3d64e1569e73aa0b4947cb4bc39618354ee260", image.checksum(format: :sha1, force: true)
     assert_equal ".jpg", image.preferred_extension
+
     assert_predicate image, :raster?
     refute_predicate image, :vector?
     refute_predicate image, :eps?
+
+    refute_predicate image, :remote?
   end
 
   def test_scaling_included
@@ -62,7 +65,8 @@ class ImageTest < Minitest::Test
     assert_equal "image/jp2", image.mime_type
   end
 
-  # MiniMagick handler specifies `image/psd`
+  # MiniMagick handler specifies `image/psd` so we prefer
+  # file system/header `Content-Type` value
   def test_mime_type_for_psd
     image = ImageWrangler::Image.new(raster_path("layers.psd"))
     assert_equal "image/vnd.adobe.photoshop", image.mime_type
@@ -125,17 +129,14 @@ class ImageTest < Minitest::Test
   end
 
   def test_mtime_with_local_file
-    wrangler = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
-    subject = wrangler.mtime
-    assert(subject.is_a?(Time))
-    assert(subject < Time.now)
+    subject = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
+    assert subject.mtime.respond_to?(:year)
+    assert(subject.mtime < Time.now)
   end
 
-  def test_remote_file
-    wrangler = ImageWrangler::Image.new("#{httpserver}/images/raster/srgb.jpg")
-    # subject = wrangler.mtime
-    # assert(subject.is_a?(Time))
-    # assert(subject < Time.now)
-    assert_equal "image/jpeg", wrangler.mime_type
+  def test_mtime_with_remote_file
+    subject = ImageWrangler::Image.new("#{httpserver}/images/raster/srgb.jpg")
+    assert subject.mtime.respond_to?(:year)
+    assert(subject.mtime < Time.now)
   end
 end
