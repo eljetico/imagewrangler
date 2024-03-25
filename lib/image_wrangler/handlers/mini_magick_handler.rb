@@ -6,7 +6,7 @@ module ImageWrangler
     class MiniMagickHandler < Handler
       DEFAULT_QUIET_WARNINGS = true
 
-      def initialize(**options)
+      def initialize(options = {})
         opts = {
           quiet_warnings: DEFAULT_QUIET_WARNINGS
         }.merge(options)

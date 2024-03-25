@@ -1,14 +1,21 @@
-version: '2'
+version: '3'
 services:
   httpserver:
-    image: httpserver
+    image: httpd:latest
     container_name: httpserver
     volumes:
-      - ./test/fixtures:/apps/httpserver/public/images
+      - ./test/fixtures:/usr/local/apache2/htdocs/
+    ports:
+      - '80:80'
+    expose:
+      - '80'
+    platform: linux/amd64
   app:
     build: .
     image: imagewrangler
     container_name: imagewrangler
+    depends_on:
+      - httpserver
     environment:
       - httpserver=http://httpserver
     volumes:

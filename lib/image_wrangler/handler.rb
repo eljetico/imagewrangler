@@ -9,7 +9,7 @@ module ImageWrangler
 
     attr_accessor :filepath
 
-    def initialize(**options)
+    def initialize(options = OPTS)
       opts = {
       }.merge(options)
 

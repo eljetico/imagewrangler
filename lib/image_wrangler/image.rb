@@ -36,7 +36,7 @@ module ImageWrangler
       end
     end
 
-    def initialize(filepath, **options)
+    def initialize(filepath, options = OPTS)
       @filepath = filepath
       @options = {
         exiftool_config: nil,
