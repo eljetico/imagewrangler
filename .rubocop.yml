@@ -1,0 +1,7 @@
+require:
+  - standard
+
+Style/ArgumentsForwarding:
+  Description: 'Use arguments forwarding.'
+  StyleGuide: '#arguments-forwarding'
+  UseAnonymousForwarding: false

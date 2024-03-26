@@ -22,7 +22,7 @@ module ImageWrangler
     def_delegators :@openable, :remote?, :url?
 
     class << self
-      def checksum(path, format: :md5)
+      def checksum(path, format = :md5)
         {
           sha1: Digest::SHA1.file(path).hexdigest,
           sha256: Digest::SHA256.file(path).hexdigest,
@@ -68,10 +68,10 @@ module ImageWrangler
       }.merge(opts)
 
       if options[:force]
-        return Image.checksum(@handler.loaded_path, format: options[:format])
+        return Image.checksum(@handler.loaded_path, options[:format])
       end
 
-      @checksum ||= Image.checksum(@handler.loaded_path, format: options[:format])
+      @checksum ||= Image.checksum(@handler.loaded_path, options[:format])
     end
 
     def errors

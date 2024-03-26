@@ -20,8 +20,8 @@ class ImageTest < Minitest::Test
     assert_equal "0.7mp", image.megapixels_humanized
     assert_equal "RGB", image.colorspace
     assert_equal 119_333, image.filesize
-    assert_equal "abb4755aff726b0c4ac77c7be07b4776", image.checksum
-    assert_equal "ed3d64e1569e73aa0b4947cb4bc39618354ee260", image.checksum(format: :sha1, force: true)
+    assert_equal "abb4755aff726b0c4ac77c7be07b4776", image.checksum({format: :md5})
+    assert_equal "ed3d64e1569e73aa0b4947cb4bc39618354ee260", image.checksum({format: :sha1, force: true})
     assert_equal ".jpg", image.preferred_extension
 
     assert_predicate image, :raster?

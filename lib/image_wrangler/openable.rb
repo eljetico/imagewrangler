@@ -21,7 +21,7 @@ module ImageWrangler
       @options = {down_backend: :httpx}.merge(opts)
       Down.backend @options[:down_backend]
 
-      @remote = @path_or_url =~ %r{\A[A-Za-z][A-Za-z0-9+\-.]*://} ? true : false
+      @remote = (@path_or_url =~ %r{\A[A-Za-z][A-Za-z0-9+\-.]*://}) ? true : false
     end
 
     # Close an opened stream and return nil (like IO)
