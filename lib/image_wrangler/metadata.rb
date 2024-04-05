@@ -25,7 +25,7 @@ module ImageWrangler
       return true if tags.empty?
 
       tags.each_pair do |tag, value|
-        @exiftool.send(:"#{tag}=", value)
+        @exiftool.send("#{tag}=", value)
       end
 
       @exiftool.save!

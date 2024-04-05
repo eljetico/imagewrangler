@@ -9,7 +9,10 @@ module ImageWrangler
 
     attr_accessor :filepath
 
-    def initialize(opts = OPTS)
+    def initialize(**options)
+      opts = {
+      }.merge(options)
+
       configure_handler(opts)
     end
 
@@ -31,11 +34,11 @@ module ImageWrangler
     private
 
     def nil_or_integer(value = nil)
-      value&.to_i
+      value.nil? ? nil : value.to_i
     end
 
     def nil_or_string(value = nil)
-      value&.to_s
+      value.nil? ? nil : value.to_s
     end
 
     def normalized_color_space(color_mode = nil)

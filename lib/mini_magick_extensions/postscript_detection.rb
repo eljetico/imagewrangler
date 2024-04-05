@@ -6,16 +6,16 @@ module MiniMagick
     PS_VERSION_REGEX = /.*?%
       !PS-Adobe-(\d\.\d)\s+?(?:EP[S|T]F*?-.*?)
       \W*?
-    /x
+    /x.freeze
 
     PS_BOUNDING_BOX_REGEX = /
       %%BoundingBox:
       \s(-?\d+)\s(-?\d+)\s(-?\d+)\s(-?\d+)
-    /x
+    /x.freeze
 
-    PS_EOF_REGEX = /%%EOF/
+    PS_EOF_REGEX = /%%EOF/.freeze
 
-    PS_LINE_SEP_REGEX = /[\r\n]+/
+    PS_LINE_SEP_REGEX = /[\r\n]+/.freeze
 
     def postscript_version
       eps_metadata[:postscript_version]
@@ -62,7 +62,7 @@ module MiniMagick
         actual_height = height
 
         f.each(sep = lsep) do |l|
-          line = l.encode('UTF-8', **_ps_line_encode_opts)
+          line = l.encode('UTF-8', 'binary', _ps_line_encode_opts)
 
           break if line.match(PS_EOF_REGEX)
 
@@ -98,7 +98,7 @@ module MiniMagick
     private
 
     def _ps_get_line_sep(str_blob)
-      line = str_blob.gets.encode("UTF-8", **_ps_line_encode_opts)
+      line = str_blob.gets.encode("UTF-8", "binary", _ps_line_encode_opts)
       lsep = line[PS_LINE_SEP_REGEX]
       str_blob.rewind
       lsep

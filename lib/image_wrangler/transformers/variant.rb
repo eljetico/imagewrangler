@@ -60,7 +60,7 @@ module ImageWrangler
 
       # Output filepath, as supplied, or a /tmp file
       def filepath
-        @filepath ||= @config[:filepath] || generate_tmp_filepath
+        @filepath ||= (@config[:filepath] || generate_tmp_filepath)
       end
       alias_method :file_path, :filepath
 

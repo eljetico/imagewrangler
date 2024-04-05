@@ -4,4 +4,3 @@ ignore:
   - 'lib/mini_exiftool_overrides/*'
   - 'lib/**/*':
     - Performance/RegexpMatch
-    - Style/ArgumentsForwarding

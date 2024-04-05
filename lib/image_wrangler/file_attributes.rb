@@ -5,7 +5,7 @@ require "timeliness"
 
 module ImageWrangler
   class FileAttributes
-    TIME_FORMAT = "ddd, dd mmm yyyy hh:nn:ss GMT"
+    TIME_FORMAT = "ddd, dd mmm yyyy hh:nn:ss GMT".freeze
 
     def from_stream(stream)
       @attributes = stream.respond_to?(:data) ? from_data(stream) : from_file_io(stream)
