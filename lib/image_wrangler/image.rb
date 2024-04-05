@@ -36,12 +36,12 @@ module ImageWrangler
       end
     end
 
-    def initialize(filepath, **options)
+    def initialize(filepath, options = OPTS)
       @filepath = filepath
       @options = {
         exiftool_config: nil,
         handler: ImageWrangler::Handlers::MiniMagickHandler.new,
-        down_backend: :httpx,
+        down_backend: :net_http,
         errors: ImageWrangler::Errors.new,
         logger: ImageWrangler::Logger.new($stdout, level: Logger::FATAL)
       }.merge(options)
@@ -49,9 +49,9 @@ module ImageWrangler
       load_image
     end
 
-    def method_missing(method, *args, &block)
+    def method_missing(method, *, &)
       if handler.respond_to?(method)
-        handler.send(method, *args, &block)
+        handler.send(method, *, &)
       else
         super
       end
