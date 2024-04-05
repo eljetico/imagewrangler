@@ -14,9 +14,9 @@ Gem::Specification.new do |s|
   s.authors = ["Tim Davies"]
   s.email = "eljetico+imagewrangler@gmail.com"
   s.files = Dir["lib/**/*", "resources/**/*", "vendor/**/*"]
-  s.required_ruby_version = ">= 2.3"
+  s.required_ruby_version = ">= 3.0.0"
 
-  s.add_dependency "httpx"
+  s.add_dependency "httpx", "~> 0", "< 1.0.0"
   s.add_dependency "down"
   s.add_dependency "marcel"
   s.add_dependency "mini_exiftool"

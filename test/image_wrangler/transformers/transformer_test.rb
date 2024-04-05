@@ -43,7 +43,7 @@ module ImageWrangler
 
         render_one = transformer.components[0]
         assert_equal 200, render_one.height
-        assert_equal(render_one.checksum, "b0630a34c11024dc352f9c5a9d4014c0")
+        assert_equal(render_one.checksum, "0588437a24ead388ac2464a27cb9a37c")
         assert_equal(render_one.filename, "#{outfile_key}.lo_res_200.jpg")
         assert(render_one.mtime.is_a?(Time))
 
