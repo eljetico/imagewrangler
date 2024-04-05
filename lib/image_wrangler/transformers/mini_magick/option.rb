@@ -36,7 +36,7 @@ module ImageWrangler
 
         def option_group
           parent = ::MiniMagick::Tool::Convert
-          @option_group ||= (!recognized?) ? "unknown" : parent.option_group(clean_option)
+          @option_group ||= !recognized? ? "unknown" : parent.option_group(clean_option)
         end
 
         def plus_option?
@@ -53,7 +53,7 @@ module ImageWrangler
         end
 
         def value
-          (@supplied_value == "_x_") ? nil : @supplied_value
+          @supplied_value == "_x_" ? nil : @supplied_value
         end
       end
     end

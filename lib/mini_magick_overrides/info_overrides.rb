@@ -4,7 +4,7 @@ module MiniMagick
   class Image
     # Override MiniMagick raw method to quiet noisy identify calls
     class Info
-      NOISY_PROPERTIES = /(8BIM:|Decoded)/i
+      NOISY_PROPERTIES = /(8BIM:|Decoded)/i.freeze
 
       def raw(value)
         @info["raw:#{value}"] ||= identify do |b|
@@ -14,7 +14,7 @@ module MiniMagick
       end
 
       def noisy_property?(value)
-        (value =~ NOISY_PROPERTIES) ? true : false
+        value =~ NOISY_PROPERTIES ? true : false
       end
 
       def suppress_warnings

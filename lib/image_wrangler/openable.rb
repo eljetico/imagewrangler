@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "down"
-require "down/httpx"
 require "marcel"
 require "uri"
 
@@ -21,7 +20,7 @@ module ImageWrangler
       @options = {down_backend: :httpx}.merge(opts)
       Down.backend @options[:down_backend]
 
-      @remote = (@path_or_url =~ %r{\A[A-Za-z][A-Za-z0-9+\-.]*://}) ? true : false
+      @remote = @path_or_url =~ %r{\A[A-Za-z][A-Za-z0-9+\-.]*://} ? true : false
     end
 
     # Close an opened stream and return nil (like IO)
@@ -46,7 +45,7 @@ module ImageWrangler
     # Returns an IO-like object for use with MiniMagick `read`.
     # Ensure this is closed after use.
     def stream
-      @_stream ||= @remote ? Down.open(@path_or_url) : Pathname.new(@path_or_url).open("rb")
+      @_stream ||= @remote ? Down.open(@path_or_url) : Pathname.new(@path_or_url).open({binmode: true})
     rescue Down::NotFound, Errno::ENOENT => _e
       raise ImageWrangler::Error, "not found at '#{@path_or_url}'"
     rescue => e
