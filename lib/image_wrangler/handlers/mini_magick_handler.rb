@@ -6,7 +6,7 @@ module ImageWrangler
     class MiniMagickHandler < Handler
       DEFAULT_QUIET_WARNINGS = true
 
-      def initialize(**options)
+      def initialize(options = OPTS)
         opts = {
           quiet_warnings: DEFAULT_QUIET_WARNINGS
         }.merge(options)
@@ -14,9 +14,9 @@ module ImageWrangler
         super(opts)
       end
 
-      def method_missing(method, *args, &block)
+      def method_missing(method, *, &)
         if @magick.respond_to?(method)
-          @magick.send(method, *args, &block)
+          @magick.send(method, *, &)
         else
           super
         end
@@ -48,7 +48,7 @@ module ImageWrangler
       # Note `identify -format "%[channels]"` returns colorspace (lowercased)
       # with current IM version so we use bruteforce method
       def channel_count
-        @channel_count ||= colorspace =~ /\Agray/i ? 1 : colorspace.length
+        @channel_count ||= (colorspace =~ /\Agray/i) ? 1 : colorspace.length
       end
       alias_method :channels, :channel_count
 
@@ -104,7 +104,7 @@ module ImageWrangler
       alias_method :file_format, :format
 
       def height
-        @height ||= (nil_or_integer(attribute("height")) || 0)
+        @height ||= nil_or_integer(attribute("height")) || 0
       end
 
       def icc_name
@@ -120,7 +120,7 @@ module ImageWrangler
       end
 
       def width
-        @width ||= (nil_or_integer(attribute("width")) || 0)
+        @width ||= nil_or_integer(attribute("width")) || 0
       end
 
       def loaded?

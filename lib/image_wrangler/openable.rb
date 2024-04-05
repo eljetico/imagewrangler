@@ -17,10 +17,10 @@ module ImageWrangler
     # Returns an array containing `[IO-like object, extension]`
     def initialize(path_or_url, opts = OPTS)
       @path_or_url = path_or_url
-      @options = {down_backend: :httpx}.merge(opts)
+      @options = {down_backend: :net_http}.merge(opts)
       Down.backend @options[:down_backend]
 
-      @remote = @path_or_url =~ %r{\A[A-Za-z][A-Za-z0-9+\-.]*://} ? true : false
+      @remote = (@path_or_url =~ %r{\A[A-Za-z][A-Za-z0-9+\-.]*://}) ? true : false
     end
 
     # Close an opened stream and return nil (like IO)
@@ -45,7 +45,7 @@ module ImageWrangler
     # Returns an IO-like object for use with MiniMagick `read`.
     # Ensure this is closed after use.
     def stream
-      @_stream ||= @remote ? Down.open(@path_or_url) : Pathname.new(@path_or_url).open({binmode: true})
+      @_stream ||= @remote ? Down.open(@path_or_url) : Pathname.new(@path_or_url).open
     rescue Down::NotFound, Errno::ENOENT => _e
       raise ImageWrangler::Error, "not found at '#{@path_or_url}'"
     rescue => e
