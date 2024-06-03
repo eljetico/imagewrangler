@@ -6,20 +6,36 @@ require "open3"
 module ImageWrangler
   # Interface to Exif, XMP, IPTC metadata
   class Metadata
+    CONTROLLED_VALUES = {
+      ai_created: "trainedAlgorithmicMedia",
+      ai_modified: "compositeWithTrainedAlgorithmicMedia"
+    }
+
     attr_reader :exiftool
 
     def initialize(filepath, opts = OPTS)
       @exiftool = instantiate_exiftool(filepath, opts)
     end
 
+    def ai_created?
+      @ai_created ||= get_tag("DigitalSourceType").to_s.match?(/#{CONTROLLED_VALUES[:ai_created]}/)
+    end
+
+    def ai_modified?
+      @ai_modified ||= get_tag("DigitalSourceType").to_s.match?(/#{CONTROLLED_VALUES[:ai_modified]}/)
+    end
+
     def get_tag(tag)
       @exiftool[tag]
     end
+    alias_method :[], :get_tag
+    alias_method :tag, :get_tag
 
     def to_hash
       @exiftool.to_hash
     end
     alias_method :get_all_tags, :to_hash
+    alias_method :all_tags, :to_hash
 
     def write_tags(tags)
       return true if tags.empty?
