@@ -5,14 +5,13 @@ require_relative "../test_helper"
 
 class ImageTest < Minitest::Test
   def setup
+    @subject = ImageWrangler::Image
   end
 
   def test_basic_attributes_raster
-    image = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
+    image = @subject.new(raster_path("valid_jpg.jpg"))
 
     assert_equal "image/jpeg", image.mime_type
-    assert_equal "808-185", image.get_tag("title")
-    refute_empty image.get_all_tags
     assert_equal 1000, image.height
     assert_equal 697, image.width
     assert_equal 0.697, image.megapixels
@@ -29,6 +28,14 @@ class ImageTest < Minitest::Test
     refute_predicate image, :eps?
 
     refute_predicate image, :remote?
+  end
+
+  def test_metadata_delegation
+    image = @subject.new(raster_path("valid_jpg.jpg"))
+    assert_equal "808-185", image.tag("title")
+    refute_empty image.all_tags
+
+    refute image.metadata.ai_created?
   end
 
   def test_scaling_included

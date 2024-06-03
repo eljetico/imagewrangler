@@ -19,20 +19,24 @@ module ImageWrangler
       @temp_file.delete
     end
 
+    def test_direct_access_to_tags
+      assert_equal "808-185", @subject["title"]
+    end
+
     def test_ensure_using_local_exiftool
       assert_match(/vendor\/Image-ExifTool/, MiniExiftool.command)
     end
 
     def test_simple_accessor
-      assert_equal "808-185", @subject.get_tag("title")
-      assert_equal "Amanda Hall/Robert Harding", @subject.get_tag("Credit")
+      assert_equal "808-185", @subject.tag("title")
+      assert_equal "Amanda Hall/Robert Harding", @subject.tag("Credit")
     end
 
     def test_xmp_tag_write
       @subject.write_tags({"AssetID" => "12345"})
       @subject.exiftool.reload
 
-      assert_equal "12345", @subject.get_tag("AssetID").to_s
+      assert_equal "12345", @subject.tag("AssetID").to_s
     end
 
     def test_custom_xmp_tags_discoverable
@@ -53,7 +57,7 @@ module ImageWrangler
       subject = ImageWrangler::Metadata.new(@temp_filename, {exiftool_config: @config_file})
       content = "New value"
       subject.write_tags("CustomField24" => content)
-      assert_equal content, subject.get_tag("CustomField24")
+      assert_equal content, subject.tag("CustomField24")
     end
 
     # CustomField24 works because overridden MiniExiftool parses the embedded tag
@@ -67,7 +71,7 @@ module ImageWrangler
       subject = ImageWrangler::Metadata.new(@temp_filename, {exiftool_config: @config_file})
       content = "New value"
       subject.write_tags("CustomField24" => content)
-      assert_equal content, subject.get_tag("CustomField24")
+      assert_equal content, subject.tag("CustomField24")
 
       assert_raises MiniExiftool::Error do
         subject.write_tags("CustomField59" => "Should fail")
@@ -84,7 +88,22 @@ module ImageWrangler
     def test_remote_read
       url = "#{httpserver}/images/raster/valid_jpg.jpg"
       subject = ImageWrangler::Metadata.new(url)
-      assert_equal("Times Square", subject.get_tag("Sub-location"))
+      assert_equal "Times Square", subject["Sub-location"]
+    end
+
+    # AI attributes
+    def test_extracts_digital_source_type
+      composite = raster_path("ai_composite_with_trained_algorithmic_media.jpg")
+      subject = ImageWrangler::Metadata.new(composite)
+      assert_match(/compositeWithTrainedAlgorithmicMedia\z/, subject.tag("DigitalSourceType"))
+      assert subject.ai_modified?
+      refute subject.ai_created?
+
+      from_trained = raster_path("ai_trained_algorithmic_media.jpg")
+      subject = ImageWrangler::Metadata.new(from_trained)
+      assert_match(/trainedAlgorithmicMedia\z/, subject.tag("DigitalSourceType"))
+      assert subject.ai_created?
+      refute subject.ai_modified?
     end
   end
 end

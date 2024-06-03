@@ -18,7 +18,7 @@ module ImageWrangler
 
     attr_reader :filepath
 
-    def_delegators :metadata_delegate, :get_tag, :get_all_tags
+    def_delegators :metadata_delegate, :get_tag, :get_all_tags, :tag, :all_tags
     def_delegators :@openable, :remote?, :url?
 
     class << self
@@ -96,6 +96,7 @@ module ImageWrangler
         ImageWrangler::Metadata.new(@filepath, config)
       end
     end
+    alias_method :metadata, :metadata_delegate
 
     def mime_type
       @mime_type = file_attributes.mime_type || handler.mime_type
