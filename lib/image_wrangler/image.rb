@@ -5,6 +5,7 @@ require "forwardable"
 require "marcel"
 require "pathname"
 require "timeliness"
+require_relative "c2pa"
 require_relative "openable"
 require_relative "metadata"
 
@@ -59,6 +60,10 @@ module ImageWrangler
 
     def respond_to_missing?(method, include_private = false)
       handler.respond_to?(method) || super
+    end
+
+    def c2pa
+      @c2pa ||= ImageWrangler::C2pa.new(@filepath)
     end
 
     def checksum(opts = OPTS)

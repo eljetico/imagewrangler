@@ -9,18 +9,26 @@ module ImageWrangler
     CONTROLLED_VALUES = {
       ai_created: "trainedAlgorithmicMedia",
       ai_modified: "compositeWithTrainedAlgorithmicMedia"
-    }
+    }.freeze
 
     attr_reader :exiftool
 
+    # Provides high-level access to image IPTC/Exif/XMP metadata.
+    # Uses <tt>exiftool</tt> via <tt>MiniExiftool</tt> gem, and provides some
+    # additional convenience methods.
+    #
+    # @param filepath [String] path/URL to image file
+    # @param opts [Hash] optional, options to pass to MiniExiftool (note: not supported for remote files)
     def initialize(filepath, opts = OPTS)
       @exiftool = instantiate_exiftool(filepath, opts)
     end
 
+    # Returns true if IPTC:DigitalSourceType is set to "trainedAlgorithmicMedia"
     def ai_created?
       @ai_created ||= get_tag("DigitalSourceType").to_s.match?(/#{CONTROLLED_VALUES[:ai_created]}/)
     end
 
+    # Returns true if IPTC:DigitalSourceType is set to "compositeWithTrainedAlgorithmicMedia"
     def ai_modified?
       @ai_modified ||= get_tag("DigitalSourceType").to_s.match?(/#{CONTROLLED_VALUES[:ai_modified]}/)
     end

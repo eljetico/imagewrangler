@@ -45,7 +45,7 @@ class ImageTest < Minitest::Test
     assert_equal 2075, scaling.height
   end
 
-  def test_identifies_cloaked_file
+  def test_preferred_extension
     image = ImageWrangler::Image.new(raster_path("png_as_jpg.jpg"))
 
     assert_equal ".jpg", image.extname
@@ -145,5 +145,17 @@ class ImageTest < Minitest::Test
     subject = ImageWrangler::Image.new("#{httpserver}/images/raster/srgb.jpg")
     assert subject.mtime.respond_to?(:year)
     assert(subject.mtime < Time.now)
+  end
+
+  def test_c2pa_extraction
+    subject = ImageWrangler::Image.new(raster_path("c2pa/truepic-20230212-camera.jpg"))
+    assert subject.c2pa.present?
+    refute_empty subject.c2pa.manifests
+  end
+
+  def test_c2pa_reports_no_manifests
+    subject = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
+    refute subject.c2pa.present?
+    assert_empty subject.c2pa.manifests
   end
 end

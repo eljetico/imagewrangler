@@ -19,12 +19,20 @@ module ImageWrangler
 
   # Use this when referring to resources, eg color profiles
   class << self
+    def colorize(text, color_code)
+      "\e[#{color_code}m#{text}\e[0m"
+    end
+
     def root
       File.expand_path "..", File.dirname(__FILE__)
     end
 
     def exiftool_lib
       @exiftool_lib ||= File.join(root, "vendor", "Image-ExifTool-#{EXIFTOOL_VERSION}")
+    end
+
+    def url?(filepath)
+      filepath.to_s.match(/\Ahttps?:/i).to_a.any?
     end
   end
 
@@ -59,6 +67,7 @@ require "mini_magick_extensions/format_families"
 require "mini_magick_extensions/peak_saturation"
 require "mini_magick_extensions/postscript_detection"
 require "mini_magick_extensions/visual_corruption"
+require "image_wrangler/c2pa"
 require "image_wrangler/dimensions"
 require "image_wrangler/errors"
 require "image_wrangler/file_attributes"

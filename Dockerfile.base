@@ -80,4 +80,11 @@ RUN curl -L -O ${GS_URL} \
 COPY policy.xml /usr/local/etc/ImageMagick-6/policy.xml
 RUN rm -rf /tmp/install
 
+RUN curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile=minimal \
+    && export PATH="$HOME/.cargo/bin:$PATH" \
+    && cargo install cargo-binstall \
+    && cargo binstall --no-confirm c2patool \
+    && mv /root/.cargo/bin/c2patool /usr/local/bin/ \
+    && /root/.cargo/bin/rustup self uninstall -y
+
 CMD ["convert", "--version"]
