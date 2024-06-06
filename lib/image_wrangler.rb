@@ -9,7 +9,7 @@ require "json"
 require "mini_exiftool"
 require "mini_magick"
 
-require "mini_exiftool_overrides/all_overrides"
+require_relative "mini_exiftool_overrides/all_overrides"
 
 # Top level module
 module ImageWrangler
@@ -19,12 +19,20 @@ module ImageWrangler
 
   # Use this when referring to resources, eg color profiles
   class << self
+    def colorize(text, color_code)
+      "\e[#{color_code}m#{text}\e[0m"
+    end
+
     def root
       File.expand_path "..", File.dirname(__FILE__)
     end
 
     def exiftool_lib
       @exiftool_lib ||= File.join(root, "vendor", "Image-ExifTool-#{EXIFTOOL_VERSION}")
+    end
+
+    def url?(filepath)
+      filepath.to_s.match(/\Ahttps?:/i).to_a.any?
     end
   end
 
@@ -52,23 +60,24 @@ module MiniMagick
   EMPTY_ARRAY = [].freeze
 end
 
-require "mini_magick_overrides/info_overrides"
-require "mini_magick_overrides/configuration_overrides"
-require "mini_magick_extensions/convert_tool_options"
-require "mini_magick_extensions/format_families"
-require "mini_magick_extensions/peak_saturation"
-require "mini_magick_extensions/postscript_detection"
-require "mini_magick_extensions/visual_corruption"
-require "image_wrangler/dimensions"
-require "image_wrangler/errors"
-require "image_wrangler/file_attributes"
-require "image_wrangler/handler"
-require "image_wrangler/handlers/mini_magick_handler"
-require "image_wrangler/logger"
-require "image_wrangler/metadata"
-require "image_wrangler/openable"
-require "image_wrangler/profiles"
-require "image_wrangler/scaling_helper"
-require "image_wrangler/transformers/transformer"
-require "image_wrangler/transformers/mini_magick_transformer"
-require "image_wrangler/image"
+require_relative "mini_magick_overrides/configuration_overrides"
+require_relative "mini_magick_overrides/info_overrides"
+require_relative "mini_magick_extensions/convert_tool_options"
+require_relative "mini_magick_extensions/format_families"
+require_relative "mini_magick_extensions/peak_saturation"
+require_relative "mini_magick_extensions/postscript_detection"
+require_relative "mini_magick_extensions/visual_corruption"
+require_relative "image_wrangler/c2pa"
+require_relative "image_wrangler/dimensions"
+require_relative "image_wrangler/errors"
+require_relative "image_wrangler/file_attributes"
+require_relative "image_wrangler/handler"
+require_relative "image_wrangler/handlers/mini_magick_handler"
+require_relative "image_wrangler/logger"
+require_relative "image_wrangler/metadata"
+require_relative "image_wrangler/openable"
+require_relative "image_wrangler/profiles"
+require_relative "image_wrangler/scaling_helper"
+require_relative "image_wrangler/transformers/transformer"
+require_relative "image_wrangler/transformers/mini_magick_transformer"
+require_relative "image_wrangler/image"

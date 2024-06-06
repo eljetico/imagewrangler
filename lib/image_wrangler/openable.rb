@@ -10,6 +10,15 @@ module ImageWrangler
   # Also attempts to gather basic file metadata from appropriate source:
   # on-disk file location or remote.
   class Openable
+    # Returns a tempfile (see <tt>Down::download</tt> docs)
+    def self.download(url)
+      Down.download(url)
+    rescue Down::NotFound, Errno::ENOENT => _e
+      raise ImageWrangler::Error, "not found at '#{url}'"
+    rescue => e
+      raise ImageWrangler::Error, "unhandled Openable exception #{e.message} - #{e.backtrace.join("\n")}"
+    end
+
     def self.for(uri_or_openable, options = OPTS)
       uri_or_openable.is_a?(ImageWrangler::Openable) ? uri_or_openable : ImageWrangler::Openable.new(uri_or_openable, options)
     end
@@ -20,7 +29,7 @@ module ImageWrangler
       @options = {down_backend: :net_http}.merge(opts)
       Down.backend @options[:down_backend]
 
-      @remote = (@path_or_url =~ %r{\A[A-Za-z][A-Za-z0-9+\-.]*://}) ? true : false
+      @remote = ImageWrangler.url?(path_or_url)
     end
 
     # Close an opened stream and return nil (like IO)
