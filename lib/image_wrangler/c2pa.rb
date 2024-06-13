@@ -90,10 +90,6 @@ module ImageWrangler
       [@options[:command], "-d", filepath].shelljoin
     end
 
-    def red(text)
-      ImageWrangler.colorize(text, 31)
-    end
-
     def initialize_c2patool
       @command_ok = false
 

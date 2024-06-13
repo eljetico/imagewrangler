@@ -72,7 +72,7 @@ module ImageWrangler
     # Access C2pa instance
     # @return [ImageWrangler::C2pa]
     def c2pa
-      @_c2pa ||= ImageWrangler::C2pa.new(@filepath)
+      @_c2pa ||= ImageWrangler::C2pa.new(@filepath, @options)
     end
 
     def checksum(opts = OPTS)
