@@ -16,7 +16,7 @@ module ImageWrangler
 
     def test_raises_error_when_command_missing
       assert_raises ImageWrangler::Error do
-        @subject.new(@c2pa_camera, "nonexistent_command")
+        @subject.new(@c2pa_camera, {command: "nonexistent_command"})
       end
     end
 

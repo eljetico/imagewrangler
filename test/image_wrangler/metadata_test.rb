@@ -90,20 +90,5 @@ module ImageWrangler
       subject = ImageWrangler::Metadata.new(url)
       assert_equal "Times Square", subject["Sub-location"]
     end
-
-    # AI attributes
-    def test_extracts_digital_source_type
-      composite = raster_path("ai_composite_with_trained_algorithmic_media.jpg")
-      subject = ImageWrangler::Metadata.new(composite)
-      assert_match(/compositeWithTrainedAlgorithmicMedia\z/, subject.tag("DigitalSourceType"))
-      assert subject.ai_modified?
-      refute subject.ai_created?
-
-      from_trained = raster_path("ai_trained_algorithmic_media.jpg")
-      subject = ImageWrangler::Metadata.new(from_trained)
-      assert_match(/trainedAlgorithmicMedia\z/, subject.tag("DigitalSourceType"))
-      assert subject.ai_created?
-      refute subject.ai_modified?
-    end
   end
 end

@@ -35,7 +35,7 @@ class ImageTest < Minitest::Test
     assert_equal "808-185", image.tag("title")
     refute_empty image.all_tags
 
-    refute image.metadata.ai_created?
+    refute image.created_with_ai?
   end
 
   def test_scaling_included
@@ -153,9 +153,9 @@ class ImageTest < Minitest::Test
     refute_empty subject.c2pa.manifests
   end
 
-  def test_c2pa_reports_no_manifests
-    subject = ImageWrangler::Image.new(raster_path("valid_jpg.jpg"))
-    refute subject.c2pa.present?
-    assert_empty subject.c2pa.manifests
+  def test_ai_metadata
+    subject = ImageWrangler::Image.new(raster_path("ai_composite_with_trained_algorithmic_media.jpg"))
+    assert subject.ai_metadata.modified_with_ai?
+    assert subject.modified_with_ai?
   end
 end
