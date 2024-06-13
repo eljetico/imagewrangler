@@ -18,12 +18,14 @@ module ImageWrangler
       assert_match(/compositeWithTrainedAlgorithmicMedia\z/, subject.digital_source_type)
       refute subject.from_c2pa?
       assert subject.from_xmp?
+      assert_equal "xmp", subject.disclosure_source
 
       from_trained = raster_path("ai_trained_algorithmic_media.jpg")
       subject = @klass.new(from_trained, @options)
       assert_match(/trainedAlgorithmicMedia\z/, subject.digital_source_type)
       refute subject.from_c2pa?
       assert subject.from_xmp?
+      assert_equal "xmp", subject.disclosure_source
     end
 
     def test_extracts_digital_source_type_from_c2pa
@@ -32,12 +34,14 @@ module ImageWrangler
       assert_match(/compositeWithTrainedAlgorithmicMedia\z/, subject.digital_source_type)
       refute subject.from_xmp?
       assert subject.from_c2pa?
+      assert_equal "c2pa", subject.disclosure_source
 
       created = raster_path("c2pa/4-firefly.jpg")
       subject = @klass.new(created, @options)
       assert_match(/trainedAlgorithmicMedia\z/, subject.digital_source_type)
       refute subject.from_xmp?
       assert subject.from_c2pa?
+      assert_equal "c2pa", subject.disclosure_source
     end
 
     def test_extraction_from_non_ai_file_is_nil_with_empty_log

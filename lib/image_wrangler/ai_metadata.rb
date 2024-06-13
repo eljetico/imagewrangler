@@ -10,6 +10,8 @@ module ImageWrangler
       ai_modified: "compositeWithTrainedAlgorithmicMedia"
     }.freeze
 
+    attr_reader :disclosure_source
+
     # Provides AI metadata disclosure from C2PA or XMP, if available
     #
     # @param path_or_url [String] path/URL to image file
@@ -21,8 +23,7 @@ module ImageWrangler
         logger: ImageWrangler::Logger.new(nil)
       }.merge(opts)
 
-      @from_xmp = false
-      @from_c2pa = false
+      @disclosure_source = nil
 
       @path_or_url = path_or_url
     end
@@ -36,11 +37,11 @@ module ImageWrangler
     end
 
     def from_xmp?
-      @from_xmp
+      disclosure_source == "xmp"
     end
 
     def from_c2pa?
-      @from_c2pa
+      disclosure_source == "c2pa"
     end
 
     def modified_with_ai?
@@ -63,7 +64,9 @@ module ImageWrangler
 
     def log_extraction(digital_source_type, source)
       logger.info("#{digital_source_type} from #{source.upcase}")
-      instance_variable_set(:"@from_#{source}", true)
+    rescue => _
+    ensure
+      instance_variable_set(:@disclosure_source, source)
     end
 
     def logger
