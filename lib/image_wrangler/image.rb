@@ -21,6 +21,7 @@ module ImageWrangler
 
     def_delegators :metadata_delegate, :get_tag, :get_all_tags, :tag, :all_tags
     def_delegators :@openable, :remote?, :url?
+    def_delegators :ai_metadata, :created_with_ai?, :digital_source_type, :modified_with_ai?
 
     class << self
       def checksum(path, format: :md5)
@@ -62,8 +63,16 @@ module ImageWrangler
       handler.respond_to?(method) || super
     end
 
+    # Access AiMetadata instance
+    # @return [ImageWrangler::AiMetadata]
+    def ai_metadata
+      @_ai_metadata ||= ImageWrangler::AiMetadata.new(@filepath, @options)
+    end
+
+    # Access C2pa instance
+    # @return [ImageWrangler::C2pa]
     def c2pa
-      @c2pa ||= ImageWrangler::C2pa.new(@filepath)
+      @_c2pa ||= ImageWrangler::C2pa.new(@filepath, @options)
     end
 
     def checksum(opts = OPTS)

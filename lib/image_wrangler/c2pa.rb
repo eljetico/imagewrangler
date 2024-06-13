@@ -8,20 +8,39 @@ module ImageWrangler
 
     attr_reader :manifests
 
-    # Provides high-level access to C2PA manifests contained in images,
-    # if available.
+    # Provides high-level access to C2PA manifests, if available
     #
-    # @param path_or_url [String] path/URL to image file
+    # @param path_or_url [String|Hash] path/URL to image file or a Hash of C2PA manifests for test
     # @param command [String] optional, the shell command to run for extraction (default: "c2patool")
-    def initialize(path_or_url, command = "c2patool")
+    def initialize(path_or_url, opts = ImageWrangler::OPTS)
+      @options = {
+        command: "c2patool"
+      }.merge(opts)
+
       @path_or_url = path_or_url
-      @command = command
-      @manifests = ImageWrangler::OPTS
+
       initialize_c2patool
-      extract
+      @manifests = @path_or_url.is_a?(Hash) ? @path_or_url : extract_manifests
     end
 
-    # Returns true if C2PA manifests are present in the image.
+    def active_manifest
+      return nil unless present?
+
+      @_active_manifest ||= begin
+        active = @manifests["active_manifest"]
+        @manifests["manifests"][active]
+      end
+    end
+
+    def c2pa_actions
+      @_c2pa_actions ||= active_manifest&.dig("assertion_store")&.dig("c2pa.actions")&.dig("actions") || []
+    end
+
+    def digital_source_types
+      @_digital_source_types ||= c2pa_actions.map { |action| action["digitalSourceType"] }
+    end
+
+    # Returns true if any C2PA manifests are present in the image.
     def present?
       @manifests.any?
     end
@@ -35,15 +54,16 @@ module ImageWrangler
 
     private
 
-    def extract
-      return @manifests unless @command_ok
+    def extract_manifests
+      manifests = ImageWrangler::OPTS
+      return manifests unless @command_ok
 
       fh = ensure_local_file # File or Tempfile instance
       cmd = extraction_command(fh.path)
 
       begin
         result, _stdout, _stderr = Open3.capture3(cmd)
-        @manifests = JSON.parse(result) unless result.empty?
+        manifests = JSON.parse(result) unless result.empty?
       rescue => e
         raise ImageWrangler::Error.new(e)
       ensure
@@ -51,7 +71,7 @@ module ImageWrangler
         fh.unlink if fh.is_a?(Tempfile)
       end
 
-      @manifests
+      manifests
     end
 
     # TODO: implement fast access to remote files
@@ -67,19 +87,15 @@ module ImageWrangler
     end
 
     def extraction_command(filepath)
-      [@command, "-d", filepath].shelljoin
-    end
-
-    def red(text)
-      ImageWrangler.colorize(text, 31)
+      [@options[:command], "-d", filepath].shelljoin
     end
 
     def initialize_c2patool
       @command_ok = false
 
-      system("exec which #{@command} >/dev/null 2>&1")
+      system("exec which #{@options[:command]} >/dev/null 2>&1")
       unless $?.success?
-        raise ImageWrangler::Error.new("'#{@command}' command not found in PATH - please install")
+        raise ImageWrangler::Error.new("'#{@options[:command]}' command not found in PATH - please install")
       end
 
       @command_ok = true
