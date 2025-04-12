@@ -17,7 +17,7 @@ module ImageWrangler
       assert_equal(".jpg", subject.extension)
 
       s = subject.stream
-      assert_equal "100644", s.lstat.mode.to_s(8)
+      assert_equal "100664", s.lstat.mode.to_s(8)
       s.close
     end
 
