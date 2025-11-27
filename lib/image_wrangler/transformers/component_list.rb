@@ -9,6 +9,7 @@ module ImageWrangler
     # ImageWrangler::Transformers::Variant-like instances
     class ComponentList
       extend Forwardable
+
       delegate %i[each each_with_index to_a] => :@variants
 
       attr_reader :variants, :list

@@ -33,7 +33,7 @@ module ImageWrangler
     end
 
     def c2pa_actions
-      @_c2pa_actions ||= active_manifest&.dig("assertion_store")&.dig("c2pa.actions")&.dig("actions") || []
+      @_c2pa_actions ||= active_manifest&.dig("assertion_store", "c2pa.actions", "actions") || []
     end
 
     def digital_source_types
@@ -102,6 +102,8 @@ module ImageWrangler
     end
 
     def validate
+      return validate_by_validation_state if validation_codes.empty?
+
       (validation_codes - VALIDATION_SUCCESS_STRINGS).empty?
     end
 
@@ -111,6 +113,12 @@ module ImageWrangler
       end
 
       validation_codes.compact.uniq
+    end
+
+    def validate_by_validation_state
+      state = @manifests.dig("validation_state").to_s.downcase
+
+      state == "valid"
     end
   end
 end
