@@ -24,7 +24,14 @@ module ImageWrangler
     def_delegators :ai_metadata, :created_with_ai?, :digital_source_type, :modified_with_ai?
 
     class << self
-      def checksum(path, format: :md5)
+      # Returns a checksum for a file at the given path.
+      #
+      # @param path [String] Path to the file
+      # @param [Hash] opts kwargs (format:)
+      # @option opts [Symbol, nil] :format Checksum format (:sha1, :sha256, :sha512, :md5). Defaults to base64 MD5.
+      #
+      # @return [String] Checksum string
+      def checksum(path, format: nil)
         {
           sha1: Digest::SHA1.file(path).hexdigest,
           sha256: Digest::SHA256.file(path).hexdigest,
@@ -75,9 +82,17 @@ module ImageWrangler
       @_c2pa ||= ImageWrangler::C2pa.new(@filepath, @options)
     end
 
-    def checksum(opts = OPTS)
+    # Returns a checksum for a file at the given path.
+    #
+    # @param path [String] Path to the file
+    # @param [Hash] opts kwargs (format:, force:)
+    # @option opts [Symbol, nil] :format Checksum format (:sha1, :sha256, :sha512, :md5). Defaults to base64 MD5.
+    # @option opts [Boolean] :force Whether to force recalculation of checksum
+    #
+    # @return [String] Checksum string
+    def checksum(**opts)
       options = {
-        format: :md5,
+        format: nil,
         force: false
       }.merge(opts)
 
