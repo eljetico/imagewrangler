@@ -18,5 +18,5 @@ services:
       - httpserver=http://httpserver
     volumes:
       - .:/apps/imagewrangler
-    command: ["bundle", "exec", "guard"]
+    command: ["bash"]
     tty: true

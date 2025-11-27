@@ -78,7 +78,7 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal "image/jpeg", @subject.mime_type
     assert_equal 8, @subject.bit_depth
     assert_equal "RGB", @subject.colorspace
-    assert_equal "abb4755aff726b0c4ac77c7be07b4776", @subject.checksum
+    assert_equal "q7R1Wv9yawxKx3x74HtHdg==", @subject.checksum
     assert_equal 1_000, @subject.height
     assert_equal 697, @subject.width
     assert_equal 119_333, @subject.filesize
@@ -95,7 +95,7 @@ class MiniMagickHandlerTest < Minitest::Test
     assert_equal "CMYK", @subject.colorspace
     assert_equal ".jpg", @subject.extension
     assert @subject.valid_extension?
-    assert_equal "638595b250d6afdf8f62dcd299da1ad0", @subject.checksum
+    assert_equal "Y4WVslDWr9+PYtzSmdoa0A==", @subject.checksum
     assert_equal "U.S. Web Coated (SWOP) v2", @subject.icc_name
     refute @subject.visually_corrupt?
   end

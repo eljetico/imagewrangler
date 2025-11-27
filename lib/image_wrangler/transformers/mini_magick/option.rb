@@ -7,7 +7,7 @@ module ImageWrangler
       class Option
         class << self
           def cleaned_option(option)
-            option.sub(/\A[\-|+]+?/, "")
+            option.sub(/\A[-|+]+?/, "")
           end
 
           def recognized?(key)

@@ -19,7 +19,7 @@ class ImageTest < Minitest::Test
     assert_equal "0.7mp", image.megapixels_humanized
     assert_equal "RGB", image.colorspace
     assert_equal 119_333, image.filesize
-    assert_equal "abb4755aff726b0c4ac77c7be07b4776", image.checksum
+    assert_equal "q7R1Wv9yawxKx3x74HtHdg==", image.checksum
     assert_equal "ed3d64e1569e73aa0b4947cb4bc39618354ee260", image.checksum(format: :sha1, force: true)
     assert_equal ".jpg", image.preferred_extension
 
@@ -97,7 +97,7 @@ class ImageTest < Minitest::Test
     assert_equal 990, image.width
     assert_equal "CMYK", image.colorspace
     assert_equal 1_425_512, image.filesize
-    assert_equal "21de1f0f359eb03f0224f4bcc00384fe", image.checksum
+    assert_equal "Id4fDzWesD8CJPS8wAOE/g==", image.checksum
     refute_predicate image, :raster?
     assert_predicate image, :vector?
     assert_predicate image, :eps?

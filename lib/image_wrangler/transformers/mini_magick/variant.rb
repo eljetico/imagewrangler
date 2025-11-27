@@ -53,7 +53,7 @@ module ImageWrangler
         ].freeze
 
         def initialize(config = OPTS, options = OPTS)
-          super(config, options)
+          super
 
           @command = nil
           @tool = ::MiniMagick::Tool::Convert

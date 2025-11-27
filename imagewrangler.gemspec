@@ -18,8 +18,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency "down"
   s.add_dependency "marcel"
-  s.add_dependency "mini_exiftool"
-  s.add_dependency "mini_magick"
+  s.add_dependency "mini_exiftool", "=2.14.0"
+  s.add_dependency "mini_magick", "=4.12.0"
   s.add_dependency "timeliness"
 
   s.add_development_dependency "benchmark-ips"

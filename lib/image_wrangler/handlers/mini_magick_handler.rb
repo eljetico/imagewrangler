@@ -52,11 +52,14 @@ module ImageWrangler
       end
       alias_method :channels, :channel_count
 
-      def checksum(opts = OPTS)
-        @checksum ||= begin
-          md5 = Digest::MD5.file @magick.path
-          md5.hexdigest
-        end
+      # Generate a checksum
+      #
+      # @param [Hash] opts kwargs (format:)
+      # @option opts [Symbol, nil] :format Checksum format (:sha1, :sha256, :sha512, :md5). Defaults to base64 MD5.
+      #
+      # @return [String] Checksum string
+      def checksum(format: nil)
+        ::ImageWrangler::Image.checksum(@magick.path, format: format)
       end
 
       def color?
@@ -131,7 +134,7 @@ module ImageWrangler
         filepath
       end
 
-      def filesize(opts = OPTS)
+      def filesize(_opts = OPTS)
         @filesize ||= stat.size
       end
 

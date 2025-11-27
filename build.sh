@@ -4,7 +4,9 @@ set -e
 
 echo "Building dev/test environment ..."
 
-rm Gemfile.lock
+if [ -f Gemfile.lock ]; then
+  rm Gemfile.lock
+fi
 
 docker-compose build
 

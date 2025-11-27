@@ -1,5 +1,6 @@
 fix: false
 parallel: true
+format: progress
 ignore:
   - 'lib/mini_exiftool_overrides/*'
   - 'lib/**/*':
